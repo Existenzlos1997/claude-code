@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Urban Scum - Mobile Game</title>
+    <link rel="stylesheet" href="src/css/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen active">
+        <div class="loading-content">
+            <h1 class="game-title">URBAN SCUM</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen">
+        <div class="start-content">
+            <h1 class="game-title animated">URBAN SCUM</h1>
+            <div class="character-preview"></div>
+            <div class="menu-buttons">
+                <button id="btn-play" class="btn btn-primary pulse">▶ PLAY</button>
+                <button id="btn-levels" class="btn btn-secondary">🎮 LEVELS</button>
+                <button id="btn-highscore" class="btn btn-secondary">🏆 HIGHSCORE</button>
+                <button id="btn-settings" class="btn btn-secondary">⚙️ SETTINGS</button>
+            </div>
+            <div class="highscore-display">
+                <span>🏆 Best: <span id="best-score">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Select Screen -->
+    <div id="level-screen" class="screen">
+        <div class="level-content">
+            <h2 class="screen-title">SELECT LEVEL</h2>
+            <div class="level-grid">
+                <div class="level-card" data-level="1">
+                    <div class="level-icon">🏙️</div>
+                    <div class="level-name">DOWNTOWN</div>
+                    <div class="level-stars">⭐⭐⭐</div>
+                    <div class="level-locked"></div>
+                </div>
+                <div class="level-card locked" data-level="2">
+                    <div class="level-icon">🏭</div>
+                    <div class="level-name">INDUSTRIAL</div>
+                    <div class="level-stars">⭐⭐⭐</div>
+                    <div class="level-locked">🔒</div>
+                </div>
+                <div class="level-card locked" data-level="3">
+                    <div class="level-icon">🌃</div>
+                    <div class="level-name">NIGHTLIFE</div>
+                    <div class="level-stars">⭐⭐⭐</div>
+                    <div class="level-locked">🔒</div>
+                </div>
+            </div>
+            <button id="btn-back-levels" class="btn btn-back">← BACK</button>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings-screen" class="screen">
+        <div class="settings-content">
+            <h2 class="screen-title">SETTINGS</h2>
+            <div class="settings-options">
+                <div class="setting-item">
+                    <span>🔊 Sound</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>🎵 Music</span>
+                    <label class="switch">
+                        <input type="checkbox" id="music-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>📳 Vibration</span>
+                    <label class="switch">
+                        <input type="checkbox" id="vibration-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <button id="btn-back-settings" class="btn btn-back">← BACK</button>
+        </div>
+    </div>
+
+    <!-- Highscore Screen -->
+    <div id="highscore-screen" class="screen">
+        <div class="highscore-content">
+            <h2 class="screen-title">🏆 HIGHSCORES</h2>
+            <div class="highscore-list" id="highscore-list">
+                <!-- Filled by JavaScript -->
+            </div>
+            <button id="btn-back-highscore" class="btn btn-back">← BACK</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <div class="game-hud">
+            <div class="hud-left">
+                <div class="score-display">
+                    <span class="score-label">SCORE</span>
+                    <span class="score-value" id="current-score">0</span>
+                </div>
+                <div class="combo-display" id="combo-display">
+                    <span class="combo-value">x1</span>
+                </div>
+            </div>
+            <div class="hud-center">
+                <div class="level-indicator" id="level-indicator">LEVEL 1</div>
+            </div>
+            <div class="hud-right">
+                <div class="lives-display" id="lives-display">
+                    ❤️❤️❤️
+                </div>
+                <button id="btn-pause" class="btn-pause">⏸️</button>
+            </div>
+        </div>
+        <canvas id="game-canvas"></canvas>
+        <div class="power-up-indicator" id="power-up-indicator"></div>
+        <div class="touch-controls">
+            <div class="touch-left" id="touch-left">◀</div>
+            <div class="touch-right" id="touch-right">▶</div>
+            <div class="touch-action" id="touch-action">⚡</div>
+        </div>
+    </div>
+
+    <!-- Pause Screen -->
+    <div id="pause-screen" class="screen overlay">
+        <div class="pause-content">
+            <h2>PAUSED</h2>
+            <div class="pause-buttons">
+                <button id="btn-resume" class="btn btn-primary">▶ RESUME</button>
+                <button id="btn-restart" class="btn btn-secondary">🔄 RESTART</button>
+                <button id="btn-quit" class="btn btn-secondary">🏠 QUIT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameover-screen" class="screen overlay">
+        <div class="gameover-content">
+            <h2 class="gameover-title">GAME OVER</h2>
+            <div class="gameover-stats">
+                <div class="stat-item">
+                    <span class="stat-label">SCORE</span>
+                    <span class="stat-value" id="final-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">BEST</span>
+                    <span class="stat-value" id="gameover-best">0</span>
+                </div>
+                <div class="stat-item new-record hidden" id="new-record">
+                    🎉 NEW RECORD! 🎉
+                </div>
+            </div>
+            <div class="gameover-buttons">
+                <button id="btn-retry" class="btn btn-primary">🔄 RETRY</button>
+                <button id="btn-watch-ad" class="btn btn-reward">📺 WATCH AD (+1 LIFE)</button>
+                <button id="btn-home" class="btn btn-secondary">🏠 HOME</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Complete Screen -->
+    <div id="levelcomplete-screen" class="screen overlay">
+        <div class="levelcomplete-content">
+            <h2 class="levelcomplete-title">LEVEL COMPLETE!</h2>
+            <div class="stars-earned" id="stars-earned">
+                ⭐⭐⭐
+            </div>
+            <div class="levelcomplete-stats">
+                <div class="stat-item">
+                    <span class="stat-label">SCORE</span>
+                    <span class="stat-value" id="level-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">TIME</span>
+                    <span class="stat-value" id="level-time">0:00</span>
+                </div>
+            </div>
+            <div class="levelcomplete-buttons">
+                <button id="btn-next-level" class="btn btn-primary">➡️ NEXT LEVEL</button>
+                <button id="btn-replay-level" class="btn btn-secondary">🔄 REPLAY</button>
+                <button id="btn-levels-complete" class="btn btn-secondary">🎮 LEVELS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ad Container (for AdMob integration) -->
+    <div id="ad-container" class="ad-container hidden"></div>
+
+    <!-- Scripts -->
+    <script src="src/js/utils.js"></script>
+    <script src="src/js/storage.js"></script>
+    <script src="src/js/audio.js"></script>
+    <script src="src/js/sprites.js"></script>
+    <script src="src/js/entities.js"></script>
+    <script src="src/js/levels.js"></script>
+    <script src="src/js/game.js"></script>
+    <script src="src/js/ui.js"></script>
+    <script src="src/js/ads.js"></script>
+    <script src="src/js/main.js"></script>
+</body>
+</html>
