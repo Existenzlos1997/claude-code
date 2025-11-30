@@ -26,6 +26,8 @@ def debug_log(message):
 
 
 # State file to track warnings shown (session-scoped using session ID)
+# Cache the expanded home directory for performance
+_CLAUDE_DIR = os.path.expanduser("~/.claude")
 
 # Security patterns configuration
 SECURITY_PATTERNS = [
@@ -128,24 +130,23 @@ Only use exec() if you absolutely need shell features and the input is guarantee
 
 def get_state_file(session_id):
     """Get session-specific state file path."""
-    return os.path.expanduser(f"~/.claude/security_warnings_state_{session_id}.json")
+    return os.path.join(_CLAUDE_DIR, f"security_warnings_state_{session_id}.json")
 
 
 def cleanup_old_state_files():
     """Remove state files older than 30 days."""
     try:
-        state_dir = os.path.expanduser("~/.claude")
-        if not os.path.exists(state_dir):
+        if not os.path.exists(_CLAUDE_DIR):
             return
 
         current_time = datetime.now().timestamp()
         thirty_days_ago = current_time - (30 * 24 * 60 * 60)
 
-        for filename in os.listdir(state_dir):
+        for filename in os.listdir(_CLAUDE_DIR):
             if filename.startswith("security_warnings_state_") and filename.endswith(
                 ".json"
             ):
-                file_path = os.path.join(state_dir, filename)
+                file_path = os.path.join(_CLAUDE_DIR, filename)
                 try:
                     file_mtime = os.path.getmtime(file_path)
                     if file_mtime < thirty_days_ago:
@@ -181,18 +182,23 @@ def save_state(session_id, shown_warnings):
 
 
 def check_patterns(file_path, content):
-    """Check if file path or content matches any security patterns."""
+    """Check if file path or content matches any security patterns.
+    
+    Returns early on first match for better performance.
+    """
     # Normalize path by removing leading slashes
     normalized_path = file_path.lstrip("/")
 
     for pattern in SECURITY_PATTERNS:
-        # Check path-based patterns
-        if "path_check" in pattern and pattern["path_check"](normalized_path):
+        # Check path-based patterns first (faster check)
+        path_check = pattern.get("path_check")
+        if path_check is not None and path_check(normalized_path):
             return pattern["ruleName"], pattern["reminder"]
 
-        # Check content-based patterns
-        if "substrings" in pattern and content:
-            for substring in pattern["substrings"]:
+        # Check content-based patterns only if content is provided
+        substrings = pattern.get("substrings")
+        if substrings and content:
+            for substring in substrings:
                 if substring in content:
                     return pattern["ruleName"], pattern["reminder"]
 

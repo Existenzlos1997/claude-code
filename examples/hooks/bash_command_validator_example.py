@@ -32,14 +32,15 @@ import json
 import re
 import sys
 
-# Define validation rules as a list of (regex pattern, message) tuples
+# Define validation rules as a list of (compiled regex pattern, message) tuples
+# Pre-compile regex patterns for better performance since this hook is called frequently
 _VALIDATION_RULES = [
     (
-        r"^grep\b(?!.*\|)",
+        re.compile(r"^grep\b(?!.*\|)"),
         "Use 'rg' (ripgrep) instead of 'grep' for better performance and features",
     ),
     (
-        r"^find\s+\S+\s+-name\b",
+        re.compile(r"^find\s+\S+\s+-name\b"),
         "Use 'rg --files | rg pattern' or 'rg --files -g pattern' instead of 'find -name' for better performance",
     ),
 ]
@@ -48,7 +49,7 @@ _VALIDATION_RULES = [
 def _validate_command(command: str) -> list[str]:
     issues = []
     for pattern, message in _VALIDATION_RULES:
-        if re.search(pattern, command):
+        if pattern.search(command):
             issues.append(message)
     return issues
 
