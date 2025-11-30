@@ -180,11 +180,12 @@ async function autoCloseDuplicates(): Promise<void> {
     }
 
     const lastDupeComment = dupeComments[dupeComments.length - 1];
-    const dupeCommentTime = new Date(lastDupeComment.created_at).getTime();
+    const dupeCommentDate = new Date(lastDupeComment.created_at);
+    const dupeCommentTime = dupeCommentDate.getTime();
     console.log(
       `[DEBUG] Issue #${
         issue.number
-      } - most recent duplicate comment from: ${new Date(dupeCommentTime).toISOString()}`
+      } - most recent duplicate comment from: ${dupeCommentDate.toISOString()}`
     );
 
     if (dupeCommentTime > threeDaysAgoTime) {
