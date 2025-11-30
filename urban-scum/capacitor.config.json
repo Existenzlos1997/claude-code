@@ -1,0 +1,20 @@
+{
+    "appId": "com.urbanscum.game",
+    "appName": "Urban Scum",
+    "webDir": ".",
+    "server": {
+        "androidScheme": "https"
+    },
+    "plugins": {
+        "AdMob": {
+            "appId": "ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX",
+            "testDevices": ["YOUR_TEST_DEVICE_ID"]
+        }
+    },
+    "android": {
+        "buildOptions": {
+            "keystorePath": "release-key.keystore",
+            "keystoreAlias": "urbanscum"
+        }
+    }
+}

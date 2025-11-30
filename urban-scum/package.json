@@ -1,0 +1,35 @@
+{
+    "name": "urban-scum",
+    "version": "1.0.0",
+    "description": "Urban Scum - Ein süchtig machendes Mobile-Plattformspiel im Cartoon-Style!",
+    "main": "index.html",
+    "scripts": {
+        "start": "npx serve .",
+        "build": "echo 'No build step required'",
+        "cap:init": "npx cap init \"Urban Scum\" com.urbanscum.game --web-dir .",
+        "cap:add:android": "npx cap add android",
+        "cap:sync": "npx cap sync",
+        "cap:open:android": "npx cap open android",
+        "android:build": "cd android && ./gradlew assembleRelease",
+        "android:bundle": "cd android && ./gradlew bundleRelease"
+    },
+    "keywords": [
+        "game",
+        "mobile",
+        "android",
+        "platformer",
+        "arcade",
+        "urban",
+        "cartoon"
+    ],
+    "author": "Urban Scum Games",
+    "license": "MIT",
+    "dependencies": {},
+    "devDependencies": {
+        "@capacitor/android": "^5.0.0",
+        "@capacitor/cli": "^5.0.0",
+        "@capacitor/core": "^5.0.0",
+        "capacitor-admob": "^5.0.0",
+        "serve": "^14.0.0"
+    }
+}
