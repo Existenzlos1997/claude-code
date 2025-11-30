@@ -111,6 +111,7 @@ async function autoCloseDuplicates(): Promise<void> {
 
   const threeDaysAgo = new Date();
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  const threeDaysAgoTime = threeDaysAgo.getTime(); // Cache timestamp for faster comparisons
   console.log(
     `[DEBUG] Checking for duplicate comments older than: ${threeDaysAgo.toISOString()}`
   );
@@ -128,9 +129,9 @@ async function autoCloseDuplicates(): Promise<void> {
     
     if (pageIssues.length === 0) break;
     
-    // Filter for issues created more than 3 days ago
+    // Filter for issues created more than 3 days ago using cached timestamp
     const oldEnoughIssues = pageIssues.filter(issue => 
-      new Date(issue.created_at) <= threeDaysAgo
+      new Date(issue.created_at).getTime() <= threeDaysAgoTime
     );
     
     allIssues.push(...oldEnoughIssues);
@@ -179,14 +180,14 @@ async function autoCloseDuplicates(): Promise<void> {
     }
 
     const lastDupeComment = dupeComments[dupeComments.length - 1];
-    const dupeCommentDate = new Date(lastDupeComment.created_at);
+    const dupeCommentTime = new Date(lastDupeComment.created_at).getTime();
     console.log(
       `[DEBUG] Issue #${
         issue.number
-      } - most recent duplicate comment from: ${dupeCommentDate.toISOString()}`
+      } - most recent duplicate comment from: ${new Date(dupeCommentTime).toISOString()}`
     );
 
-    if (dupeCommentDate > threeDaysAgo) {
+    if (dupeCommentTime > threeDaysAgoTime) {
       console.log(
         `[DEBUG] Issue #${issue.number} - duplicate comment is too recent, skipping`
       );
@@ -196,12 +197,13 @@ async function autoCloseDuplicates(): Promise<void> {
       `[DEBUG] Issue #${
         issue.number
       } - duplicate comment is old enough (${Math.floor(
-        (Date.now() - dupeCommentDate.getTime()) / (1000 * 60 * 60 * 24)
+        (Date.now() - dupeCommentTime) / (1000 * 60 * 60 * 24)
       )} days)`
     );
 
+    // Use timestamp comparison for better performance
     const commentsAfterDupe = comments.filter(
-      (comment) => new Date(comment.created_at) > dupeCommentDate
+      (comment) => new Date(comment.created_at).getTime() > dupeCommentTime
     );
     console.log(
       `[DEBUG] Issue #${issue.number} - ${commentsAfterDupe.length} comments after duplicate detection`

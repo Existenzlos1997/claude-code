@@ -48,7 +48,7 @@ if [ -z "$gh_ranges" ]; then
     exit 1
 fi
 
-if ! echo "$gh_ranges" | jq -e '.web and .api and .git' >/dev/null; then
+if ! jq -e '.web and .api and .git' >/dev/null <<< "$gh_ranges"; then
     echo "ERROR: GitHub API response missing required fields"
     exit 1
 fi
@@ -61,7 +61,7 @@ while read -r cidr; do
     fi
     echo "Adding GitHub range $cidr"
     ipset add allowed-domains "$cidr"
-done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
+done < <(jq -r '(.web + .api + .git)[]' <<< "$gh_ranges" | aggregate -q)
 
 # Resolve and add other allowed domains
 for domain in \
@@ -87,7 +87,7 @@ for domain in \
         fi
         echo "Adding $ip for $domain"
         ipset add allowed-domains "$ip"
-    done < <(echo "$ips")
+    done <<< "$ips"
 done
 
 # Get host IP from default route
