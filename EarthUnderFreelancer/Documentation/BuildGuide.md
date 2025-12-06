@@ -9,7 +9,7 @@
    - ✅ Android Build Support
    - ✅ Android SDK & NDK Tools
    - ✅ OpenJDK
-   - ✅ Windows Build Support (IL2CPP)
+   - ✅ Windows Build Support (für IL2CPP Scripting Backend)
 
 3. **Visual Studio 2022** oder **Rider** für Code-Bearbeitung
 

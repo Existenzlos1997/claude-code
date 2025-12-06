@@ -39,12 +39,14 @@ namespace EarthUnderFreelancer.Vehicles
         private bool isBoosting;
         private bool isBraking;
 
+        [Header("Boost Settings")]
+        [SerializeField] private float boostRegenRate = 0.2f;
+        [SerializeField] private float boostConsumptionRate = 0.5f;
+
         private float currentSpeed;
         private float currentThrottle;
         private bool isControllable = true;
         private float boostAmount = 1f;
-        private float boostRegenRate = 0.2f;
-        private float boostConsumptionRate = 0.5f;
 
         public float CurrentSpeed => currentSpeed;
         public float MaxSpeed => maxSpeed;

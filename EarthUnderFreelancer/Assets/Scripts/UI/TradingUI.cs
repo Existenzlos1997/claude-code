@@ -192,6 +192,31 @@ namespace EarthUnderFreelancer.UI
             }
         }
 
+        private int GetBasePrice(string itemId)
+        {
+            // Try to load ItemData from Resources
+            var itemData = Resources.Load<Data.ItemData>($"Data/Items/{itemId}");
+            if (itemData != null)
+            {
+                return itemData.basePrice;
+            }
+
+            // Check station available items
+            if (currentStation != null)
+            {
+                foreach (var item in currentStation.AvailableItems)
+                {
+                    if (item.itemId == itemId)
+                    {
+                        return item.basePrice;
+                    }
+                }
+            }
+
+            // Default fallback price based on item category
+            return 100;
+        }
+
         public void OnQuantityChanged(float value)
         {
             selectedQuantity = Mathf.Max(1, Mathf.RoundToInt(value));
@@ -202,7 +227,7 @@ namespace EarthUnderFreelancer.UI
         {
             if (string.IsNullOrEmpty(selectedItemId)) return;
 
-            int basePrice = 100; // Would need lookup
+            int basePrice = GetBasePrice(item.itemId);
             for (int i = 0; i < selectedQuantity; i++)
             {
                 if (!Systems.EconomyManager.Instance.BuyItem(selectedItemId, basePrice, currentStation?.FactionId))
@@ -219,7 +244,7 @@ namespace EarthUnderFreelancer.UI
         {
             if (string.IsNullOrEmpty(selectedItemId)) return;
 
-            int basePrice = 100;
+            int basePrice = GetBasePrice(item.itemId);
             for (int i = 0; i < selectedQuantity; i++)
             {
                 if (!Systems.EconomyManager.Instance.SellItem(selectedItemId, basePrice, currentStation?.FactionId))
