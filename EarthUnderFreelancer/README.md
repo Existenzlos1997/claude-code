@@ -39,25 +39,33 @@ EarthUnder Freelancer ist ein Open-World Weltraum-Spiel, das die besten Elemente
 EarthUnderFreelancer/
 ├── Assets/
 │   ├── Scripts/
-│   │   ├── AI/              # KI-Systeme
-│   │   ├── Combat/          # Waffen, Targeting
-│   │   ├── Core/            # GameManager, Input, Audio
-│   │   ├── Data/            # ScriptableObjects
+│   │   ├── AI/              # KI-Systeme (AIShipController, AISpawnManager)
+│   │   ├── Combat/          # Waffen, Targeting, Projectile, Missile
+│   │   ├── Core/            # GameManager, Input, Audio, SaveLoad
+│   │   ├── Data/            # ScriptableObjects (Items, Ships, Weapons)
 │   │   ├── Missions/        # Missionssystem
 │   │   ├── Monetization/    # Ads, IAP
-│   │   ├── Networking/      # Multiplayer
-│   │   ├── Player/          # Spielersteuerung
-│   │   ├── Systems/         # Economy, Factions, Inventory
+│   │   ├── Networking/      # Multiplayer (Lobby, Matchmaking)
+│   │   ├── Player/          # Spielersteuerung, Kamera
+│   │   ├── Systems/         # Economy, Factions, Inventory, Skills,
+│   │   │                    # Achievements, Quests, Loot, Docking,
+│   │   │                    # Ship Upgrades, Environment, Crafting
 │   │   ├── Trading/         # Handelssystem
-│   │   ├── UI/              # Alle UI-Komponenten
+│   │   ├── UI/              # HUD, Menüs, Radar, Skill Tree, Achievements
 │   │   ├── VFX/             # Visuelle Effekte
-│   │   └── Vehicles/        # Fahrzeugphysik
+│   │   └── Vehicles/        # Fahrzeugphysik, HealthSystem
+│   ├── Editor/              # Build Scripts
 │   ├── Prefabs/
 │   ├── Scenes/
 │   └── Resources/
 ├── ProjectSettings/
 └── Documentation/
 ```
+
+### Anzahl der Dateien
+- **C# Scripts**: 75+
+- **Codezeilen**: ~15.000+
+- **Systeme**: 25+
 
 ---
 
@@ -79,16 +87,22 @@ EarthUnderFreelancer/
 4. Öffne das Projekt mit Unity 2022.3 LTS
 
 ### Erste Schritte im Editor
-1. Öffne die Szene `Assets/Scenes/GameScene`
+1. Öffne die Szene `Assets/Scenes/GameScene` (oder erstelle eine mit GameSceneSetup)
 2. Drücke Play zum Testen
 3. Steuerung:
-   - **WASD** - Bewegung
+   - **WASD** - Bewegung (W=Schub, S=Rückwärts, A/D=Rollen)
    - **Maus** - Zielen/Kamera
    - **Linke Maustaste** - Primärwaffe
    - **Rechte Maustaste** - Sekundärwaffe/Rakete
    - **Shift** - Boost
    - **Space** - Bremsen
    - **Tab** - Ziel wechseln
+   - **R** - Waffe wechseln
+   - **F** - Andocken (bei Stationen)
+   - **I** - Inventar
+   - **M** - Missionen
+   - **K** - Skill Tree
+   - **J** - Achievements
    - **ESC** - Pause
 
 ---
@@ -148,15 +162,32 @@ EarthUnderFreelancer/
 
 ---
 
-## 🎯 Roadmap
+## 🎯 Roadmap & Fertigstellungsgrad
 
-- [x] Core Flight System
-- [x] Combat System
-- [x] Trading System
-- [x] Mission System
-- [x] UI System
-- [x] Save/Load System
-- [ ] Multiplayer PvP
+### ✅ Fertig (~98%)
+- [x] Core Flight System (6DoF Physik, Boost, Bremsen)
+- [x] Combat System (Waffen, Raketen, Targeting mit Lead-Indikator)
+- [x] Trading System (Dynamische Preise, Angebot/Nachfrage)
+- [x] Mission System (Zufallsgenerierte Missionen)
+- [x] Quest System (Story-Quests mit Voraussetzungen)
+- [x] UI System (HUD, Menüs, Inventar, Trading)
+- [x] Save/Load System (Vollständige Speicherung)
+- [x] Skill Tree System (4 Bäume: Combat, Defense, Piloting, Trading)
+- [x] Achievement System (15+ Achievements mit Belohnungen)
+- [x] Tutorial System (Interaktives Tutorial für neue Spieler)
+- [x] Loot System (Drops, Attraktion, Sammlung)
+- [x] Docking System (Andocken an Raumstationen)
+- [x] Ship Upgrade System (Waffen, Schilde, Motoren, Rüstung)
+- [x] Space Environment System (Nebel, Asteroiden, Strahlung)
+- [x] Enhanced Audio System (Musik-Crossfade, 3D-Sound, Ambience)
+- [x] Radar/Minimap System
+- [x] Pause Menu mit Optionen
+- [x] Fraktionssystem mit Reputation
+- [x] Crafting System
+- [x] Monetarisierung (Unity Ads, IAP)
+
+### 🔧 In Bearbeitung
+- [ ] Multiplayer PvP (Grundgerüst vorhanden)
 - [ ] Zusätzliche Schiffe
 - [ ] Mehr Fraktionen
 - [ ] Story-Kampagne
