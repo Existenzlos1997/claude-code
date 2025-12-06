@@ -220,5 +220,25 @@ namespace EarthUnderFreelancer.Vehicles
         public void SetArmor(float armor, float reduction) { armorValue = armor; damageReduction = Mathf.Clamp01(reduction); }
         public void SetHealth(float value) { currentHealth = Mathf.Clamp(value, 0, maxHealth); OnHealthChanged?.Invoke(currentHealth, maxHealth); }
         public void SetShield(float value) { currentShield = Mathf.Clamp(value, 0, maxShield); OnShieldChanged?.Invoke(currentShield, maxShield); }
+
+        /// <summary>
+        /// Overload for realistic damage system with DamageSource enum
+        /// </summary>
+        public void TakeDamage(float damage, DamageSource source)
+        {
+            // Convert DamageSource to DamageType for compatibility
+            DamageType damageType = source switch
+            {
+                DamageSource.Projectile => DamageType.Kinetic,
+                DamageSource.Explosion => DamageType.Explosive,
+                DamageSource.Collision => DamageType.Kinetic,
+                DamageSource.StructuralFailure => DamageType.Kinetic,
+                DamageSource.Fire => DamageType.Energy,
+                DamageSource.Crash => DamageType.Kinetic,
+                _ => DamageType.Kinetic
+            };
+
+            TakeDamage(damage, null, Vector3.zero, damageType);
+        }
     }
 }
