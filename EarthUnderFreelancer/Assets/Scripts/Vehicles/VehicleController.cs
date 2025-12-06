@@ -42,11 +42,15 @@ namespace EarthUnderFreelancer.Vehicles
         private float currentSpeed;
         private float currentThrottle;
         private bool isControllable = true;
+        private float boostAmount = 1f;
+        private float boostRegenRate = 0.2f;
+        private float boostConsumptionRate = 0.5f;
 
         public float CurrentSpeed => currentSpeed;
         public float MaxSpeed => maxSpeed;
         public bool IsBoosting => isBoosting;
         public VehicleStats Stats => stats;
+        public float BoostAmount => boostAmount;
 
         private void Awake()
         {
@@ -88,9 +92,17 @@ namespace EarthUnderFreelancer.Vehicles
         {
             float targetThrottle = movementInput.y;
             
-            if (isBoosting && currentThrottle > 0)
+            // Boost management
+            if (isBoosting && boostAmount > 0 && currentThrottle > 0)
             {
                 targetThrottle *= boostMultiplier;
+                boostAmount -= boostConsumptionRate * Time.fixedDeltaTime;
+                boostAmount = Mathf.Max(0, boostAmount);
+            }
+            else if (!isBoosting && boostAmount < 1f)
+            {
+                boostAmount += boostRegenRate * Time.fixedDeltaTime;
+                boostAmount = Mathf.Min(1f, boostAmount);
             }
 
             currentThrottle = Mathf.Lerp(currentThrottle, targetThrottle, Time.fixedDeltaTime * 3f);

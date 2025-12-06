@@ -218,5 +218,7 @@ namespace EarthUnderFreelancer.Vehicles
         public void SetMaxShield(float value) { maxShield = value; currentShield = Mathf.Min(currentShield, maxShield); }
         public void SetShieldRegenRate(float rate) => shieldRegenRate = rate;
         public void SetArmor(float armor, float reduction) { armorValue = armor; damageReduction = Mathf.Clamp01(reduction); }
+        public void SetHealth(float value) { currentHealth = Mathf.Clamp(value, 0, maxHealth); OnHealthChanged?.Invoke(currentHealth, maxHealth); }
+        public void SetShield(float value) { currentShield = Mathf.Clamp(value, 0, maxShield); OnShieldChanged?.Invoke(currentShield, maxShield); }
     }
 }
