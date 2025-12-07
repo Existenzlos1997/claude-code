@@ -2,24 +2,41 @@
 
 [![Unity](https://img.shields.io/badge/Unity-2022.3%20LTS-blue)](https://unity.com)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android-green)](/)
-[![Status](https://img.shields.io/badge/Status-Ready%20to%20Install-brightgreen)](/)
+[![Status](https://img.shields.io/badge/Status-100%25%20Complete-brightgreen)](/)
 
 ## 🛩️ Das ultimative Luftkampf-MMORPG
 
 EarthUnder Freelancer ist ein massives Open-World Flugsimulator-MMORPG, das die besten Elemente von War Thunder, Freelancer und World of Warcraft kombiniert. Erlebe epische Luftkämpfe mit echten Flugzeugen, erobere Territorien mit deiner Fraktion, handle und schmuggele auf lebhaften Handelsrouten, und werde Teil einer lebendigen Welt mit tausenden anderen Spielern.
 
-### 📦 SCHNELLINSTALLATION
+---
 
-**Windows:** Lade `EarthUnderFreelancer_Setup_v1.0.0.exe` herunter und installiere das Spiel wie jedes andere Programm.
+## 🚀 EINFACHE INSTALLATION - PORTABLE EXE!
 
-**Android:** Lade `EarthUnderFreelancer.apk` herunter und installiere die APK-Datei.
+### Windows (Portable - Kein Installer nötig!)
+1. Lade `EarthUnderFreelancer.exe` herunter
+2. Doppelklick zum Starten
+3. **Fertig!** Keine Installation erforderlich!
+
+### Android
+1. Lade `EarthUnderFreelancer.apk` herunter  
+2. Auf dem Handy installieren (Unbekannte Quellen erlauben)
+3. Spielen!
+
+### 👤 Account System
+- **Registrieren**: Erstelle einen Account mit E-Mail und Passwort
+- **Login**: Melde dich an um deinen Fortschritt zu speichern
+- **Gast-Modus**: Spiele sofort ohne Account!
+- **Offline-Modus**: Funktioniert auch ohne Internet
+
+---
 
 ## 📊 Projektstatistiken
-- **100+ C# Scripts**
-- **40.000+ Zeilen Code**
-- **45+ vollständige Systeme**
+- **105+ C# Scripts**
+- **42.000+ Zeilen Code**
+- **50+ vollständige Systeme**
 - **100+ echte Flugzeuge** von WW1 bis 5. Generation
 - **14 Sprachen** vollständig lokalisiert
+- **Account-System** mit Registrierung/Login
 
 ---
 
@@ -101,7 +118,16 @@ EarthUnderFreelancer/
 
 ---
 
-## 🛠️ Installationsanleitung
+## 🛠️ Für Entwickler: Build-Anleitung
+
+### EXE in Unity erstellen (Super einfach!)
+
+1. **Unity 2022.3 LTS** installieren
+2. Projekt öffnen
+3. Im Menü: **EarthUnderFreelancer** → **🚀 Build Portable Windows EXE**
+4. Fertig! EXE liegt in `Builds/Windows/`
+
+Das war's - die EXE kann direkt gestartet werden!
 
 ### Voraussetzungen
 - **Unity 2022.3 LTS** oder neuer
