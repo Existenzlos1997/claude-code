@@ -1,21 +1,42 @@
 # EarthUnder Freelancer
 
-## 🚀 Das ultimative Weltraum-Kampf- und Handelsspiel
+## 🛩️ Das ultimative Luftkampf-MMORPG
 
-EarthUnder Freelancer ist ein Open-World Weltraum-Spiel, das die besten Elemente von Freelancer, War Thunder und Elite Dangerous kombiniert. Erlebe epische Weltraumkämpfe, baue dein Imperium durch Handel auf und erkunde ein riesiges Universum.
+EarthUnder Freelancer ist ein massives Open-World Flugsimulator-MMORPG, das die besten Elemente von War Thunder, Freelancer und World of Warcraft kombiniert. Erlebe epische Luftkämpfe mit echten Flugzeugen, erobere Territorien mit deiner Fraktion, handle und schmuggele auf lebhaften Handelsrouten, und werde Teil einer lebendigen Welt mit tausenden anderen Spielern.
+
+## 📊 Projektstatistiken
+- **95+ C# Scripts**
+- **35.000+ Zeilen Code**
+- **40+ vollständige Systeme**
+- **100+ echte Flugzeuge** von WW1 bis 5. Generation
 
 ---
 
 ## 🎮 Features
 
-### Kampfsystem
-- **360° Weltraumflug** mit realistischer Physik (Trägheit, Schub, Dampfer)
-- **Mehrere Waffensysteme**: Laser, Projektile, Raketen
-- **Lead-Indikator-Zielsystem** für präzise Schüsse
-- **Schild- und Rumpfschadenssystem**
-- **Intelligente KI-Gegner** mit Patrol, Chase, Attack, Flee-Verhalten
+### ✈️ Echte Flugzeuge (100+ Modelle)
+- **Weltkrieg I**: Fokker Dr.I, Sopwith Camel, SPAD XIII
+- **Weltkrieg II**: P-51D Mustang, Bf 109, Spitfire, Zero, Fw 190, P-47, Corsair
+- **Koreakrieg**: F-86 Sabre, MiG-15
+- **Kalter Krieg**: F-4 Phantom, MiG-21, F-104 Starfighter
+- **Modern**: F-14 Tomcat, F-15 Eagle, F-16, F/A-18, MiG-29, Su-27, A-10
+- **5. Generation**: F-22 Raptor, F-35 Lightning II, Su-57
 
-### Wirtschaftssystem
+### 🎯 Kampfsystem
+- **Realistische Flugphysik** wie in War Thunder (G-Kräfte, Strömungsabriss, Drehung)
+- **Authentische Waffen**: MG, Kanonen, Bomben, Raketen, Lenkwaffen
+- **Lead-Indikator-Zielsystem** mit präziser Berechnung
+- **Schild-, Rumpf- und Komponenten-Schadenssystem**
+- **Intelligente KI-Gegner** mit Patrol, Chase, Attack, Flee, Evade-Verhalten
+
+### 🌍 MMORPG Fraktionssystem
+- **Dynamische Territorien** die von Spielern erobert werden können
+- **Fraktionskämpfe** die Grenzen auf der Weltkarte verschieben
+- **Handelsrouten** zwischen Fraktionsgebieten
+- **Schmuggel-Missionen** mit Grenzübergang
+- **Lebendige Welt** - alle Spieler auf einem Server
+
+### 💰 Wirtschaftssystem
 - **Dynamisches Handelssystem** mit Angebot/Nachfrage
 - **Fraktionsreputation** beeinflusst Preise und Missionen
 - **Inventar- und Ausrüstungssystem**
