@@ -1,14 +1,25 @@
 # EarthUnder Freelancer
 
+[![Unity](https://img.shields.io/badge/Unity-2022.3%20LTS-blue)](https://unity.com)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android-green)](/)
+[![Status](https://img.shields.io/badge/Status-Ready%20to%20Install-brightgreen)](/)
+
 ## 🛩️ Das ultimative Luftkampf-MMORPG
 
 EarthUnder Freelancer ist ein massives Open-World Flugsimulator-MMORPG, das die besten Elemente von War Thunder, Freelancer und World of Warcraft kombiniert. Erlebe epische Luftkämpfe mit echten Flugzeugen, erobere Territorien mit deiner Fraktion, handle und schmuggele auf lebhaften Handelsrouten, und werde Teil einer lebendigen Welt mit tausenden anderen Spielern.
 
+### 📦 SCHNELLINSTALLATION
+
+**Windows:** Lade `EarthUnderFreelancer_Setup_v1.0.0.exe` herunter und installiere das Spiel wie jedes andere Programm.
+
+**Android:** Lade `EarthUnderFreelancer.apk` herunter und installiere die APK-Datei.
+
 ## 📊 Projektstatistiken
-- **95+ C# Scripts**
-- **35.000+ Zeilen Code**
-- **40+ vollständige Systeme**
+- **100+ C# Scripts**
+- **40.000+ Zeilen Code**
+- **45+ vollständige Systeme**
 - **100+ echte Flugzeuge** von WW1 bis 5. Generation
+- **14 Sprachen** vollständig lokalisiert
 
 ---
 
