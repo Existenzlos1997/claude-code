@@ -38,6 +38,11 @@ EarthUnder Freelancer ist ein massives Open-World Flugsimulator-MMORPG, das die 
 - **14 Sprachen** vollständig lokalisiert
 - **Account-System** mit Registrierung/Login
 
+### 📄 Vergleich mit AAA-Spielen
+Möchtest du wissen, wie wir im Vergleich zu War Thunder, WoW und Freelancer abschneiden? 
+- 🇩🇪 [Detaillierter Vergleich (Deutsch)](../Documentation/VERGLEICH_MIT_FERTIGEN_SPIELEN.md)
+- 🇬🇧 [Detailed Comparison (English)](../Documentation/GAME_COMPARISON_AAA_TITLES.md)
+
 ---
 
 ## 🎮 Features
