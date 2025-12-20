@@ -31,12 +31,22 @@ EarthUnder Freelancer ist ein massives Open-World Flugsimulator-MMORPG, das die 
 ---
 
 ## 📊 Projektstatistiken
-- **105+ C# Scripts**
-- **42.000+ Zeilen Code**
-- **50+ vollständige Systeme**
+- **120+ C# Scripts** (+15 neue Systeme!)
+- **46.800+ Zeilen Code** (+4.800 Zeilen)
+- **56+ vollständige Systeme** (+6 neue)
 - **100+ echte Flugzeuge** von WW1 bis 5. Generation
 - **14 Sprachen** vollständig lokalisiert
 - **Account-System** mit Registrierung/Login
+
+### 🚀 Alpha-Entwicklung (NEU!)
+- 📋 [Alpha Roadmap](../Documentation/ALPHA_ROADMAP.md) - 5-Wochen-Plan
+- 🎨 [Asset Acquisition Guide](../Documentation/ASSET_ACQUISITION_GUIDE.md) - Asset-Shopping-Hilfe
+- 📊 [Progress Update #1](../Documentation/PROGRESS_UPDATE_001.md) - Was wurde erreicht?
+
+### 📄 Vergleich mit AAA-Spielen
+Möchtest du wissen, wie wir im Vergleich zu War Thunder, WoW und Freelancer abschneiden? 
+- 🇩🇪 [Detaillierter Vergleich (Deutsch)](../Documentation/VERGLEICH_MIT_FERTIGEN_SPIELEN.md)
+- 🇬🇧 [Detailed Comparison (English)](../Documentation/GAME_COMPARISON_AAA_TITLES.md)
 
 ---
 

@@ -10,6 +10,17 @@ Claude Code is an agentic coding tool that lives in your terminal, understands y
 
 <img src="./demo.gif" />
 
+## EarthUnderFreelancer Game Project
+
+This repository also includes **EarthUnderFreelancer**, an MMORPG flight simulator combining elements from War Thunder, World of Warcraft, and Freelancer. 
+
+📄 **Documentation:**
+- 🇩🇪 [Vergleich mit AAA-Spielen (Deutsch)](Documentation/VERGLEICH_MIT_FERTIGEN_SPIELEN.md)
+- 🇬🇧 [AAA Games Comparison (English)](Documentation/GAME_COMPARISON_AAA_TITLES.md)
+- [Game README](EarthUnderFreelancer/README.md)
+
+---
+
 ## Get started
 
 1. Install Claude Code:
