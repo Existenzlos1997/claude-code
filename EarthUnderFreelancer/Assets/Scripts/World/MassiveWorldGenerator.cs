@@ -94,7 +94,7 @@ namespace EarthUnderFreelancer.World
             // Calculate statistics
             CalculateStatistics();
             
-            Debug.Log($"[MassiveWorldGenerator] World generation complete! {Statistics}");
+            Debug.Log($"[MassiveWorldGenerator] World generation complete! {Statistics?.ToString() ?? "No statistics available"}");
         }
         
         private void GenerateContinents()

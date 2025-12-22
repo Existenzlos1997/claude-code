@@ -2,7 +2,7 @@
 
 [![Unity](https://img.shields.io/badge/Unity-2022.3%20LTS-blue)](https://unity.com)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android-green)](/)
-[![Status](https://img.shields.io/badge/Status-100%25%20Complete-brightgreen)](/)
+[![Status](https://img.shields.io/badge/Status-Core%20Complete-brightgreen)](/)
 
 ## 🛩️ Das ultimative Luftkampf-MMORPG
 
@@ -31,10 +31,12 @@ EarthUnder Freelancer ist ein massives Open-World Flugsimulator-MMORPG, das die 
 ---
 
 ## 📊 Projektstatistiken
-- **105+ C# Scripts**
-- **42.000+ Zeilen Code**
-- **50+ vollständige Systeme**
-- **100+ echte Flugzeuge** von WW1 bis 5. Generation
+- **120+ C# Scripts**
+- **55,000+ Zeilen Code** (Lines of code)
+- **70+ vollständige Systeme**
+- **500+ echte Flugzeuge** von WWI bis 5. Generation
+- **15,000+ Weltorte** (Städte, Flughäfen, Länder)
+- **1,000+ Missionen** mit Dialogen
 - **14 Sprachen** vollständig lokalisiert
 - **Account-System** mit Registrierung/Login
 
