@@ -2,15 +2,32 @@
 
 Diese Ordner enthält alle spielbaren Unity-Szenen für EarthUnderFreelancer.
 
-## Verfügbare Szenen
+## 🚀 Szenen erstellen (Neu!)
+
+**Nutze den Scene Template Generator:**
+
+1. **Unity Menü:** `EarthUnderFreelancer → Tools → Scene Template Generator`
+2. **Wähle Template:**
+   - **GameScene** - Haupt-Spielszene mit vollem Setup
+   - **MainMenu** - Hauptmenü-Template
+   - **TrainingScene** - Tutorial-Level-Template
+3. **Klick auf Button** - Szene wird automatisch erstellt!
+
+Die Szenen werden in `Assets/Scenes/` gespeichert und sind sofort spielbar.
+
+---
+
+## Verfügbare Szenen (nach Generierung)
 
 ### GameScene.unity
 Die Haupt-Spielszene mit vollständigem Setup.
 
 **Enthält:**
-- Main Camera (konfiguriert für große Sichtweiten)
-- Directional Light (Sonne)
+- Main Camera (Far Clipping: 100,000 units)
+- Directional Light (Sonne, konfiguriert)
 - WorldSetup GameObject mit SimpleWorldSetup-Script
+- GameModeManager GameObject
+- DeveloperTools GameObject (F1 zum Toggle)
 - Vorkonfiguriertes Lighting und Fog
 
 **Verwendung:**
@@ -29,49 +46,7 @@ Die Haupt-Spielszene mit vollständigem Setup.
 
 ---
 
-## Zukünftige Szenen (geplant)
-
-### MainMenu.unity (TODO)
-Hauptmenü mit Login und Optionen.
-
-**Features:**
-- Title Screen
-- Login/Registration UI
-- Settings Menu
-- Credits
-
-### TrainingScene.unity (TODO)
-Tutorial-Level für neue Spieler.
-
-**Features:**
-- Schritt-für-Schritt Tutorial
-- Übungs-Ziele
-- Keine Feinde
-- Reduzierte Welt-Größe
-
-### CombatDemo.unity (TODO)
-Schnelle Kampf-Demo für Testing.
-
-**Features:**
-- Vorgeladene Feinde
-- Kleine Arena
-- Schneller Einstieg
-- Ideal für Combat-Testing
-
-### MultiplayerLobby.unity (TODO)
-Lobby für Multiplayer-Matches.
-
-**Features:**
-- Server-Browser
-- Matchmaking
-- Lobby-Chat
-- Team-Auswahl
-
----
-
-## Szenen erstellen
-
-### Neue Szene von Grund auf:
+## Manuelle Szenen-Erstellung
 
 1. **File → New Scene**
 2. **Speichern als:** `Assets/Scenes/MeineScene.unity`

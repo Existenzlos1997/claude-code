@@ -188,20 +188,21 @@ namespace EarthUnderFreelancer.Editor
             BoxCollider collider = aircraft.AddComponent<BoxCollider>();
             collider.size = new Vector3(8f, 2f, 6f);
             
-            // Color based on type (WW2 vs Modern)
-            Material mat = new Material(Shader.Find("Standard"));
+            // Color based on type (WW2 vs Modern) - use sharedMaterial for efficiency
+            Material sharedMat = new Material(Shader.Find("Standard"));
             if (aircraftName.Contains("P-51") || aircraftName.Contains("Bf 109") || aircraftName.Contains("Spitfire"))
             {
-                mat.color = new Color(0.4f, 0.4f, 0.4f); // Gray for WW2
+                sharedMat.color = new Color(0.4f, 0.4f, 0.4f); // Gray for WW2
             }
             else
             {
-                mat.color = new Color(0.5f, 0.5f, 0.6f); // Blue-gray for modern
+                sharedMat.color = new Color(0.5f, 0.5f, 0.6f); // Blue-gray for modern
             }
             
+            // Assign same material to all renderers to avoid memory waste
             foreach (Renderer renderer in aircraft.GetComponentsInChildren<Renderer>())
             {
-                renderer.material = mat;
+                renderer.sharedMaterial = sharedMat;
             }
             
             return aircraft;
@@ -258,9 +259,9 @@ namespace EarthUnderFreelancer.Editor
             barrel.transform.localScale = new Vector3(0.1f, 1f, 0.1f);
             barrel.transform.localRotation = Quaternion.Euler(90, 0, 0);
             
-            Material mat = new Material(Shader.Find("Standard"));
-            mat.color = new Color(0.3f, 0.3f, 0.3f);
-            barrel.GetComponent<Renderer>().material = mat;
+            Material sharedMat = new Material(Shader.Find("Standard"));
+            sharedMat.color = new Color(0.3f, 0.3f, 0.3f);
+            barrel.GetComponent<Renderer>().sharedMaterial = sharedMat;
             
             return weapon;
         }
@@ -318,17 +319,56 @@ namespace EarthUnderFreelancer.Editor
             rb.useGravity = false;
             rb.mass = 0.01f;
             
-            Material mat = new Material(Shader.Find("Standard"));
-            mat.color = Color.yellow;
-            visual.GetComponent<Renderer>().material = mat;
+            Material sharedMat = new Material(Shader.Find("Standard"));
+            sharedMat.color = Color.yellow;
+            visual.GetComponent<Renderer>().sharedMaterial = sharedMat;
             
             return projectile;
         }
 
         private int GenerateStationPrefabs()
         {
-            // TODO: Implement station prefab generation
-            return 0;
+            string path = prefabOutputPath + "Stations/";
+            EnsureDirectoryExists(path);
+            
+            // Create a simple station prefab
+            GameObject station = new GameObject("SpaceStation");
+            
+            // Main body
+            GameObject core = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            core.name = "Core";
+            core.transform.parent = station.transform;
+            core.transform.localScale = new Vector3(20f, 5f, 20f);
+            
+            // Docking arms
+            for (int i = 0; i < 4; i++)
+            {
+                GameObject arm = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                arm.name = $"DockingArm_{i+1}";
+                arm.transform.parent = station.transform;
+                float angle = i * 90f;
+                arm.transform.localPosition = new Vector3(
+                    Mathf.Cos(angle * Mathf.Deg2Rad) * 15f,
+                    0,
+                    Mathf.Sin(angle * Mathf.Deg2Rad) * 15f
+                );
+                arm.transform.localScale = new Vector3(2f, 2f, 10f);
+                arm.transform.localRotation = Quaternion.Euler(0, angle, 0);
+            }
+            
+            // Station material
+            Material stationMat = new Material(Shader.Find("Standard"));
+            stationMat.color = new Color(0.7f, 0.7f, 0.8f);
+            foreach (Renderer renderer in station.GetComponentsInChildren<Renderer>())
+            {
+                renderer.sharedMaterial = stationMat;
+            }
+            
+            string prefabPath = path + "SpaceStation.prefab";
+            PrefabUtility.SaveAsPrefabAsset(station, prefabPath);
+            DestroyImmediate(station);
+            
+            return 1;
         }
 
         private void EnsureDirectoryExists(string path)
