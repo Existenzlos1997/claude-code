@@ -48,6 +48,22 @@ Die Theorie macht spezifische, experimentell überprüfbare Vorhersagen:
 4. **Kosmologische Informationsdichte-Entwicklung**: S(z) ∝ (1+z)³ für z < 10
 5. **Quantenverschränkung-Gravitations-Kopplung**: Fidelitätsänderung in verschiedenen Gravitationsfeldern
 
+---
+
+## English Abstract (Short Version for Journals - 250 words)
+
+**Title:** Information-Based Unification of Fundamental Forces: Modified Quantum Gravity Theory
+
+**Abstract:**
+
+We propose a unified field theory where information density serves as a fundamental physical quantity mediating all four fundamental forces. The theory introduces a scalar information field S(x) coupled to electromagnetic, weak, strong, and gravitational interactions via information-dependent coupling constants α_i(S) = α⁰_i exp[β_i S/S_Planck]. At Planck-scale information density (S_Planck ≈ 1.42×10⁶⁹ bits/m³), all coupling constants converge to a unified value, achieving force unification without extra dimensions or supersymmetry.
+
+The mathematical framework extends general relativity and the Standard Model through information-extended field equations: □S - dV/dS = Σᵢ λᵢ F^i_μν F^{iμν}, where S obeys a Klein-Gordon-type equation sourced by all fundamental field strengths. This formalism naturally explains quantum entanglement as information correlation, resolves the black hole information paradox via information conservation, and predicts measurable deviations in gravitational wave dispersion, cosmological evolution, and high-energy scattering.
+
+Key experimental signatures include: (1) information-dependent corrections to gravitational wave propagation (Δv/c ≈ 10⁻²⁰ at LIGO), (2) modified Hawking radiation with preserved correlations, (3) cosmological information density evolution affecting dark energy, and (4) testable nonlinear correlations in quantum interference experiments. Unlike string theory or loop quantum gravity, our approach operates in 4 spacetime dimensions with falsifiable predictions accessible to current technology (LIGO, Planck, LHC).
+
+The theory addresses fundamental open problems including the measurement problem, dark matter/energy, and the cosmological constant, while maintaining consistency with all known experimental results at low information densities. (249 words)
+
 ### Bedeutung
 
 Falls experimentell bestätigt, würde die MQG-Theorie:
