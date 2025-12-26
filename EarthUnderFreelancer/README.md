@@ -13,7 +13,8 @@ EarthUnderFreelancer is a sample project that showcases how Claude Code can assi
 ## Structure
 
 - `README.md` - This file, providing project documentation
-- Additional files and examples can be added as needed
+- `project-template.md` - A reusable template for freelancer projects
+- `example-workflow.md` - Step-by-step guide for using Claude Code in freelance projects
 
 ## Usage
 

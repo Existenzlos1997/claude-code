@@ -11,7 +11,7 @@ You're a freelancer who needs to build a simple web application for a client. He
 **Task:** Initialize a new web project
 
 **Using Claude Code:**
-```
+```bash
 claude "Set up a new Node.js project with Express.js and create a basic server structure"
 ```
 
@@ -26,7 +26,7 @@ claude "Set up a new Node.js project with Express.js and create a basic server s
 **Task:** Add user authentication
 
 **Using Claude Code:**
-```
+```bash
 claude "Implement JWT-based authentication with login and registration endpoints"
 ```
 
@@ -41,7 +41,7 @@ claude "Implement JWT-based authentication with login and registration endpoints
 **Task:** Ensure code quality
 
 **Using Claude Code:**
-```
+```bash
 claude "Write unit tests for the authentication endpoints"
 ```
 
@@ -55,7 +55,7 @@ claude "Write unit tests for the authentication endpoints"
 **Task:** Document the API
 
 **Using Claude Code:**
-```
+```bash
 claude "Generate API documentation for all endpoints"
 ```
 
@@ -69,7 +69,7 @@ claude "Generate API documentation for all endpoints"
 **Task:** Prepare for production
 
 **Using Claude Code:**
-```
+```bash
 claude "Set up environment configuration and deployment scripts"
 ```
 
