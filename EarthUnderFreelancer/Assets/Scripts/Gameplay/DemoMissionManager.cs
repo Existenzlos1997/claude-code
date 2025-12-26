@@ -67,41 +67,41 @@ namespace EarthUnderFreelancer.Gameplay
                 case DemoMissionType.BasicFlight:
                     mission.missionName = "Tutorial: Basic Flight";
                     mission.description = "Learn the basic flight controls. Fly through all checkpoints.";
-                    mission.difficulty = MissionData.MissionDifficulty.Easy;
-                    mission.rewardCredits = 100;
-                    mission.rewardXP = 50;
+                    mission.difficulty = MissionDifficulty.Easy;
+                    mission.creditReward = 100;
+                    mission.experienceReward = 50;
                     break;
 
                 case DemoMissionType.CombatIntro:
                     mission.missionName = "Tutorial: First Combat";
                     mission.description = "Learn combat basics. Destroy 3 training targets.";
-                    mission.difficulty = MissionData.MissionDifficulty.Easy;
-                    mission.rewardCredits = 250;
-                    mission.rewardXP = 100;
+                    mission.difficulty = MissionDifficulty.Easy;
+                    mission.creditReward = 250;
+                    mission.experienceReward = 100;
                     break;
 
                 case DemoMissionType.PatrolMission:
                     mission.missionName = "Mission: Patrol Sector Alpha";
                     mission.description = "Patrol the designated area and report any enemy activity.";
-                    mission.difficulty = MissionData.MissionDifficulty.Medium;
-                    mission.rewardCredits = 500;
-                    mission.rewardXP = 200;
+                    mission.difficulty = MissionDifficulty.Normal;
+                    mission.creditReward = 500;
+                    mission.experienceReward = 200;
                     break;
 
                 case DemoMissionType.InterceptMission:
                     mission.missionName = "Mission: Intercept Enemy Squadron";
                     mission.description = "Enemy fighters detected. Intercept and destroy them.";
-                    mission.difficulty = MissionData.MissionDifficulty.Medium;
-                    mission.rewardCredits = 750;
-                    mission.rewardXP = 300;
+                    mission.difficulty = MissionDifficulty.Normal;
+                    mission.creditReward = 750;
+                    mission.experienceReward = 300;
                     break;
 
                 case DemoMissionType.EscortMission:
                     mission.missionName = "Mission: Escort Transport";
                     mission.description = "Escort the friendly transport to its destination safely.";
-                    mission.difficulty = MissionData.MissionDifficulty.Hard;
-                    mission.rewardCredits = 1000;
-                    mission.rewardXP = 400;
+                    mission.difficulty = MissionDifficulty.Hard;
+                    mission.creditReward = 1000;
+                    mission.experienceReward = 400;
                     break;
             }
 
@@ -204,7 +204,7 @@ namespace EarthUnderFreelancer.Gameplay
             missionActive = false;
 
             Debug.Log($"[DemoMission] MISSION COMPLETE!");
-            Debug.Log($"[DemoMission] Rewards: {currentMission.rewardCredits} credits, {currentMission.rewardXP} XP");
+            Debug.Log($"[DemoMission] Rewards: {currentMission.creditReward} credits, {currentMission.experienceReward} XP");
 
             ShowMissionComplete();
         }
@@ -229,7 +229,7 @@ namespace EarthUnderFreelancer.Gameplay
             Debug.Log($"Mission: {currentMission.missionName}");
             Debug.Log($"Description: {currentMission.description}");
             Debug.Log($"Difficulty: {currentMission.difficulty}");
-            Debug.Log($"Rewards: {currentMission.rewardCredits} credits, {currentMission.rewardXP} XP");
+            Debug.Log($"Rewards: {currentMission.creditReward} credits, {currentMission.experienceReward} XP");
             Debug.Log("========================");
         }
 
@@ -239,7 +239,7 @@ namespace EarthUnderFreelancer.Gameplay
             Debug.Log("=== MISSION COMPLETE ===");
             Debug.Log($"Mission: {currentMission.missionName}");
             Debug.Log($"Status: SUCCESS");
-            Debug.Log($"Rewards Earned: {currentMission.rewardCredits} credits, {currentMission.rewardXP} XP");
+            Debug.Log($"Rewards Earned: {currentMission.creditReward} credits, {currentMission.experienceReward} XP");
             Debug.Log("========================");
         }
 
