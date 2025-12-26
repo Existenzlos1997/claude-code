@@ -20,6 +20,22 @@ npm install -g @anthropic-ai/claude-code
 
 2. Navigate to your project directory and run `claude`.
 
+## Additional Resources
+
+### Free Aircraft Models for Game Development
+
+Looking for free 3D aircraft models for your game development project? Check out our curated resource guides:
+
+- **[Free Aircraft Models](./FREE_AIRCRAFT_MODELS.md)** - English version with comprehensive list of free aircraft models, download links, and licensing information
+- **[Kostenlose Flugzeugmodelle](./KOSTENLOSE_FLUGZEUGMODELLE.md)** - Deutsche Version mit umfassender Liste kostenloser Flugzeugmodelle
+
+These guides include:
+- Links to major 3D model repositories
+- Open-source aircraft projects
+- Models categorized by type (commercial, military, helicopters, etc.)
+- License information and usage guidelines
+- Tools and resources for model preparation
+
 ## Reporting Bugs
 
 We welcome your feedback. Use the `/bug` command to report issues directly within Claude Code, or file a [GitHub issue](https://github.com/anthropics/claude-code/issues).
