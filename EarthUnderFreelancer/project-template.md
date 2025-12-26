@@ -36,6 +36,8 @@ This template can be used by freelancers to quickly start new projects with Clau
 
 ### Example Commands
 
+**Note:** The commands below are illustrative examples. Run `claude` first to start the interactive session, then use natural language prompts like these:
+
 ```bash
 # Initialize a new project
 claude "Create a new React app with TypeScript"

@@ -6,6 +6,8 @@ This document demonstrates a typical freelancer workflow using Claude Code.
 
 You're a freelancer who needs to build a simple web application for a client. Here's how Claude Code can help at each stage.
 
+**Note:** The examples below show natural language prompts you would use within an interactive Claude Code session. First run `claude` in your project directory, then use these kinds of prompts.
+
 ## Stage 1: Project Setup
 
 **Task:** Initialize a new web project
