@@ -1,6 +1,6 @@
-# Kostenlose Flugzeugmodelle für Spieleentwicklung
+# Kostenlose Flugzeugmodelle für Spielentwicklung
 
-Dieses Dokument bietet eine kuratierte Liste kostenloser Flugzeugmodelle, die für die Spieleentwicklung und andere Projekte verfügbar sind. Alle hier aufgeführten Modelle stammen aus seriösen Quellen und sind kostenlos verfügbar, obwohl einige spezifische Lizenzanforderungen haben können.
+Dieses Dokument bietet eine kuratierte Liste kostenloser Flugzeugmodelle, die für die Spielentwicklung und andere Projekte verfügbar sind. Alle hier aufgeführten Modelle stammen aus seriösen Quellen und sind kostenlos verfügbar, obwohl einige spezifische Lizenzanforderungen haben können.
 
 ## Inhaltsverzeichnis
 - [3D-Modell-Repositories](#3d-modell-repositories)
