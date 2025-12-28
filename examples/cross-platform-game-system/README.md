@@ -202,12 +202,40 @@ Edit `config/settings.json` for global settings:
 # Development mode
 npm run dev
 
+# Simulierter End-to-End-Test (keine Spiele erforderlich)
+# Simulated end-to-end test (no games required)
+npm run simulate
+
 # Run tests
 npm test
+
+# Run all tests
+npm run test:all
 
 # Build
 npm run build
 ```
+
+### Simulierter Systemtest / Simulated System Test
+
+Das System verfügt über einen umfassenden Simulationstest, der alle Komponenten ohne echte Spiele testet:
+The system includes a comprehensive simulation test that validates all components without real games:
+
+```bash
+npm run simulate
+```
+
+**Was wird getestet / What is tested:**
+- ✅ Game Library (CRUD operations)
+- ✅ Compatibility Manager (Plugin loading)
+- ✅ Anti-Cheat Detection (EAC, BattlEye)
+- ✅ Input Validation
+- ✅ Game Profiles
+- ✅ Performance Monitor
+- ✅ Logger
+- ✅ Integration workflows
+
+**36 Tests in 8 Kategorien / 36 tests across 8 categories**
 
 ## Plugin-Entwicklung / Plugin Development
 

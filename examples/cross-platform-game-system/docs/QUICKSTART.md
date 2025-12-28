@@ -1,4 +1,4 @@
-# Schnellstart / Quick Start Guide
+# Quick Start Guide / Schnellstart-Anleitung
 
 ## Deutsch
 
@@ -12,7 +12,10 @@ cd mein-game-system
 # 2. Dependencies installieren
 npm install
 
-# 3. System einrichten
+# 3. System testen (simuliert, keine Spiele erforderlich)
+npm run simulate
+
+# 4. System einrichten
 npm run setup
 ```
 
@@ -57,7 +60,10 @@ cd my-game-system
 # 2. Install dependencies
 npm install
 
-# 3. Run setup
+# 3. Test system (simulated, no games required)
+npm run simulate
+
+# 4. Run setup
 npm run setup
 ```
 

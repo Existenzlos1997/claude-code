@@ -9,10 +9,14 @@ Das System verfügt über ein umfassendes Test-Framework:
 - **Integration Tests**: Testen des Zusammenspiels
 - **Validierung**: Systemprüfung und Konfiguration
 - **End-to-End Tests**: Vollständige Workflows
+- **Simulation Tests**: Vollständiger Test ohne echte Spiele ⭐ NEW
 
 ### Tests ausführen
 
 ```bash
+# Simulierter End-to-End-Test (empfohlen, keine Spiele erforderlich)
+npm run simulate
+
 # Alle Unit Tests
 npm test
 
@@ -28,6 +32,30 @@ npm run test:all
 # System-Validierung
 npm run validate
 ```
+
+### Simulationstest ⭐ NEW
+
+Der Simulationstest testet das gesamte System ohne echte Spiele:
+
+```bash
+npm run simulate
+```
+
+**Was wird getestet:**
+- Game Library (Hinzufügen, Suchen, Entfernen)
+- Compatibility Manager (Plugin-Loading)
+- Anti-Cheat Detection (EAC, BattlEye, Vanguard)
+- Input Validation (Spiele, Plattformen, Layer)
+- Game Profiles (15+ Profile)
+- Performance Monitor
+- Logger (alle Log-Level)
+- Integration (komplette Workflows)
+
+**Ergebnis:**
+- 36 Tests in 8 Kategorien
+- 100% Erfolgsrate erwartet
+- Keine Installation von Spielen erforderlich
+- Läuft in ~2 Sekunden
 
 ### Test-Struktur
 
@@ -90,10 +118,14 @@ The system features a comprehensive test framework:
 - **Integration Tests**: Test component interactions
 - **Validation**: System checks and configuration
 - **End-to-End Tests**: Complete workflows
+- **Simulation Tests**: Complete test without real games ⭐ NEW
 
 ### Running Tests
 
 ```bash
+# Simulated end-to-end test (recommended, no games required)
+npm run simulate
+
 # All unit tests
 npm test
 
@@ -109,6 +141,30 @@ npm run test:all
 # System validation
 npm run validate
 ```
+
+### Simulation Test ⭐ NEW
+
+The simulation test validates the entire system without real games:
+
+```bash
+npm run simulate
+```
+
+**What is tested:**
+- Game Library (Add, find, remove)
+- Compatibility Manager (Plugin loading)
+- Anti-Cheat Detection (EAC, BattlEye, Vanguard)
+- Input Validation (Games, platforms, layers)
+- Game Profiles (15+ profiles)
+- Performance Monitor
+- Logger (all log levels)
+- Integration (complete workflows)
+
+**Results:**
+- 36 tests across 8 categories
+- 100% pass rate expected
+- No game installation required
+- Runs in ~2 seconds
 
 ### Test Structure
 
