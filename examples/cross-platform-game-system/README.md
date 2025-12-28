@@ -26,12 +26,25 @@ This project enables running games (new and old) on different operating systems,
   - Zentrale Verwaltung installierter Spiele / Central management of installed games
   - Automatische Erkennung von Spielen / Automatic game detection
   - Profilverwaltung und Einstellungen / Profile management and settings
+  - Vordefinierte Profile für beliebte Spiele / Predefined profiles for popular games
 
 - **Anti-Cheat-Unterstützung** / Anti-Cheat Support
   - EasyAntiCheat (EAC) und BattlEye Unterstützung / EasyAntiCheat and BattlEye support
   - Automatische Erkennung von Anti-Cheat-Systemen / Automatic anti-cheat detection
   - Kernel-Ebene Emulation für Kompatibilität / Kernel-level emulation for compatibility
   - Windows-Komponenten-Imitation / Windows component imitation
+
+- **Performance & Monitoring** / Performance & Monitoring
+  - Performance-Überwachung während des Spielens / Performance monitoring during gameplay
+  - CPU/RAM-Metriken / CPU/RAM metrics
+  - Benchmark-Berichte / Benchmark reports
+  - Zentrale Logging / Centralized logging
+
+- **Benutzerfreundlichkeit** / User Experience
+  - Interaktiver Einrichtungsassistent / Interactive setup wizard
+  - Vordefinierte Spiel-Profile / Predefined game profiles
+  - Umfassende Fehlerbehebung / Comprehensive troubleshooting
+  - Mehrsprachige Dokumentation / Multilingual documentation
 
 ## Architektur / Architecture
 
@@ -89,7 +102,10 @@ cd cross-platform-game-system
 # Install dependencies
 npm install
 
-# Configure system
+# Run interactive configuration wizard (recommended)
+npm run wizard
+
+# Or configure manually
 npm run setup
 
 # Start the system
@@ -120,6 +136,22 @@ npm start launch "Apex Legends" -- --anticheat eac
 # Via UI
 npm run gui
 ```
+
+### Spiel-Profile / Game Profiles
+
+```bash
+# Liste aller verfügbaren Profile / List all available profiles
+npm run list-profiles
+
+# Zeige Details für ein Spiel / Show details for a game
+npm run show-profile apex-legends
+
+# Suche nach Profilen / Search for profiles
+npm run search-profiles "witcher"
+```
+
+Das System enthält vordefinierte Profile für beliebte Spiele mit optimierten Einstellungen.
+The system includes predefined profiles for popular games with optimized settings.
 
 ### Anti-Cheat-Kompatibilität prüfen / Check Anti-Cheat Compatibility
 
@@ -225,6 +257,15 @@ module.exports = {
 Siehe [CONTRIBUTING.md](CONTRIBUTING.md) für Details.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
+## Dokumentation / Documentation
+
+- **[README.md](README.md)** - Hauptdokumentation / Main documentation
+- **[QUICKSTART.md](docs/QUICKSTART.md)** - Schnellstart-Anleitung / Quick start guide
+- **[ANTICHEAT.md](docs/ANTICHEAT.md)** - Anti-Cheat-Unterstützung / Anti-cheat support
+- **[TESTING.md](docs/TESTING.md)** - Test-Anleitung / Testing guide
+- **[TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - Fehlerbehebung / Troubleshooting ⭐ NEW
+- **[COMPLETE-GUIDE.md](docs/COMPLETE-GUIDE.md)** - Vollständige Referenz / Complete reference
+
 ## Lizenz / License
 
 MIT License - siehe [LICENSE](LICENSE)
@@ -234,4 +275,5 @@ MIT License - siehe [LICENSE](LICENSE)
 - [Wine HQ](https://www.winehq.org/)
 - [Proton](https://github.com/ValveSoftware/Proton)
 - [DXVK](https://github.com/doitsujin/dxvk)
+- [ProtonDB](https://www.protondb.com/) - Spiele-Kompatibilitätsdatenbank
 - [Lutris](https://lutris.net/) - Inspiration für Spiele-Management
