@@ -12,7 +12,7 @@ const path = require('path');
 
 async function runTests() {
   console.log(chalk.blue('🧪 Starting Comprehensive Test Suite\n'));
-  console.log(chalk.blue('=' .repeat(60)));
+  console.log(chalk.blue('='.repeat(60)));
 
   const results = {
     passed: 0,
