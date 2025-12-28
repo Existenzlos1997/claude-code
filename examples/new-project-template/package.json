@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Add a test framework (Jest, Mocha, etc.) and update this script\" && exit 1"
   },
   "keywords": [
     "template",

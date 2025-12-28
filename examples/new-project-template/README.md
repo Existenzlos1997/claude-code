@@ -13,7 +13,7 @@ This is a starting template for creating a new project. It provides a basic stru
 
 1. Copy this template to your new project location
 2. Update the `package.json` with your project details
-3. Install dependencies: `npm install`
+3. Add any dependencies you need: `npm install <package-name>`
 4. Start developing!
 
 ## Project Structure
