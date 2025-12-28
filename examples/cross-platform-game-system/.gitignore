@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Environment
+.env
+.env.local
+
+# User data
+.game-system/
+
+# Wine prefixes
+.wine-games/
+.proton-games/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# Test coverage
+coverage/

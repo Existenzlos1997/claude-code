@@ -35,7 +35,52 @@ npm install
 npm start
 ```
 
-### 2. Hooks
+### 2. Cross-Platform Game System
+**Location:** `cross-platform-game-system/`
+
+Ein System zur plattformübergreifenden Ausführung von PC-Spielen / A system for running PC games across platforms (Windows, Linux, etc.).
+
+This advanced example demonstrates:
+- Wine and Proton integration for Windows game compatibility
+- Plugin architecture for compatibility layers
+- Game library management
+- Automatic game detection
+- Multi-platform support
+
+**Features:**
+- Run Windows games on Linux using Wine or Proton
+- Support for native games
+- Automatic detection of Steam games
+- Extensible plugin system
+- CLI and (planned) GUI interface
+
+**Usage:**
+```bash
+# Copy and set up the system
+cp -r examples/cross-platform-game-system /path/to/your-location
+cd /path/to/your-location
+
+# Install dependencies
+npm install
+
+# Run setup
+npm run setup
+
+# Detect games
+npm run detect-games
+
+# Launch a game
+npm start launch "Game Name"
+```
+
+**Requirements:**
+- Node.js 16+
+- Wine (for Windows games on Linux)
+- Optional: Proton, winetricks
+
+See the project's README for detailed documentation in German and English.
+
+### 3. Hooks
 **Location:** `hooks/`
 
 Examples of Claude Code hooks for customizing behavior.
