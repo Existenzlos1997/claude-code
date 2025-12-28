@@ -64,6 +64,43 @@ module.exports = {
       DXVK_HUD: options.dxvkHud ? 'fps,devinfo' : '0'
     };
 
+    // Anti-cheat support
+    if (options.anticheat) {
+      const AntiCheatManager = require('../../src/compatibility/anticheat');
+      const acManager = new AntiCheatManager();
+      
+      // Detect anti-cheat in game directory
+      const detected = await acManager.detectAntiCheat(game.path);
+      
+      if (detected.length > 0) {
+        console.log(`Detected anti-cheat: ${detected.map(d => d.name).join(', ')}`);
+        
+        // Apply anti-cheat environment settings
+        detected.forEach(ac => {
+          const acEnv = acManager.getAntiCheatEnvironment(ac.type, env);
+          Object.assign(env, acEnv);
+        });
+      }
+    }
+
+    // EasyAntiCheat runtime
+    const eacRuntime = path.join(process.env.HOME, '.steam/steam/steamapps/common/Proton EasyAntiCheat Runtime');
+    try {
+      await fs.access(eacRuntime);
+      env.PROTON_EAC_RUNTIME = eacRuntime;
+    } catch (err) {
+      // EAC runtime not installed
+    }
+
+    // BattlEye runtime
+    const beRuntime = path.join(process.env.HOME, '.steam/steam/steamapps/common/Proton BattlEye Runtime');
+    try {
+      await fs.access(beRuntime);
+      env.PROTON_BATTLEYE_RUNTIME = beRuntime;
+    } catch (err) {
+      // BattlEye runtime not installed
+    }
+
     console.log(`Launching ${game.name} with Proton`);
     console.log(`Proton: ${protonPath}`);
     console.log(`Prefix: ${prefix}`);

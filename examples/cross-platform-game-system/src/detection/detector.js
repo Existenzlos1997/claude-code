@@ -5,7 +5,7 @@
 
 const fs = require('fs').promises;
 const path = require('path');
-const { glob } = require('glob');
+const glob = require('glob');
 
 class GameDetector {
   constructor() {

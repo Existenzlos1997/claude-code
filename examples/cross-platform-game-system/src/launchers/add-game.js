@@ -5,7 +5,7 @@
 
 const { program } = require('commander');
 const chalk = require('chalk');
-const GameLibrary = require('../src/core/game-library');
+const GameLibrary = require('../core/game-library');
 
 async function addGame(options) {
   const library = new GameLibrary();

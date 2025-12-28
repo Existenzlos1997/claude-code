@@ -10,6 +10,7 @@
     "detect-games": "node src/detection/detect.js",
     "add-game": "node src/launchers/add-game.js",
     "launch": "node src/launchers/launch.js",
+    "check-anticheat": "node src/compatibility/check-anticheat.js",
     "gui": "electron src/gui/main.js",
     "test": "jest",
     "build": "npm run build:core && npm run build:gui",

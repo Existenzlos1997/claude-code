@@ -27,6 +27,12 @@ This project enables running games (new and old) on different operating systems,
   - Automatische Erkennung von Spielen / Automatic game detection
   - Profilverwaltung und Einstellungen / Profile management and settings
 
+- **Anti-Cheat-Unterstützung** / Anti-Cheat Support
+  - EasyAntiCheat (EAC) und BattlEye Unterstützung / EasyAntiCheat and BattlEye support
+  - Automatische Erkennung von Anti-Cheat-Systemen / Automatic anti-cheat detection
+  - Kernel-Ebene Emulation für Kompatibilität / Kernel-level emulation for compatibility
+  - Windows-Komponenten-Imitation / Windows component imitation
+
 ## Architektur / Architecture
 
 ```
@@ -108,9 +114,34 @@ npm run add-game -- --path "/path/to/game" --platform windows
 # Via CLI
 npm run launch -- --game "Game Name"
 
+# Mit Anti-Cheat-Unterstützung / With anti-cheat support
+npm start launch "Apex Legends" -- --anticheat eac
+
 # Via UI
 npm run gui
 ```
+
+### Anti-Cheat-Kompatibilität prüfen / Check Anti-Cheat Compatibility
+
+```bash
+# Überprüfe Anti-Cheat für ein Spiel / Check anti-cheat for a game
+npm run check-anticheat "Game Name"
+```
+
+Das System erkennt automatisch Anti-Cheat-Systeme wie EasyAntiCheat und BattlEye und konfiguriert die notwendigen Komponenten.
+
+The system automatically detects anti-cheat systems like EasyAntiCheat and BattlEye and configures the necessary components.
+
+**Unterstützte Anti-Cheat-Systeme / Supported Anti-Cheat Systems:**
+- ✅ EasyAntiCheat (EAC) - via Proton
+- ✅ BattlEye - via Proton
+- ✅ Valve Anti-Cheat (VAC)
+- ⚠️ Denuvo Anti-Tamper - teilweise / partial
+- ❌ Riot Vanguard - nicht unterstützt / not supported
+- ❌ FACEIT AC - nicht unterstützt / not supported
+
+Siehe [docs/ANTICHEAT.md](docs/ANTICHEAT.md) für Details.
+See [docs/ANTICHEAT.md](docs/ANTICHEAT.md) for details.
 
 ### Konfiguration / Configuration
 
@@ -181,10 +212,13 @@ module.exports = {
 
 ## Bekannte Probleme / Known Issues
 
-- Einige Anti-Cheat-Systeme funktionieren nicht unter Wine
-  Some anti-cheat systems don't work under Wine
-- DirectX 12 Unterstützung ist experimentell
-  DirectX 12 support is experimental
+- **Anti-Cheat-Systeme / Anti-Cheat Systems**: Einige Anti-Cheat-Systeme wie Riot Vanguard funktionieren nicht unter Wine/Proton, da sie Kernel-Treiber benötigen. Siehe [docs/ANTICHEAT.md](docs/ANTICHEAT.md) für Lösungen.
+  
+  Some anti-cheat systems like Riot Vanguard don't work under Wine/Proton as they require kernel drivers. See [docs/ANTICHEAT.md](docs/ANTICHEAT.md) for solutions.
+
+- **DirectX 12 Unterstützung / DirectX 12 Support**: DirectX 12 Unterstützung ist experimentell via VKD3D.
+  
+  DirectX 12 support is experimental via VKD3D.
 
 ## Mitwirken / Contributing
 

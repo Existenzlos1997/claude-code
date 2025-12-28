@@ -10,6 +10,15 @@ const GameSystem = require('../index');
 async function launch(gameName, options) {
   const system = new GameSystem();
   await system.initialize();
+  
+  // Apply compatibility layer override if specified
+  if (options.layer) {
+    const game = system.library.findGame(gameName);
+    if (game) {
+      game.compatibilityLayer = options.layer;
+    }
+  }
+  
   await system.launch(gameName);
 }
 

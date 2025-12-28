@@ -14,7 +14,8 @@ class CompatibilityManager {
 
   async loadPlugins() {
     // Load built-in compatibility layers
-    const pluginsDir = path.join(__dirname, '../../plugins');
+    // Support both development and installed paths
+    const pluginsDir = process.env.GAME_SYSTEM_PLUGINS || path.join(__dirname, '../../plugins');
     
     try {
       const entries = await fs.readdir(pluginsDir, { withFileTypes: true });
