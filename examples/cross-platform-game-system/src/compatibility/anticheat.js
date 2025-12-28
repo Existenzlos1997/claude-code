@@ -180,6 +180,8 @@ class AntiCheatManager {
       return null;
     }
 
+    const homeDir = process.env.HOME || process.env.USERPROFILE || '~';
+
     return {
       dualBoot: 'Install Windows alongside Linux for games with incompatible anti-cheat',
       gpuPassthrough: 'Use Windows VM with GPU passthrough for near-native performance',

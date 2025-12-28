@@ -5,6 +5,7 @@
 
 const fs = require('fs').promises;
 const path = require('path');
+const Validator = require('./validator');
 
 class GameLibrary {
   constructor() {
@@ -28,7 +29,13 @@ class GameLibrary {
     await fs.writeFile(this.libraryPath, JSON.stringify(this.games, null, 2));
   }
 
-  addGame(game) {
+  async addGame(game) {
+    // Validate game data
+    const errors = Validator.validateGame(game);
+    if (errors.length > 0) {
+      throw new Error(`Invalid game data: ${errors.join(', ')}`);
+    }
+
     this.games.push({
       id: Date.now().toString(),
       name: game.name,

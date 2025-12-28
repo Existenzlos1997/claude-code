@@ -14,9 +14,14 @@ module.exports = {
 
   async canRun(game) {
     // Check if Proton is available
+    const homeDir = process.env.HOME || process.env.USERPROFILE;
+    if (!homeDir) {
+      return false;
+    }
+
     const protonPaths = [
-      path.join(process.env.HOME, '.steam/steam/steamapps/common/Proton 8.0'),
-      path.join(process.env.HOME, '.steam/steam/steamapps/common/Proton - Experimental'),
+      path.join(homeDir, '.steam/steam/steamapps/common/Proton 8.0'),
+      path.join(homeDir, '.steam/steam/steamapps/common/Proton - Experimental'),
       '/usr/share/steam/compatibilitytools.d/proton'
     ];
 
@@ -32,9 +37,14 @@ module.exports = {
   },
 
   async findProton() {
+    const homeDir = process.env.HOME || process.env.USERPROFILE;
+    if (!homeDir) {
+      throw new Error('Unable to determine home directory');
+    }
+
     const protonPaths = [
-      path.join(process.env.HOME, '.steam/steam/steamapps/common/Proton 8.0'),
-      path.join(process.env.HOME, '.steam/steam/steamapps/common/Proton - Experimental')
+      path.join(homeDir, '.steam/steam/steamapps/common/Proton 8.0'),
+      path.join(homeDir, '.steam/steam/steamapps/common/Proton - Experimental')
     ];
 
     for (const protonPath of protonPaths) {
@@ -49,15 +59,20 @@ module.exports = {
   },
 
   async launch(game, options = {}) {
+    const homeDir = process.env.HOME || process.env.USERPROFILE;
+    if (!homeDir) {
+      throw new Error('Unable to determine home directory');
+    }
+
     const protonPath = await this.findProton();
     const protonBinary = path.join(protonPath, 'proton');
     
-    const prefix = options.prefix || path.join(process.env.HOME, '.proton-games', game.name);
+    const prefix = options.prefix || path.join(homeDir, '.proton-games', game.name);
 
     const env = {
       ...process.env,
       STEAM_COMPAT_DATA_PATH: prefix,
-      STEAM_COMPAT_CLIENT_INSTALL_PATH: path.join(process.env.HOME, '.steam/steam'),
+      STEAM_COMPAT_CLIENT_INSTALL_PATH: path.join(homeDir, '.steam/steam'),
       PROTON_USE_WINED3D: options.useWineD3D ? '1' : '0',
       PROTON_NO_ESYNC: options.noEsync ? '1' : '0',
       PROTON_NO_FSYNC: options.noFsync ? '1' : '0',
@@ -84,7 +99,7 @@ module.exports = {
     }
 
     // EasyAntiCheat runtime
-    const eacRuntime = path.join(process.env.HOME, '.steam/steam/steamapps/common/Proton EasyAntiCheat Runtime');
+    const eacRuntime = path.join(homeDir, '.steam/steam/steamapps/common/Proton EasyAntiCheat Runtime');
     try {
       await fs.access(eacRuntime);
       env.PROTON_EAC_RUNTIME = eacRuntime;
@@ -93,7 +108,7 @@ module.exports = {
     }
 
     // BattlEye runtime
-    const beRuntime = path.join(process.env.HOME, '.steam/steam/steamapps/common/Proton BattlEye Runtime');
+    const beRuntime = path.join(homeDir, '.steam/steam/steamapps/common/Proton BattlEye Runtime');
     try {
       await fs.access(beRuntime);
       env.PROTON_BATTLEYE_RUNTIME = beRuntime;

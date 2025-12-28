@@ -31,6 +31,10 @@ const [gameName] = program.args;
 const options = program.opts();
 
 launch(gameName, options).catch(err => {
-  console.error(chalk.red('Error:'), err.message);
+  console.error(chalk.red('Error launching game:'), err.message);
+  if (err.stack) {
+    console.error(chalk.gray('Stack trace:'));
+    console.error(chalk.gray(err.stack));
+  }
   process.exit(1);
 });

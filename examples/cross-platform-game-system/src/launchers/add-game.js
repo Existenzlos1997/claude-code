@@ -1,6 +1,7 @@
 /**
  * Add Game CLI
- * Manuelles Hinzufügen von Spielen zur Bibliothek
+ * CLI zum manuellen Hinzufügen von Spielen zur Bibliothek
+ * CLI for manually adding games to the library
  */
 
 const { program } = require('commander');

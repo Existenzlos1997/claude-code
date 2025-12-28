@@ -13,6 +13,10 @@
     "check-anticheat": "node src/compatibility/check-anticheat.js",
     "gui": "electron src/gui/main.js",
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:all": "node scripts/test-all.js",
+    "validate": "node scripts/validate-system.js",
     "build": "npm run build:core && npm run build:gui",
     "build:core": "echo 'Building core...'",
     "build:gui": "echo 'Building GUI...'"
