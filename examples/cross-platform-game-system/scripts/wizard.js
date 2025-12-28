@@ -13,7 +13,7 @@ const { execa } = require('execa');
 
 async function runWizard() {
   console.log(chalk.blue('🧙 Cross-Platform Game System Configuration Wizard\n'));
-  console.log(chalk.blue('=' .repeat(60)));
+  console.log(chalk.blue('='.repeat(60)));
 
   const config = {
     defaultCompatibilityLayer: 'proton',
@@ -115,6 +115,8 @@ async function runWizard() {
   console.log(chalk.white('\n📋 Step 5: Saving Configuration\n'));
 
   const configPath = path.join(__dirname, '..', 'config', 'settings.json');
+  const configDir = path.dirname(configPath);
+  await fs.mkdir(configDir, { recursive: true });
   await fs.writeFile(configPath, JSON.stringify(config, null, 2));
   console.log(chalk.green(`✓ Configuration saved: ${configPath}`));
 
