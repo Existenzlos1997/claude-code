@@ -6,15 +6,17 @@
 
 ## 📝 Zusammenfassung
 
-Der erste Band der Reihe führt die Heldin ein und legt den Grundstein für die gesamte Saga. Eine Prophezeiung deutet darauf hin, dass sie die Auserwählte ist, die die Welt vor der dunklen Macht retten wird.
+Der erste Band der Reihe führt die Heldin ein und legt den Grundstein für die gesamte Saga. Eine uralte Prophezeiung deutet darauf hin, dass sie "die Verfluchte" ist - eine Person, die entweder die Welt zerstören oder durch die richtige Nutzung dunkler Macht retten wird. Niemand ahnt, dass die Prophezeiung von zwei Personen spricht.
 
 ## 🎯 Haupthandlung
 
 - **Einführung der Heldin:** Eine starke, entschlossene Frau, die ihr normales Leben hinter sich lassen muss
-- **Die Prophezeiung:** Alte Texte deuten auf sie als die Retterin hin
+- **Die Prophezeiung:** Sie ist "die Verfluchte" - wird die Welt zerstören ODER retten durch dunkle Macht
+- **Ambiguität:** Alle glauben, sie ist die einzige Person in der Prophezeiung
 - **Erste Kämpfe:** Konfrontationen mit Dienern der dunklen Macht
 - **Team-Aufbau:** Verbündete schließen sich ihr an
 - **Der Vertraute:** Ein alter Freund der Familie taucht auf und bietet seine Hilfe an
+- **Das Geheimnis:** Ihr Kind - nur sie und ihr Mann wissen davon
 
 ## 👥 Wichtige Charaktere
 
@@ -60,7 +62,9 @@ kapitel/
 ## ⚡ Spannungselemente
 
 - Wer oder was ist die dunkle Macht?
-- Wird die Heldin der Prophezeiung gerecht werden?
+- Was bedeutet die Prophezeiung wirklich - zerstören ODER retten?
+- Warum ist SIE "die Verfluchte"?
+- Muss sie dunkle Macht nutzen, um die Welt zu retten?
 - Kann das Team zusammenhalten?
 - Was verschweigt der Vertraute?
 - Warum hält die Mutter das Kind geheim vor ihrem Team?

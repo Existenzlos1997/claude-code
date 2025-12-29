@@ -88,35 +88,48 @@ Entweder A1-A6 oder B1-B6, dann Finale
 - **Das Schlachtfeld:** Wo das Finale stattfindet
 
 ### Kräfte
-- **Die Prophezeiung (Seelenkodex):** Alte Macht, die die Mutter führt. Sagt voraus, dass nur EINE Person die dunkle Macht nutzen kann ("der Verfluchte")
+- **Die Prophezeiung (Seelenkodex):** Uralte Warnung über "die Verfluchte" - eine Person, die entweder die Welt in Schutt und Asche legen ODER sie durch die richtige Nutzung dunkler Macht retten wird
+- **Die doppelte Bedeutung:** Niemand weiß, dass die Prophezeiung von ZWEI Personen spricht (Mutter UND Sohn)
 - **Die Manipulation des Mannes:** Er sagte ihr: "Das Kind bekommt keine dunkle Macht, solange du lebst" - eine Lüge
-- **Die dunkle Macht (Abgrundresonanz):** Uraltes Böses, das sich auf Personen überträgt. Die Prophezeiung war unvollständig - sie überträgt sich auf Blutsverwandte beim Tod des Trägers
+- **Die dunkle Macht (Abgrundresonanz):** Uraltes Böses, das sich auf Personen überträgt
 - **Das Geheimnis:** Nur Mutter und Vater wussten vom Kind - das Team kennt es nicht
 - **Das Team:** Verbündete der Mutter (unwissend über das Kind)
 - **Die dunkle Armee:** Schergen des Kindes (später)
 
-## ⚠️ Die fehlerhafte Prophezeiung und die Lüge
+## ⚠️ Die Prophezeiung und die Lüge
 
-**Was die Prophezeiung sagt:**
-"Nur eine einzige Seele kann mit dem Abgrund resonieren, der Verfluchte. Wenn diese Seele erlischt, endet die Verschlingung."
+**Was die Prophezeiung wirklich sagt (Der Seelenkodex):**
+
+_"Eine Seele, mit dem Abgrund verbunden, die Verfluchte genannt.  
+Zwei Wege liegen vor ihr:  
+Der erste - Vernichtung aller Resonanz, die Welt in Stille gehüllt.  
+Der zweite - Erlösung durch Gleichgewicht, Dunkelheit gegen Dunkelheit.  
+Nur durch das Spiegeln des Abgrunds kann der Abgrund bezwungen werden.  
+Die Verfluchte wird wählen - Zerstörung oder Rettung durch die verbotene Kraft."_
+
+**Die Fehlinterpretation:**
+Alle glauben, "die Verfluchte" sei NUR die Mutter. Niemand versteht, dass die Prophezeiung von ZWEI Personen spricht:
+- Die Mutter ist eine "Verfluchte" (trägt die Abgrundresonanz in sich)
+- Das Kind wird zur zweiten "Verfluchten" (erbt die Macht)
+- Beide sind Teil der Prophezeiung
 
 **Was der Mann der Mutter sagte:**
 "Behalte das Kind. Es wird keine dunkle Macht bekommen, solange du lebst. Du schützt es durch deine Existenz."
 
 **Die schreckliche Wahrheit:**
-Beides war eine Lüge oder unvollständig:
-1. Der Vater (der Mann) war der erste Verfluchte - er manipulierte sie
+1. Der Vater (der Mann) hatte bereits Abgrundresonanz - er manipulierte sie
 2. Als sie ihn TÖTETE, übertrug sich die Macht auf das Kind
-3. Gerade WEIL sie lebt und ihn getötet hat, bekommt das Kind die Macht
-4. Die Macht springt auf Blutsverwandte beim Tod, nicht beim "Erlöschen"
-5. Das Kind wird mächtiger als der Vater, genährt durch Trauma
+3. Die Mutter trägt AUCH Abgrundresonanz in sich (daher "die Verfluchte")
+4. Sie hat sie nur nie genutzt - unterdrückt durch ihren Willen
+5. Im Finale: Sie MUSS ihre eigene dunkle Macht nutzen, um die des Sohnes zu besiegen
+6. "Dunkelheit gegen Dunkelheit" - nur so kann sie die Welt retten
 
 **Die Tragödie:**
-- Die Mutter glaubte, das Kind zu schützen, indem sie am Leben blieb
-- In Wahrheit: Indem sie den Vater tötete, verfluchte sie das Kind
-- Sie sucht nach ihrem Mann, den sie selbst getötet hat
-- Sie will ihr Kind retten, das gerade zum neuen Bösen wird
-- Ihr Geheimnis (niemand kennt das Kind) verhindert, dass sie Hilfe bekommt
+- Die Mutter glaubte, nur Licht zu nutzen und damit die Welt zu retten
+- In Wahrheit: Sie IST "die Verfluchte" und muss dunkle Macht nutzen
+- Das Kind ist die zweite "Verfluchte" - beide Teil derselben Prophezeiung
+- Sie muss im Finale ihre eigene Dunkelheit akzeptieren, um ihren Sohn zu stoppen
+- Beide sterben - "Vernichtung" UND "Rettung" gleichzeitig erfüllt
 
 ## 🎨 Thematische Entwicklung
 
