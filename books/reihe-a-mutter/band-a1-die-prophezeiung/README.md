@@ -19,9 +19,10 @@ Der erste Band der Reihe führt die Heldin ein und legt den Grundstein für die 
 ## 👥 Wichtige Charaktere
 
 - **Die Heldin/Mutter:** Protagonistin, die Auserwählte
-- **Der Ehemann:** Liebevoller Partner, unterstützt sie
+- **Der Ehemann:** Scheinbar liebevoller Partner, unterstützt sie - versteckt seine wahre Natur
+- **Das Kind:** Ein Geheimnis - nur Mutter und Vater wissen davon, das Team kennt es nicht
 - **Der Vertraute:** Mysteriöser Freund der Familie
-- **Erste Teammitglieder:** Krieger, Magier, Heiler
+- **Erste Teammitglieder:** Krieger, Magier, Heiler (wissen nichts vom Kind)
 
 ## 🔑 Schlüsselszenen
 
@@ -53,6 +54,8 @@ kapitel/
 - **Bestimmung:** Die Last der Prophezeiung
 - **Anfänge:** Der Beginn einer epischen Reise
 - **Familie:** Die Bedeutung von Liebe und Zusammenhalt
+- **Geheimnis:** Das Kind - eine verborgene Wahrheit vor dem Team
+- **Manipulation:** Der Ehemann beruhigt sie über das Kind ("Es wird nicht böse, solange du lebst")
 
 ## ⚡ Spannungselemente
 
@@ -60,6 +63,8 @@ kapitel/
 - Wird die Heldin der Prophezeiung gerecht werden?
 - Kann das Team zusammenhalten?
 - Was verschweigt der Vertraute?
+- Warum hält die Mutter das Kind geheim vor ihrem Team?
+- Was bedeutet die Warnung des Mannes: "Das Kind ist sicher, solange du lebst"?
 
 ## 🔗 Verbindungen
 

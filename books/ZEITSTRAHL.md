@@ -16,11 +16,11 @@ Die beiden Reihen A und B verlaufen parallel auf der gleichen Zeitachse. Währen
 - **Reihe B, Band 1:** Das Kind wächst im Waisenhaus auf, erste Misshandlungen
 
 ### Jahre 6-10: Der erste große Kampf
-- **Reihe A, Band 2:** Der erste große Böse erscheint (ihr verwandelter Mann), verschwindet im Kampf. Ihr Kind verschwindet ebenfalls spurlos.
+- **Reihe A, Band 2:** Der erste große Böse erscheint (ihr verwandelter Mann), sie tötet ihn unwissentlich. Nach der Rückkehr: Mann und Kind sind verschwunden.
 - **Reihe B, Band 1-2:** Das Kind wird älter, der Freund stirbt, Manipulation beginnt
 
-### Jahre 11-15: Die Suche und Verrat
-- **Reihe A, Band 3:** Verzweifelte Suche nach Mann und Kind. Während sie sucht, wächst das Böse stärker als je zuvor. Sie wird manipuliert und abgelenkt.
+### Jahre 11-15: Die geheime Suche und Verrat
+- **Reihe A, Band 3:** Verzweifelte geheime Suche nach Mann und Kind (Team weiß nichts vom Kind). Während sie sucht, wächst das Böse stärker - die Macht überträgt sich auf das Kind.
 - **Reihe B, Band 2-3:** Manipulation verstärkt sich, erste Siege, dann Verrat
 
 ### Jahre 16-20: Wiederaufbau und dunkle Taten
@@ -46,8 +46,8 @@ Die beiden Reihen A und B verlaufen parallel auf der gleichen Zeitachse. Währen
 Während die Mutter...                    | Erlebt das Kind...
 ----------------------------------------|-----------------------------------
 ...die Prophezeiung entdeckt            | ...Misshandlung im Waisenhaus
-...ihren Mann kämpft (verschwindet)     | ...den Tod seines einzigen Freundes
-...verzweifelt nach beiden sucht        | ...wiederholte Verrate
+...den Bösen tötet (ihr Mann)           | ...den Tod seines einzigen Freundes
+...heimlich nach beiden sucht           | ...wiederholte Verrate
 ...gegen kleine Bedrohungen kämpft      | ...seine erste dunkle Tat
 ...die wachsende Dunkelheit erkennt     | ...den Aufbau seines Reiches
 ...die Wahrheit erfährt                 | ...kurz vor dem totalen Sieg steht
@@ -88,27 +88,35 @@ Entweder A1-A6 oder B1-B6, dann Finale
 - **Das Schlachtfeld:** Wo das Finale stattfindet
 
 ### Kräfte
-- **Die Prophezeiung:** Alte Macht, die die Mutter führt. Sagt voraus, dass nur EINE Person die dunkle Macht nutzen kann ("der Verfluchte")
-- **Die dunkle Macht (Umbramacht):** Uraltes Böses, das sich auf Personen überträgt. Die Prophezeiung war unvollständig - sie kann auf Nachkommen übergehen
-- **Das Team:** Verbündete der Mutter
-- **Die dunkle Armee:** Schergen des Kindes
+- **Die Prophezeiung (Seelenkodex):** Alte Macht, die die Mutter führt. Sagt voraus, dass nur EINE Person die dunkle Macht nutzen kann ("der Verfluchte")
+- **Die Manipulation des Mannes:** Er sagte ihr: "Das Kind bekommt keine dunkle Macht, solange du lebst" - eine Lüge
+- **Die dunkle Macht (Abgrundresonanz):** Uraltes Böses, das sich auf Personen überträgt. Die Prophezeiung war unvollständig - sie überträgt sich auf Blutsverwandte beim Tod des Trägers
+- **Das Geheimnis:** Nur Mutter und Vater wussten vom Kind - das Team kennt es nicht
+- **Das Team:** Verbündete der Mutter (unwissend über das Kind)
+- **Die dunkle Armee:** Schergen des Kindes (später)
 
-## ⚠️ Die fehlerhafte Prophezeiung
+## ⚠️ Die fehlerhafte Prophezeiung und die Lüge
 
 **Was die Prophezeiung sagt:**
-"Nur eine einzige Seele kann die Umbramacht tragen, der Verfluchte. Wenn diese Seele fällt, endet die Dunkelheit."
+"Nur eine einzige Seele kann mit dem Abgrund resonieren, der Verfluchte. Wenn diese Seele erlischt, endet die Verschlingung."
+
+**Was der Mann der Mutter sagte:**
+"Behalte das Kind. Es wird keine dunkle Macht bekommen, solange du lebst. Du schützt es durch deine Existenz."
 
 **Die schreckliche Wahrheit:**
-Die Prophezeiung ist unvollständig. Die Macht endet NICHT mit dem Tod des Verfluchten. Sie kann auf Blutsverwandte übergehen:
-1. Der Vater wird zum ersten Verfluchten
-2. Wenn er "fällt" (verschwindet), geht die Macht auf das Kind über
-3. Das Kind wird zum neuen, noch mächtigeren Verfluchten
+Beides war eine Lüge oder unvollständig:
+1. Der Vater (der Mann) war der erste Verfluchte - er manipulierte sie
+2. Als sie ihn TÖTETE, übertrug sich die Macht auf das Kind
+3. Gerade WEIL sie lebt und ihn getötet hat, bekommt das Kind die Macht
+4. Die Macht springt auf Blutsverwandte beim Tod, nicht beim "Erlöschen"
+5. Das Kind wird mächtiger als der Vater, genährt durch Trauma
 
 **Die Tragödie:**
-Die Mutter kämpft in dem Glauben, den EINEN Verfluchten besiegen zu müssen. Sie weiß nicht, dass:
-- Ihr Mann der erste war
-- Ihr Kind der zweite ist
-- Ihre ganze Familie verflucht ist
+- Die Mutter glaubte, das Kind zu schützen, indem sie am Leben blieb
+- In Wahrheit: Indem sie den Vater tötete, verfluchte sie das Kind
+- Sie sucht nach ihrem Mann, den sie selbst getötet hat
+- Sie will ihr Kind retten, das gerade zum neuen Bösen wird
+- Ihr Geheimnis (niemand kennt das Kind) verhindert, dass sie Hilfe bekommt
 
 ## 🎨 Thematische Entwicklung
 
@@ -133,10 +141,10 @@ Die Mutter kämpft in dem Glauben, den EINEN Verfluchten besiegen zu müssen. Si
 
 Momente, wo die beiden Geschichten sich fast berühren (ohne dass die Charaktere es wissen):
 
-- **Jahr 2:** Die Mutter sucht verzweifelt nach ihrem verschwundenen Kind, während es im Waisenhaus ist
-- **Jahr 10:** Der Freund des Kindes stirbt am selben Tag, an dem die Mutter gegen den "ersten Bösen" kämpft (ihr Mann verschwindet)
-- **Jahr 12-15:** Während die Mutter verzweifelt nach Mann und Kind sucht, wächst das Böse im Verborgenen - ihr Mann überträgt die dunkle Macht auf das Kind
+- **Jahr 2:** Die Mutter sucht heimlich nach ihrem verschwundenen Kind, während es im Waisenhaus ist. Das Team weiß nichts.
+- **Jahr 10:** Der Freund des Kindes stirbt am selben Tag, an dem die Mutter den "ersten Bösen" tötet (ihr Mann). Die Macht überträgt sich auf das Kind.
+- **Jahr 12-15:** Während die Mutter heimlich nach Mann und Kind sucht, überträgt sich die dunkle Macht vollständig auf das Kind - es wird mächtiger als der Vater
 - **Jahr 20:** Die "kleine Bedrohung", gegen die die Mutter kämpft, ist eine Tat des Kindes
-- **Jahr 25:** Die Mutter spürt die wachsende Dunkelheit - es ist die Macht ihres Kindes, stärker als die des Vaters
+- **Jahr 25:** Die Mutter spürt die wachsende Dunkelheit - es ist die Macht ihres Kindes, verstärkt durch Trauma und Hass
 
 Diese Verbindungen sollten subtil sein und erst beim zweiten Lesen oder beim Vergleich der Reihen auffallen.
