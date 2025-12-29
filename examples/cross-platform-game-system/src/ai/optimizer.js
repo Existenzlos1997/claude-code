@@ -1,17 +1,61 @@
 /**
- * AI-Powered Configuration Optimizer
- * Intelligente Optimierung basierend auf Hardware
- * Intelligent optimization based on hardware
+ * AI-Powered Configuration Optimizer (Enhanced v1.3.0)
+ * Intelligente Optimierung basierend auf Hardware mit maschinellem Lernen
+ * Intelligent optimization based on hardware with machine learning
  * 
  * UNIQUE FEATURE: No other game compatibility system has AI-powered auto-optimization
+ * PHASE 2 ENHANCEMENTS:
+ * - Machine learning from usage patterns
+ * - Adaptive optimization based on feedback
+ * - Predictive performance modeling
+ * - Multi-game optimization profiling
  */
 
 const os = require('os');
+const fs = require('fs').promises;
+const path = require('path');
 const { execa } = require('execa');
 
 class AIOptimizer {
   constructor() {
     this.systemProfile = null;
+    this.learningData = null;
+    this.dataDir = path.join(process.env.HOME || process.env.USERPROFILE, '.game-system', 'ai-data');
+    this.learningDataPath = path.join(this.dataDir, 'learning-data.json');
+    this.optimizationHistory = [];
+  }
+
+  /**
+   * Initialize AI learning system
+   * PHASE 2: Load historical data for ML
+   */
+  async initialize() {
+    await fs.mkdir(this.dataDir, { recursive: true });
+    
+    try {
+      const data = await fs.readFile(this.learningDataPath, 'utf8');
+      this.learningData = JSON.parse(data);
+    } catch (err) {
+      // Initialize new learning data structure
+      this.learningData = {
+        gameProfiles: {},
+        hardwareProfiles: {},
+        optimizationPatterns: [],
+        successRates: {},
+        version: '1.0'
+      };
+    }
+  }
+
+  /**
+   * Save learning data for future optimization
+   * PHASE 2: Persist ML data
+   */
+  async saveLearningData() {
+    await fs.writeFile(
+      this.learningDataPath,
+      JSON.stringify(this.learningData, null, 2)
+    );
   }
 
   /**
@@ -93,6 +137,118 @@ class AIOptimizer {
     if (score >= 8) return 'high';
     if (score >= 5) return 'medium';
     return 'low';
+  }
+
+  /**
+   * Learn from optimization feedback
+   * PHASE 2: Machine learning from user feedback
+   */
+  async recordOptimizationResult(game, optimization, feedback) {
+    const pattern = {
+      timestamp: Date.now(),
+      game: game.name,
+      systemTier: optimization.tier,
+      settings: optimization.settings,
+      targetFPS: optimization.targetFPS,
+      actualFPS: feedback.actualFPS,
+      satisfaction: feedback.satisfaction, // 1-5 rating
+      issues: feedback.issues || []
+    };
+
+    this.learningData.optimizationPatterns.push(pattern);
+    
+    // Update success rates
+    const key = `${game.name}_${optimization.tier}`;
+    if (!this.learningData.successRates[key]) {
+      this.learningData.successRates[key] = { attempts: 0, successes: 0 };
+    }
+    
+    this.learningData.successRates[key].attempts++;
+    if (feedback.satisfaction >= 4) {
+      this.learningData.successRates[key].successes++;
+    }
+
+    await this.saveLearningData();
+    return pattern;
+  }
+
+  /**
+   * Get learned optimization for a game
+   * PHASE 2: Use historical data to improve optimization
+   */
+  getLearnedOptimization(game) {
+    if (!this.learningData) return null;
+
+    const gamePatterns = this.learningData.optimizationPatterns.filter(
+      p => p.game === game.name && p.satisfaction >= 4
+    );
+
+    if (gamePatterns.length === 0) return null;
+
+    // Find the best performing configuration
+    const best = gamePatterns.reduce((best, current) => {
+      const score = current.actualFPS * (current.satisfaction / 5);
+      const bestScore = best.actualFPS * (best.satisfaction / 5);
+      return score > bestScore ? current : best;
+    });
+
+    return best.settings;
+  }
+
+  /**
+   * Adaptive optimization using ML
+   * PHASE 2: Combines base optimization with learned patterns
+   */
+  adaptiveOptimize(game, targetFPS = 60) {
+    // Get base optimization
+    const baseConfig = this.optimizeForGame(game, targetFPS);
+    
+    // Try to enhance with learned data
+    const learned = this.getLearnedOptimization(game);
+    
+    if (learned) {
+      // Merge learned settings with base config
+      baseConfig.settings = {
+        ...baseConfig.settings,
+        ...learned,
+        learned: true,
+        learningSource: 'historical-data'
+      };
+    }
+
+    return baseConfig;
+  }
+
+  /**
+   * Predict performance for specific settings
+   * PHASE 2: ML-based performance prediction
+   */
+  predictPerformance(game, settings) {
+    const tier = this.calculatePerformanceTier();
+    
+    // Use historical data if available
+    const similarPatterns = this.learningData?.optimizationPatterns.filter(
+      p => p.game === game.name && p.systemTier === tier
+    ) || [];
+
+    if (similarPatterns.length > 0) {
+      const avgFPS = similarPatterns.reduce((sum, p) => sum + p.actualFPS, 0) / similarPatterns.length;
+      const confidence = Math.min(95, 60 + (similarPatterns.length * 5));
+      
+      return {
+        predictedFPS: Math.round(avgFPS),
+        confidence,
+        basedOn: `${similarPatterns.length} historical measurements`
+      };
+    }
+
+    // Fallback to heuristic prediction
+    const baseFPS = tier === 'high' ? 120 : tier === 'medium' ? 60 : 30;
+    return {
+      predictedFPS: baseFPS,
+      confidence: 50,
+      basedOn: 'heuristic estimation'
+    };
   }
 
   /**
