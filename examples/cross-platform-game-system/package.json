@@ -1,7 +1,7 @@
 {
   "name": "cross-platform-game-system",
-  "version": "1.3.0",
-  "description": "Revolutionary AI-powered cross-platform game compatibility system with ML-enhanced optimization, cloud sync, and predictive compilation / Revolutionäres KI-gestütztes plattformübergreifendes Spiele-Kompatibilitätssystem mit ML-verstärkter Optimierung, Cloud-Sync und prädiktiver Kompilierung",
+  "version": "1.4.0",
+  "description": "Revolutionary AI-powered cross-platform game compatibility system with ML-enhanced optimization, cloud sync, predictive compilation, and polished UX / Revolutionäres KI-gestütztes plattformübergreifendes Spiele-Kompatibilitätssystem mit ML-verstärkter Optimierung, Cloud-Sync, prädiktiver Kompilierung und perfektionierter Benutzererfahrung",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

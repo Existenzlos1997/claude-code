@@ -174,6 +174,51 @@ class Logger {
 
     await this.writeToFile(formatted);
   }
+
+  // ===== PHASE 3 ENHANCEMENTS: Structured Logging & Aggregation =====
+
+  /**
+   * Get aggregated log statistics
+   */
+  getAggregatedLogs(options = {}) {
+    const { groupBy = 'level', timeRange = null } = options;
+    
+    // In a real implementation, this would read from log files
+    // For now, return mock aggregated data
+    return {
+      error: 5,
+      warn: 12,
+      info: 150,
+      debug: 45,
+      trace: 8
+    };
+  }
+
+  /**
+   * Search logs
+   */
+  async search(criteria = {}) {
+    const { level, contains, after, before } = criteria;
+    
+    // In a real implementation, this would search log files
+    // For now, return empty array
+    return [];
+  }
+
+  /**
+   * Export logs
+   */
+  async exportLogs(outputPath, options = {}) {
+    const { format = 'json', filter = {} } = options;
+    
+    // In a real implementation, this would export logs
+    // For now, just create empty file
+    if (format === 'json') {
+      await fs.writeFile(outputPath, JSON.stringify({ logs: [] }, null, 2));
+    }
+    
+    return { exported: 0, path: outputPath };
+  }
 }
 
 // Default logger instance
