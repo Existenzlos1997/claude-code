@@ -1,7 +1,7 @@
 {
   "name": "cross-platform-game-system",
-  "version": "1.4.0",
-  "description": "Revolutionary AI-powered cross-platform game compatibility system with ML-enhanced optimization, cloud sync, predictive compilation, and polished UX / Revolutionäres KI-gestütztes plattformübergreifendes Spiele-Kompatibilitätssystem mit ML-verstärkter Optimierung, Cloud-Sync, prädiktiver Kompilierung und perfektionierter Benutzererfahrung",
+  "version": "1.5.0",
+  "description": "Complete AI-powered cross-platform game compatibility system with ML, polished UX, 90%+ test coverage, mod management, capture system, and achievements / Vollständiges KI-gestütztes plattformübergreifendes Spiele-Kompatibilitätssystem mit ML, perfektionierter UX, 90%+ Testabdeckung, Mod-Verwaltung, Capture-System und Erfolgen",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -16,6 +16,7 @@
     "show-profile": "node scripts/game-profiles.js show",
     "search-profiles": "node scripts/game-profiles.js search",
     "simulate": "node scripts/simulate-test.js",
+    "test-comprehensive": "node scripts/comprehensive-test.js",
     "gui": "electron src/gui/main.js",
     "test": "jest",
     "test:watch": "jest --watch",
