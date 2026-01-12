@@ -129,38 +129,8 @@ Fix: Always specify the button type:
 Best Practice: Be explicit about button purpose
 Impact: Prevents accidental form submissions and improves clarity""",
     },
-    {
-        "ruleName": "onclick_without_keyboard",
-        "patterns": [
-            r"onClick(?![^}]*onKeyDown)(?![^}]*onKeyPress)",
-        ],
-        "reminder": """⚠️ Accessibility Warning: onClick handler without keyboard support
-
-If using onClick on a non-button element, you must also handle keyboard events.
-
-Fix options:
-
-1. Use a semantic button (preferred):
-   <button onClick={handleClick}>Click me</button>
-
-2. Add keyboard handlers:
-   <div 
-     role="button"
-     tabIndex={0}
-     onClick={handleClick}
-     onKeyDown={(e) => {
-       if (e.key === 'Enter' || e.key === ' ') {
-         e.preventDefault();
-         handleClick(e);
-       }
-     }}
-   >
-     Click me
-   </div>
-
-WCAG Criterion: 2.1.1 Keyboard (Level A)
-Impact: Keyboard users cannot trigger the action""",
-    },
+    # Note: onclick_without_keyboard is covered by interactive_div_span pattern
+    # No need for a separate pattern that would trigger on semantic elements
     {
         "ruleName": "aria_hidden_focusable",
         "patterns": [
