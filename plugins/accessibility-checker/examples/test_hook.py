@@ -25,7 +25,9 @@ def test_hook(test_name, tool_input, expected_exit_code, should_contain_text=Non
     # Clear state before each test
     clear_test_state()
     
-    hook_path = "/home/runner/work/claude-code/claude-code/plugins/accessibility-checker/hooks/accessibility_hook.py"
+    # Get the hook path relative to this script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    hook_path = os.path.join(script_dir, "..", "hooks", "accessibility_hook.py")
     
     # Prepare input
     input_data = {
