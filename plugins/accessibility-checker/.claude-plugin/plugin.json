@@ -1,0 +1,9 @@
+{
+  "name": "accessibility-checker",
+  "version": "1.0.0",
+  "description": "Proactive accessibility checker that analyzes code for digital accessibility barriers (WCAG compliance), suggests fixes, and educates developers about inclusive design across multiple frameworks",
+  "author": {
+    "name": "Claude Code Community",
+    "email": "community@anthropic.com"
+  }
+}
