@@ -209,7 +209,7 @@ Impact: Screen reader users rely on headings for navigation""",
     {
         "ruleName": "positive_tabindex",
         "patterns": [
-            r'tabIndex\s*=\s*["{]\s*([1-9]\d*)',
+            r'tabIndex\s*=\s*\{?\s*["\']?\s*([1-9]\d*)',  # Matches both tabIndex={1} and tabIndex="1"
         ],
         "reminder": """⚠️ Accessibility Warning: Positive tabIndex value detected
 

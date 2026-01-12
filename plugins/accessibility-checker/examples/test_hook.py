@@ -5,6 +5,7 @@ Simple test script to verify the accessibility hook works correctly.
 
 import json
 import os
+from pathlib import Path
 import subprocess
 import sys
 
@@ -25,9 +26,8 @@ def test_hook(test_name, tool_input, expected_exit_code, should_contain_text=Non
     # Clear state before each test
     clear_test_state()
     
-    # Get the hook path relative to this script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    hook_path = os.path.join(script_dir, "..", "hooks", "accessibility_hook.py")
+    # Get the hook path relative to this script using pathlib
+    hook_path = Path(__file__).parent.parent / "hooks" / "accessibility_hook.py"
     
     # Prepare input
     input_data = {
