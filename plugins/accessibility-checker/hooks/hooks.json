@@ -1,0 +1,16 @@
+{
+  "description": "Accessibility checker hook that warns about potential accessibility barriers in UI code",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/accessibility_hook.py"
+          }
+        ],
+        "matcher": "Edit|Write|MultiEdit"
+      }
+    ]
+  }
+}
