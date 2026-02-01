@@ -156,6 +156,40 @@ This project is developed autonomously. External contributions will be integrate
 
 ---
 
+## 🔬 Experimentelle Erweiterung / Experimental Extension
+
+**NEU / NEW** (Version 0.2.0-experimental): Das MQG-System wurde um **experimentelle Messfähigkeiten** erweitert!
+
+The MQG system has been extended with **experimental measurement capabilities**!
+
+### Hardware-Integration / Hardware Integration
+
+- ✅ **Physische Sensoren** / Physical Sensors (Serial, Network, Custom)
+- ✅ **Echtzeit-ICQ** / Real-Time ICQ (Streaming data processing)
+- ✅ **Kalibrierung** / Calibration (Linear, Polynomial, Validation)
+- ✅ **Experimentelle Daten** / Experimental Data (CSV, JSON, NumPy import)
+
+**Siehe / See**: `EXPERIMENTAL_GUIDE.md` für vollständige Dokumentation
+
+### Schnellstart Experimentell / Quick Start Experimental
+
+```python
+from src.experimental.hardware_interface import HardwareInterface, SerialSensorAdapter
+
+# Hardware-Interface initialisieren
+hw = HardwareInterface()
+hw.register_sensor('sensor1', SerialSensorAdapter('/dev/ttyUSB0'))
+hw.connect_sensor('sensor1')
+
+# ICQ direkt vom Sensor messen
+result = hw.measure_icq_from_sensor('sensor1', duration=5.0, sampling_rate=100.0)
+print(f"ICQ: {result['icq']:.4f}")
+```
+
+**Demo**: `python demo_experimental.py`
+
+---
+
 **Letzte Aktualisierung / Last Update**: 2026-02-01  
-**Version**: 0.1.0-alpha  
-**Status**: ✅ Initialisierung abgeschlossen / Initialization complete
+**Version**: 0.2.0-experimental  
+**Status**: ✅ Experimentelle Integration abgeschlossen / Experimental integration complete
