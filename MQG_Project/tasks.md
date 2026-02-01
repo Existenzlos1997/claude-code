@@ -1,19 +1,47 @@
 # MQG-Projekt: Aufgabenliste / Task List
 
 **Status**: 🔄 Aktiv / Active  
-**Letzte Aktualisierung / Last Update**: 2026-02-01 21:40:50 UTC
+**Letzte Aktualisierung / Last Update**: 2026-02-01 22:30:00 UTC
 
 ---
 
 ## 🎯 Aktuelle Priorität / Current Priority
 
-**Phase 1: Theoretische Fundierung**
+**Phase 2: Experimentelle Integration und Hardware-Anbindung**
 
 ---
 
 ## 📋 Offene Aufgaben / Open Tasks
 
 ### Hochpriorität / High Priority
+
+#### TASK-007: Integration mit realen Sensoren ⚡ **NEU**
+**Status**: Ausstehend / Pending  
+**Beschreibung**: Test und Integration der experimentellen Module mit echten physischen Sensoren  
+**Akzeptanzkriterien**:
+- [ ] Test mit Arduino/Serial-Sensor durchgeführt
+- [ ] Netzwerk-Sensor erfolgreich angebunden
+- [ ] ICQ-Messung von realen Daten validiert
+- [ ] Kalibrierungs-Workflow mit Hardware getestet
+**Geschätzte Dauer**: 3 Arbeitseinheiten  
+**Abhängigkeiten**: Experimentelle Module (abgeschlossen)  
+**Nächster Schritt**: Hardware-Setup vorbereiten, erste Sensoren anschließen
+
+---
+
+#### TASK-008: Live-Monitoring GUI entwickeln 📊 **NEU**
+**Status**: Geplant / Planned  
+**Beschreibung**: Grafische Benutzeroberfläche für Echtzeit-ICQ-Monitoring  
+**Akzeptanzkriterien**:
+- [ ] Dashboard mit Live-ICQ-Anzeige
+- [ ] Grafische Darstellung der Zeitreihen
+- [ ] Sensor-Status-Übersicht
+- [ ] Export-Funktionen für Messdaten
+**Geschätzte Dauer**: 5 Arbeitseinheiten  
+**Abhängigkeiten**: TASK-007  
+**Nächster Schritt**: Framework-Auswahl (Tkinter, PyQt, Web-basiert)
+
+---
 
 #### TASK-001: Mathematische Formalisierung des ICQ ⏳
 **Status**: Ausstehend / Pending  
@@ -105,6 +133,20 @@
 
 ## ✅ Abgeschlossene Aufgaben / Completed Tasks
 
+### TASK-EXP-001: Experimentelle Hardware-Interface-Module ✓ **NEU**
+**Status**: Abgeschlossen / Completed  
+**Abschlussdatum**: 2026-02-01 22:30:00 UTC  
+**Ergebnis**: 
+- ✅ `hardware_interface.py` - Sensor-Adapter und Hardware-Manager
+- ✅ `experimental_adapter.py` - Echtzeit-Prozessor und Daten-Import
+- ✅ `calibration.py` - Kalibrierungs- und Validierungs-System
+- ✅ EXPERIMENTAL_GUIDE.md - Vollständige Dokumentation
+- ✅ Unterstützung für Serial, Network und Custom Sensoren
+- ✅ Real-Time ICQ-Berechnung mit Sliding Window
+- ✅ Sensor-Kalibrierung (linear und polynomial)
+
+---
+
 ### TASK-000: Projektinitialisierung ✓
 **Status**: Abgeschlossen / Completed  
 **Abschlussdatum**: 2026-02-01 21:40:50 UTC  
@@ -119,7 +161,10 @@
 
 ## 📊 Fortschrittsübersicht / Progress Overview
 
-- **Abgeschlossen / Completed**: 1 Task (14%)
+- **Abgeschlossen / Completed**: 2 Tasks (22%)
+- **In Bearbeitung / In Progress**: 2 Tasks (experimentelle Integration)
+- **Ausstehend / Pending**: 6 Tasks (78%)
+- **Gesamt / Total**: 9 Tasks
 - **In Bearbeitung / In Progress**: 0 Tasks (0%)
 - **Ausstehend / Pending**: 6 Tasks (86%)
 - **Gesamt / Total**: 7 Tasks
