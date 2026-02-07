@@ -31,7 +31,7 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-fo
 
 ## ✨ Was macht die App Pro?
 
-Die PZR Assistent Pro App ist Ihr professioneller Begleiter für Zahngesundheit mit **Behandler-Empfehlungen**:
+Die PZR Assistent Pro App ist Ihr professioneller Begleiter für Zahngesundheit mit **Behandler-Empfehlungen** und **medizinischer Anamnese**:
 
 ### 🔐 Login-System
 - Getrennte Anmeldung für Patienten und Mitarbeiter
@@ -45,8 +45,20 @@ Die PZR Assistent Pro App ist Ihr professioneller Begleiter für Zahngesundheit 
    • Empfohlene Hilfsmittel und Anwendung
    • Weitere wichtige Bemerkungen
 
-📅 **Termin-Verwaltung**
-   • Übersicht aller PZR-Termine
+👤 **Profil bearbeiten (NEU!)**
+   • Eigene Daten aktualisieren (Name, E-Mail, Telefon)
+   • Selbstverwaltung der Kontaktdaten
+   • Sofortige Speicherung
+
+🏥 **Medizinische Anamnese (NEU!)**
+   • Vollständiges medizinisches Profil
+   • Allergien, Medikamente, Erkrankungen
+   • Automatische Erinnerung zur Aktualisierung (jährlich)
+   • Pflichtfeld bei Login wenn veraltet
+
+📅 **Termin-Übersicht**
+   • Alle Termine die vom Behandler erstellt wurden
+   • Automatische Anzeige neuer Termine
    • Status-Anzeige (Heute, In X Tagen, Vergangen)
 
 🔔 **Erweiterte Erinnerungen**
@@ -61,6 +73,14 @@ Die PZR Assistent Pro App ist Ihr professioneller Begleiter für Zahngesundheit 
    • Patientennummern zuweisen
    • Profile bearbeiten
    • Suchfunktion
+   • Kritische medizinische Infos sichtbar
+
+📅 **Termine erstellen (NEU!)**
+   • Termine für Patienten anlegen
+   • Patienten-Auswahl via Dropdown
+   • Datum, Uhrzeit, Ort, Notizen
+   • Automatische Erinnerungen für Patienten
+   • Anzeige kritischer medizinischer Informationen
 
 💡 **Behandler-Empfehlungen erfassen**
    • Individuelle PZR-Empfehlungen
@@ -78,6 +98,24 @@ Die PZR Assistent Pro App ist Ihr professioneller Begleiter für Zahngesundheit 
 ---
 
 ## 💡 Highlights - Neu in Pro Version:
+
+🏥 **Medizinische Anamnese (NEU!)**
+- Vollständiges medizinisches Profil
+- Kritische Felder automatisch rot markiert
+- Allergien, Medikamente, Erkrankungen erfassen
+- Jährliche Aktualisierungs-Erinnerung
+- Pflichtfeld-Logik: Warnung bei Login wenn veraltet
+
+📅 **Terminverwaltung durch Mitarbeiter (NEU!)**
+- Mitarbeiter können Termine für Patienten erstellen
+- Patienten sehen Termine automatisch
+- Kritische medizinische Infos bei Terminen sichtbar
+- Automatische Erinnerungen
+
+👤 **Profil-Selbstverwaltung (NEU!)**
+- Patienten können eigene Daten bearbeiten
+- Name, E-Mail, Telefon aktualisieren
+- Sofortige Speicherung
 
 🎤 **Sprachaufnahme für Empfehlungen**
 - Klick auf Mikrofon-Symbol bei Empfehlungsfeldern
