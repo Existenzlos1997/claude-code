@@ -8,6 +8,9 @@
 https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_app.html
 ```
 
+> **Hinweis:** Nach dem Merge des Pull Requests ändert sich die URL zu:  
+> `https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/PZR_App/pzr_app.html`
+
 ## 🦷 Was ist die PZR App?
 
 Die PZR Assistent App hilft Ihnen bei der Verwaltung Ihrer professionellen Zahnreinigungstermine (PZR). Die App bietet:

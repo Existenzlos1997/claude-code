@@ -8,6 +8,9 @@
 https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_app.html
 ```
 
+> **Hinweis:** Nach dem Merge des Pull Requests wird die URL zu:  
+> `https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/PZR_App/pzr_app.html`
+
 ### 🔗 Oder verwenden Sie diesen Kurzlink:
 
 Öffnen Sie einfach den obigen Link in Ihrem Smartphone-Browser (Chrome, Safari, Firefox, etc.)

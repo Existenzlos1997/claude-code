@@ -339,9 +339,9 @@
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('info')">Info</button>
-            <button class="tab" onclick="switchTab('appointments')">Termine</button>
-            <button class="tab" onclick="switchTab('reminders')">Erinnerungen</button>
+            <button class="tab active" onclick="switchTab('info', event)">Info</button>
+            <button class="tab" onclick="switchTab('appointments', event)">Termine</button>
+            <button class="tab" onclick="switchTab('reminders', event)">Erinnerungen</button>
         </div>
 
         <div class="content">
@@ -491,6 +491,8 @@
         // Initialize the app
         let appointments = [];
         let reminders = [];
+        let notificationInterval = null;
+        let reminderIdCounter = 1;
 
         // Load data from localStorage
         function loadData() {
@@ -515,12 +517,21 @@
         }
 
         // Switch tabs
-        function switchTab(tabName) {
+        function switchTab(tabName, event) {
             // Update tab buttons
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback: find the tab by data or content
+                document.querySelectorAll('.tab').forEach(tab => {
+                    if (tab.textContent.toLowerCase().includes(tabName.substring(0, 4))) {
+                        tab.classList.add('active');
+                    }
+                });
+            }
 
             // Update tab content
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -641,7 +652,7 @@
                 reminder24h.setHours(reminder24h.getHours() - 24);
                 
                 reminders.push({
-                    id: Date.now() + 1,
+                    id: Date.now() + (reminderIdCounter++),
                     appointmentId: appointment.id,
                     time: reminder24h.toISOString(),
                     message: `Morgen um ${appointment.time} Uhr: ${appointment.title}`,
@@ -655,7 +666,7 @@
                 reminder1h.setHours(reminder1h.getHours() - 1);
                 
                 reminders.push({
-                    id: Date.now() + 2,
+                    id: Date.now() + (reminderIdCounter++),
                     appointmentId: appointment.id,
                     time: reminder1h.toISOString(),
                     message: `In 1 Stunde: ${appointment.title}`,
@@ -669,7 +680,7 @@
                 reminderAftercare.setMonth(reminderAftercare.getMonth() + 6);
                 
                 reminders.push({
-                    id: Date.now() + 3,
+                    id: Date.now() + (reminderIdCounter++),
                     appointmentId: appointment.id,
                     time: reminderAftercare.toISOString(),
                     message: `Zeit für die nächste PZR! Letzter Termin war vor 6 Monaten.`,
@@ -769,8 +780,7 @@
                 checkNotificationPermission();
                 if (permission === 'granted') {
                     new Notification('PZR Assistent', {
-                        body: 'Benachrichtigungen wurden aktiviert! Sie erhalten jetzt Erinnerungen für Ihre Termine.',
-                        icon: '🦷'
+                        body: 'Benachrichtigungen wurden aktiviert! Sie erhalten jetzt Erinnerungen für Ihre Termine.'
                     });
                     scheduleNotifications();
                 }
@@ -783,8 +793,13 @@
                 return;
             }
 
+            // Clear existing interval to prevent duplicates
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+            }
+
             // Check reminders every minute
-            setInterval(() => {
+            notificationInterval = setInterval(() => {
                 const now = new Date();
                 reminders.forEach(reminder => {
                     const reminderTime = new Date(reminder.time);
@@ -794,7 +809,6 @@
                     if (timeDiff > 0 && timeDiff < 60000) {
                         new Notification('🦷 PZR Erinnerung', {
                             body: reminder.message,
-                            icon: '🦷',
                             requireInteraction: true
                         });
                     }
