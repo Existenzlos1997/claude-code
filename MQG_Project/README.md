@@ -7,6 +7,31 @@
 
 ---
 
+## 📱 NEU: phyphox Integration - Zuverlässige Datenerfassung!
+
+**Problem gelöst:** Browser-Sensoren funktionieren nicht zuverlässig? **Nutzen Sie phyphox!**
+
+### Was ist phyphox?
+**phyphox** = Professional Physics App (RWTH Aachen University)
+- ✅ Zuverlässige Sensor-Datenaufzeichnung
+- ✅ Alle Smartphone-Sensoren verfügbar
+- ✅ Export in CSV/Excel
+- ✅ Kostenlos für iOS & Android
+
+### 3-Schritte zum ICQ:
+1. **📲 phyphox App installieren** (App Store / Play Store)
+2. **📊 Daten aufzeichnen & exportieren** (CSV)
+3. **📤 In MQG hochladen** → `smartphone_app_phyphox.html`
+
+**SOFORT TESTEN:**
+- Öffnen Sie: `smartphone_app_phyphox.html`
+- Laden Sie: `examples/phyphox_sample_data.csv`
+- Sehen Sie ICQ-Ergebnisse!
+
+**📖 Vollständige Anleitung:** `PHYPHOX_INTEGRATION.md`
+
+---
+
 ## 🚀 SCHNELLSTART: GPS-freies Ortungssystem JETZT testen!
 
 ### 📱 Auf dem Smartphone (30 Sekunden!)
