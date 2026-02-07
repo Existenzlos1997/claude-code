@@ -97,13 +97,24 @@ Die PZR Assistent Pro App ist eine professionelle Lösung für die Verwaltung vo
   - Putztechnik-Anpassungen
   - Hilfsmittel und Anwendung
   - Weitere Bemerkungen
+- **🎤 Spracheingabe**: Klicken Sie auf das Mikrofon-Symbol neben den Feldern, um Empfehlungen per Sprache zu erfassen
 
 #### Patienten bearbeiten
 - Alle Patientendaten aktualisieren
 - Empfehlungen anpassen
 - Individuelle Anweisungen pflegen
+- **🎤 Spracheingabe** für schnelle Erfassung
 
 ## 💡 Neue Highlights
+
+### 🎤 Sprachaufnahme für Empfehlungen (NEU!)
+- **Mikrofonzugriff**: Automatische Sprache-zu-Text-Konvertierung
+- **Fokussiert**: Nur Empfehlungen aufzeichnen, ohne alles drum herum
+- **Einfache Bedienung**: Klick auf Mikrofon-Symbol → Sprechen → Klick zum Stoppen
+- **Deutsche Spracherkennung**: Optimiert für medizinische Fachbegriffe
+- **Visuelle Anzeige**: Pulsierender Button während Aufnahme
+- **Echtzeit-Transkript**: Sehen Sie, was erfasst wird, während Sie sprechen
+- **Nachbearbeitung möglich**: Text kann nach Aufnahme angepasst werden
 
 ### Behandler-Empfehlungen mit Präsenz
 - **Prominente Darstellung**: Gelb-orange hervorgehobene Karten im Dashboard
@@ -127,12 +138,15 @@ Die PZR Assistent Pro App ist eine professionelle Lösung für die Verwaltung vo
 ## 🔧 Technische Details
 
 - **Technologie**: Pure HTML/CSS/JavaScript (keine Dependencies)
-- **Dateigröße**: ~54 KB (single file)
-- **Browser-Kompatibilität**: Moderne Browser (Chrome, Firefox, Safari, Edge)
+- **Dateigröße**: ~60 KB (single file)
+- **Browser-Kompatibilität**: 
+  - Moderne Browser (Chrome, Firefox, Safari, Edge)
+  - Spracherkennung: Chrome, Edge, Safari (Web Speech API)
 - **Responsive Design**: Optimiert für alle Bildschirmgrößen
 - **Benachrichtigungen**: Web Notifications API (Standard in modernen Browsern)
 - **Login-System**: Rollenbasierte Zugriffskontrolle
 - **Modal-Interface**: Für Patientenbearbeitung
+- **Spracherkennung**: Web Speech API mit deutscher Spracherkennung (de-DE)
 
 ## ⚠️ Wichtige Hinweise
 
@@ -154,6 +168,8 @@ Die PZR Assistent Pro App ist eine professionelle Lösung für die Verwaltung vo
 - 🔐 Login-System mit Rollenverwaltung
 - 💡 Prominente Behandler-Empfehlungen
 - 👨‍⚕️ Mitarbeiter-Interface zur Patientenverwaltung
+- 🎤 Sprachaufnahme für Empfehlungen (Web Speech API)
+- ⚡ Echtzeit-Sprache-zu-Text-Konvertierung
 
 ## 📞 Support
 

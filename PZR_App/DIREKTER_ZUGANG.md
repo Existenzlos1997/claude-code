@@ -68,9 +68,24 @@ Die PZR Assistent Pro App ist Ihr professioneller Begleiter für Zahngesundheit 
    • Hilfsmittel und Verwendung
    • Zusätzliche Bemerkungen
 
+🎤 **Sprachaufnahme (NEU!)**
+   • Mikrofon-Symbol bei jedem Empfehlungsfeld
+   • Sprache wird automatisch zu Text konvertiert
+   • Fokussiert nur auf Empfehlungen
+   • Deutsche Spracherkennung
+   • Echtzeit-Transkription
+
 ---
 
 ## 💡 Highlights - Neu in Pro Version:
+
+🎤 **Sprachaufnahme für Empfehlungen**
+- Klick auf Mikrofon-Symbol bei Empfehlungsfeldern
+- Automatische Sprache-zu-Text-Konvertierung
+- Nur Empfehlungen aufzeichnen (fokussiert)
+- Deutsche Spracherkennung (de-DE)
+- Visuelle Anzeige während Aufnahme
+- Echtzeit-Transkript sichtbar
 
 ✨ **Prominente Behandler-Empfehlungen**
 - Gelb-orange hervorgehobene Karten
