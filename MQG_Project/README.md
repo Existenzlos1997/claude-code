@@ -38,7 +38,14 @@
 
 **NEU:** Direkt auf Ihrem Smartphone testen - KEINE Installation nötig!
 
-**🔗 DIREKTER DOWNLOAD-LINK:**
+**🔗 DIREKTE DOWNLOAD-LINKS:**
+
+**⭐ phyphox-Integration (EMPFOHLEN - zuverlässige Datenerfassung):**
+```
+https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app_phyphox.html
+```
+
+**Alternative - Original App (direkte Browser-Sensoren):**
 ```
 https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app.html
 ```

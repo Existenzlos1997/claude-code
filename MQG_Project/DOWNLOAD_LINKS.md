@@ -2,13 +2,28 @@
 
 ## 🎯 Schnellste Methode: Direkter Link
 
-### Smartphone App direkt herunterladen:
+### ⭐ **NEU: phyphox-Integration App** (EMPFOHLEN)
 
 **Klicken Sie auf diesen Link auf Ihrem Smartphone:**
 
 ```
+https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app_phyphox.html
+```
+
+✅ **Diese Version nutzt phyphox-Daten für zuverlässige Sensormessungen!**
+- Upload von phyphox CSV-Dateien
+- Keine Browser-Sensor-Probleme
+- 100% zuverlässige Datenerfassung
+
+### Alternative: Original App (direkte Sensoren)
+
+**Für direkte Browser-Sensor-Nutzung:**
+
+```
 https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app.html
 ```
+
+⚠️ *Hinweis: Browser-Sensoren können eingeschränkt sein. Für beste Ergebnisse nutzen Sie die phyphox-Version oben!*
 
 **So funktioniert's:**
 1. Öffnen Sie diesen Link auf Ihrem Smartphone im Browser
@@ -66,12 +81,29 @@ Scannen Sie diesen QR-Code mit Ihrer Kamera-App:
 
 ## 🔗 Alle wichtigen Download-Links
 
-### Hauptdatei (Smartphone App):
+### Hauptdateien (Smartphone Apps):
+
+**phyphox-Integration (empfohlen):**
+```
+https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app_phyphox.html
+```
+
+**Original (direkte Sensoren):**
 ```
 https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app.html
 ```
 
 ### Dokumentation:
+- **phyphox Integration Anleitung:** 
+  ```
+  https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/PHYPHOX_INTEGRATION.md
+  ```
+
+- **Smartphone Datenerfassung:** 
+  ```
+  https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/SMARTPHONE_DATENERFASSUNG.md
+  ```
+
 - **Smartphone Anleitung:** 
   ```
   https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/SMARTPHONE_ANLEITUNG.md
@@ -94,7 +126,8 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mq
 ### Auf dem Smartphone (empfohlen):
 
 1. **Link öffnen:**
-   - Tippen Sie auf: https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app.html
+   - **phyphox-Version (empfohlen):** https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app_phyphox.html
+   - **Original-Version:** https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app.html
 
 2. **Seite speichern:**
    
@@ -153,14 +186,22 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mq
 
 ---
 
-## 📊 Was die App macht
+## 📊 Was die Apps machen
 
-Die Smartphone-App zeigt in Echtzeit:
-- **ICQ-Wert** (Information Coherence Quotient): 0.000 - 1.000
-- **Qualitäts-Balken**: Visuelles Feedback (rot → gelb → grün)
-- **Sensor-Daten**: Beschleunigung (X, Y, Z) und Rotation (α, β, γ)
+### phyphox-Integration App (smartphone_app_phyphox.html):
+- **Upload von phyphox CSV-Dateien**
+- **ICQ-Berechnung** aus importierten Sensordaten
+- **Visualisierung** mit Qualitäts-Balken (rot → gelb → grün)
+- **Daten-Vorschau** (erste 100 Samples)
+- **Export** der Ergebnisse als JSON
+- ✅ **100% zuverlässig** (keine Browser-Einschränkungen)
+
+### Original App (smartphone_app.html):
+- **Echtzeit-Sensoren**: Beschleunigung, Rotation
+- **ICQ-Wert live**: 0.000 - 1.000
 - **Position**: Geschätzte X/Y-Koordinaten
 - **Genauigkeit**: Basierend auf ICQ-Wert
+- ⚠️ Abhängig von Browser-Sensor-Zugriff
 
 ---
 
