@@ -8,17 +8,12 @@ Die PZR App ist jetzt eine **Progressive Web App (PWA)** und kann auf Android, i
 
 ## 🔗 Direkter Link zur App:
 
-**Haupt-App (PZR Assistent Pro):**
+**PZR Assistent Pro:**
 ```
 https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_app.html
 ```
 
-**Sync-Demo (Export/Import testen):**
-```
-https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_sync_demo.html
-```
-
-> **Nach Merge:** Links ändern sich zu `/main/` statt `/copilot/add-app-for-pzr-recommendations/`
+> **Nach Merge:** Link ändert sich zu `/main/PZR_App/pzr_app.html`
 
 ---
 

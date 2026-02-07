@@ -18,16 +18,18 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-fo
 
 ## 🦷 Was ist PZR Assistent Pro?
 
-Eine professionelle Lösung für Zahnarztpraxen zur Verwaltung von PZR-Terminen mit **Multi-User-System**, **Praxis-Verwaltung** und **medizinischer Anamnese**.
+Eine professionelle Lösung für Zahnarztpraxen zur Verwaltung von PZR-Terminen mit **Login-System**, **Praxis-Registrierung** und **medizinischer Anamnese**.
 
-### 🆕 NEU: Multi-Practice Support!
+### 🆕 Hauptfunktionen:
 
-- 🏥 **Praxis-Registrierung:** Jede Praxis kann sich selbst registrieren
+- 🏥 **Praxis-Registrierung:** Praxis kann sich selbst registrieren
 - 👥 **Multi-User:** Mehrere Mitarbeiter pro Praxis
 - 🔐 **Admin-System:** Erster Benutzer wird automatisch Administrator
-- 👨‍⚕️ **Mitarbeiter-Verwaltung:** Admins können Mitarbeiter hinzufügen
+- 👨‍⚕️ **Mitarbeiter-Verwaltung:** Admins können Mitarbeiter hinzufügen/verwalten
+- 📅 **Termine:** Behandler können Termine für Patienten erstellen
+- 🏥 **Anamnese:** Vollständige medizinische Vorgeschichte
+- 🎤 **Sprachaufnahme:** Empfehlungen per Sprache erfassen
 - 📱 **PWA-Installation:** Auf allen Plattformen installierbar
-- 🏢 **Daten-Trennung:** Jede Praxis hat eigene Daten
 
 ---
 
