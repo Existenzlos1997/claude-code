@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MQG ICQ-Analyse - phyphox Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+        }
+        
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .button:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .icq-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .icq-value {
+            font-size: 72px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .icq-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .quality-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        
+        .quality-fill {
+            height: 100%;
+            transition: width 0.5s, background-color 0.5s;
+            border-radius: 15px;
+        }
+        
+        .quality-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .sensor-data {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .sensor-data h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .data-row:last-child {
+            border-bottom: none;
+        }
+        
+        .data-label {
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .data-value {
+            color: #333;
+            font-family: monospace;
+        }
+        
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+        
+        .preview-table th {
+            background: #667eea;
+            color: white;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .preview-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .preview-table tr:nth-child(even) {
+            background: #f8f9ff;
+        }
+        
+        .file-info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .file-info strong {
+            color: #2e7d32;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #c62828;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #2196f3;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .icq-value {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 MQG ICQ-Analyse</h1>
+        <div class="subtitle">phyphox Daten-Integration</div>
+        
+        <div class="info-box">
+            <strong>📱 Hinweis:</strong> Laden Sie eine CSV- oder Excel-Datei von phyphox hoch, um den ICQ (Information Coherence Quotient) zu berechnen.
+        </div>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📤</div>
+            <div><strong>Datei auswählen oder hierher ziehen</strong></div>
+            <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                Unterstützte Formate: CSV, Excel (.xlsx)
+            </div>
+        </div>
+        
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+        
+        <button class="button" onclick="document.getElementById('fileInput').click()">
+            📁 Datei auswählen
+        </button>
+        
+        <div id="results" class="results">
+            <div id="fileInfo" class="file-info"></div>
+            
+            <div id="icqResults"></div>
+            
+            <div id="dataPreview" class="sensor-data"></div>
+            
+            <button class="button" onclick="exportResults()">
+                💾 Ergebnisse exportieren (JSON)
+            </button>
+            
+            <button class="button" onclick="resetApp()" style="background: #999;">
+                🔄 Neue Datei laden
+            </button>
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentData = null;
+        let icqResults = null;
+        
+        // Initialize
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+        
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+        
+        // Handle file upload
+        function handleFile(file) {
+            hideError();
+            
+            const filename = file.name.toLowerCase();
+            
+            if (filename.endsWith('.csv')) {
+                readCSV(file);
+            } else if (filename.endsWith('.xlsx') || filename.endsWith('.xls')) {
+                showError('Excel-Dateien werden derzeit nur im CSV-Format unterstützt. Bitte exportieren Sie Ihre phyphox-Daten als CSV.');
+            } else {
+                showError('Nicht unterstütztes Dateiformat. Bitte verwenden Sie CSV oder Excel (.xlsx).');
+            }
+        }
+        
+        // Read CSV file
+        function readCSV(file) {
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                try {
+                    const text = e.target.result;
+                    parseCSV(text, file.name);
+                } catch (error) {
+                    showError('Fehler beim Lesen der Datei: ' + error.message);
+                }
+            };
+            
+            reader.onerror = () => {
+                showError('Fehler beim Lesen der Datei.');
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Parse CSV data
+        function parseCSV(text, filename) {
+            const lines = text.trim().split('\n');
+            
+            if (lines.length < 2) {
+                showError('Datei enthält zu wenige Zeilen.');
+                return;
+            }
+            
+            // Detect delimiter
+            const delimiter = lines[0].includes('\t') ? '\t' : ',';
+            
+            // Parse header
+            const headers = lines[0].split(delimiter).map(h => h.trim());
+            
+            // Find time and data columns
+            let timeCol = -1;
+            const dataColumns = [];
+            
+            headers.forEach((header, index) => {
+                const lower = header.toLowerCase();
+                if (lower.includes('time') || lower.startsWith('t (')) {
+                    timeCol = index;
+                } else if (lower.includes('acceleration') || lower.includes('gyro') || 
+                           lower.includes('magnet') || !isNaN(parseFloat(header))) {
+                    dataColumns.push({ index, name: header });
+                }
+            });
+            
+            // Parse data rows
+            const data = {
+                time: [],
+                columns: {},
+                metadata: {
+                    filename: filename,
+                    samples: lines.length - 1,
+                    headers: headers
+                }
+            };
+            
+            dataColumns.forEach(col => {
+                data.columns[col.name] = [];
+            });
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(delimiter).map(v => v.trim());
+                
+                if (values.length !== headers.length) continue;
+                
+                // Time
+                if (timeCol >= 0) {
+                    const timeValue = parseFloat(values[timeCol]);
+                    if (!isNaN(timeValue)) {
+                        data.time.push(timeValue);
+                    }
+                } else {
+                    data.time.push(i * 0.01); // Assume 100 Hz
+                }
+                
+                // Data columns
+                dataColumns.forEach(col => {
+                    const value = parseFloat(values[col.index]);
+                    if (!isNaN(value)) {
+                        data.columns[col.name].push(value);
+                    }
+                });
+            }
+            
+            if (data.time.length === 0) {
+                showError('Keine gültigen Daten gefunden.');
+                return;
+            }
+            
+            currentData = data;
+            calculateICQ();
+            displayResults();
+        }
+        
+        // Calculate ICQ for each column
+        function calculateICQ() {
+            icqResults = {};
+            
+            for (const [name, values] of Object.entries(currentData.columns)) {
+                if (values.length > 0) {
+                    icqResults[name] = computeICQ(values);
+                }
+            }
+        }
+        
+        // Compute ICQ using the MQG formula
+        function computeICQ(data) {
+            if (data.length < 2) return 0;
+            
+            // Calculate transitions
+            const transitions = [];
+            for (let i = 1; i < data.length; i++) {
+                transitions.push(data[i] - data[i-1]);
+            }
+            
+            // Calculate statistics
+            const mean = transitions.reduce((a, b) => a + b, 0) / transitions.length;
+            const variance = transitions.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / transitions.length;
+            const stdDev = Math.sqrt(variance);
+            
+            // Calculate entropy (simplified Shannon entropy)
+            const range = Math.max(...data) - Math.min(...data);
+            if (range === 0) return 1.0; // Perfect coherence if no change
+            
+            // Normalize and bin data
+            const bins = 20;
+            const binCounts = new Array(bins).fill(0);
+            
+            data.forEach(value => {
+                const normalized = (value - Math.min(...data)) / range;
+                const binIndex = Math.min(Math.floor(normalized * bins), bins - 1);
+                binCounts[binIndex]++;
+            });
+            
+            // Calculate entropy
+            let entropy = 0;
+            binCounts.forEach(count => {
+                if (count > 0) {
+                    const p = count / data.length;
+                    entropy -= p * Math.log2(p);
+                }
+            });
+            
+            // Normalize entropy (0 to 1)
+            const maxEntropy = Math.log2(bins);
+            const normalizedEntropy = entropy / maxEntropy;
+            
+            // ICQ = 1 - normalized_entropy
+            const icq = 1 - normalizedEntropy;
+            
+            return Math.max(0, Math.min(1, icq)); // Clamp to [0, 1]
+        }
+        
+        // Display results
+        function displayResults() {
+            // File info
+            document.getElementById('fileInfo').innerHTML = `
+                <strong>📁 Datei:</strong> ${currentData.metadata.filename}<br>
+                <strong>📊 Datenpunkte:</strong> ${currentData.metadata.samples}<br>
+                <strong>⏱️ Dauer:</strong> ${(currentData.time[currentData.time.length - 1] - currentData.time[0]).toFixed(2)} Sekunden
+            `;
+            
+            // ICQ results
+            let icqHTML = '';
+            for (const [name, icq] of Object.entries(icqResults)) {
+                const quality = interpretICQ(icq);
+                const color = getICQColor(icq);
+                
+                icqHTML += `
+                    <div class="icq-display">
+                        <div class="icq-label">${name}</div>
+                        <div class="icq-value">${icq.toFixed(3)}</div>
+                        <div class="quality-bar">
+                            <div class="quality-fill" style="width: ${icq * 100}%; background-color: ${color};"></div>
+                        </div>
+                        <div class="quality-text">${quality}</div>
+                    </div>
+                `;
+            }
+            document.getElementById('icqResults').innerHTML = icqHTML;
+            
+            // Data preview (first 100 rows)
+            const previewRows = Math.min(100, currentData.time.length);
+            let previewHTML = '<h3>📋 Datenvorschau (erste ' + previewRows + ' Zeilen)</h3>';
+            previewHTML += '<table class="preview-table"><thead><tr>';
+            previewHTML += '<th>Zeit (s)</th>';
+            
+            for (const name of Object.keys(currentData.columns)) {
+                previewHTML += '<th>' + name + '</th>';
+            }
+            previewHTML += '</tr></thead><tbody>';
+            
+            for (let i = 0; i < previewRows; i++) {
+                previewHTML += '<tr>';
+                previewHTML += '<td>' + currentData.time[i].toFixed(2) + '</td>';
+                
+                for (const values of Object.values(currentData.columns)) {
+                    previewHTML += '<td>' + values[i].toFixed(4) + '</td>';
+                }
+                previewHTML += '</tr>';
+            }
+            previewHTML += '</tbody></table>';
+            
+            document.getElementById('dataPreview').innerHTML = previewHTML;
+            
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        // Interpret ICQ value
+        function interpretICQ(icq) {
+            if (icq >= 0.8) return 'Ausgezeichnet';
+            if (icq >= 0.6) return 'Gut';
+            if (icq >= 0.4) return 'Mittel';
+            if (icq >= 0.2) return 'Niedrig';
+            return 'Sehr niedrig';
+        }
+        
+        // Get color for ICQ value
+        function getICQColor(icq) {
+            if (icq >= 0.8) return '#4caf50';
+            if (icq >= 0.6) return '#8bc34a';
+            if (icq >= 0.4) return '#ffeb3b';
+            if (icq >= 0.2) return '#ff9800';
+            return '#f44336';
+        }
+        
+        // Export results as JSON
+        function exportResults() {
+            const results = {
+                metadata: currentData.metadata,
+                icq_values: icqResults,
+                interpretation: {}
+            };
+            
+            for (const [name, icq] of Object.entries(icqResults)) {
+                results.interpretation[name] = interpretICQ(icq);
+            }
+            
+            const json = JSON.stringify(results, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'mqg_icq_results.json';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+        
+        // Reset app
+        function resetApp() {
+            currentData = null;
+            icqResults = null;
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            hideError();
+        }
+        
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '⚠️ ' + message;
+            errorDiv.style.display = 'block';
+        }
+        
+        // Hide error message
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
