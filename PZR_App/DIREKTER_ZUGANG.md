@@ -1,4 +1,4 @@
-# 🦷 PZR Assistent - Direkter Smartphone-Zugang
+# 🦷 PZR Assistent Pro - Direkter Smartphone-Zugang
 
 ## 📱 Direkt auf dem Smartphone öffnen:
 
@@ -17,39 +17,85 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-fo
 
 ---
 
-## ✨ Was macht die App?
+## 🔐 Anmeldung - Demo-Zugänge:
 
-Die PZR Assistent App ist Ihr persönlicher Begleiter für professionelle Zahnreinigung:
+**Als Patient testen:**
+- Patientennummer: `PAT-12345`
+- PIN: `1234`
 
-### 📖 Info-Bereich
-- Detaillierte Erklärungen zur PZR (Professionelle Zahnreinigung)
-- 5-Schritte-Ablauf einer PZR-Behandlung
-- Wichtige Empfehlungen nach der Behandlung
-- Tipps für tägliche Mundhygiene
-- Vorteile regelmäßiger PZR
+**Als Mitarbeiter testen:**
+- Mitarbeiter-ID: `MA-001`
+- Passwort: `admin`
 
-### 📅 Termin-Verwaltung
-- Neue PZR-Termine anlegen
-- Datum, Uhrzeit, Praxis und Notizen speichern
-- Übersichtliche Anzeige aller Termine
-- Status-Anzeige: "Heute", "In X Tagen", "Vergangen"
-- Termine löschen
+---
 
-### 🔔 Erinnerungen (Konfigurierbar)
-- ⏰ **24 Stunden vorher** - Erinnerung am Vortag
-- ⏰ **1 Stunde vorher** - Kurz vor dem Termin
-- ⏰ **Nachsorge (6 Monate)** - Zeit für die nächste PZR
+## ✨ Was macht die App Pro?
+
+Die PZR Assistent Pro App ist Ihr professioneller Begleiter für Zahngesundheit mit **Behandler-Empfehlungen**:
+
+### 🔐 Login-System
+- Getrennte Anmeldung für Patienten und Mitarbeiter
+- Sichere PIN/Passwort-Authentifizierung
+- Rollenbasierte Oberflächen
+
+### 👤 Für Patienten:
+📖 **Dashboard mit Behandler-Empfehlungen**
+   • Personalisierte Empfehlungen prominent angezeigt
+   • Ihre individuelle Putztechnik
+   • Empfohlene Hilfsmittel und Anwendung
+   • Weitere wichtige Bemerkungen
+
+📅 **Termin-Verwaltung**
+   • Übersicht aller PZR-Termine
+   • Status-Anzeige (Heute, In X Tagen, Vergangen)
+
+🔔 **Erweiterte Erinnerungen**
+   • ⏰ 24 Stunden vorher - mit Empfehlungen
+   • ⏰ 1 Stunde vorher - mit Empfehlungen
+   • ⏰ Nachsorge (6 Monate später)
+   • Browser-Push-Benachrichtigungen mit persönlichen Hinweisen
+
+### 👨‍⚕️ Für Mitarbeiter:
+📋 **Patientenverwaltung**
+   • Neue Patienten anlegen
+   • Patientennummern zuweisen
+   • Profile bearbeiten
+   • Suchfunktion
+
+💡 **Behandler-Empfehlungen erfassen**
+   • Individuelle PZR-Empfehlungen
+   • Putztechnik-Anpassungen
+   • Hilfsmittel und Verwendung
+   • Zusätzliche Bemerkungen
+
+---
+
+## 💡 Highlights - Neu in Pro Version:
+
+✨ **Prominente Behandler-Empfehlungen**
+- Gelb-orange hervorgehobene Karten
+- Sofort sichtbar im Dashboard
+- In Erinnerungen eingebettet
+- Personalisiert für jeden Patienten
+
+🔐 **Login-System**
+- Sichere Anmeldung
+- Getrennte Interfaces für Patienten und Mitarbeiter
+- PIN-geschützte Patientendaten
 
 ---
 
 ## 💡 Schnellstart
 
 1. **Link öffnen** - Klicken Sie auf den obigen Link
-2. **Zum Homescreen hinzufügen** (optional):
+2. **Anmelden**:
+   - Als Patient: Patientennummer PAT-12345 + PIN 1234
+   - Als Mitarbeiter: MA-001 + Passwort admin
+3. **Dashboard erkunden** - Sehen Sie Ihre personalisierten Empfehlungen
+4. **Zum Homescreen hinzufügen** (optional):
    - iPhone: Safari-Menü → "Zum Home-Bildschirm"
    - Android: Chrome-Menü (⋮) → "Zum Startbildschirm hinzufügen"
-3. **Benachrichtigungen erlauben** - Für Erinnerungen (wird beim ersten Mal gefragt)
-4. **Ersten Termin eintragen** - Wechseln Sie zum "Termine"-Tab
+5. **Benachrichtigungen erlauben** - Für Erinnerungen (wird beim ersten Mal gefragt)
 
 ---
 

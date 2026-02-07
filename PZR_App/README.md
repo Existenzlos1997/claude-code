@@ -1,4 +1,4 @@
-# PZR Assistent - Smartphone App
+# PZR Assistent Pro - Smartphone App
 
 ## 📱 Direkter Download Link
 
@@ -11,13 +11,16 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-fo
 > **Hinweis:** Nach dem Merge des Pull Requests ändert sich die URL zu:  
 > `https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/PZR_App/pzr_app.html`
 
-## 🦷 Was ist die PZR App?
+## 🦷 Was ist die PZR App Pro?
 
-Die PZR Assistent App hilft Ihnen bei der Verwaltung Ihrer professionellen Zahnreinigungstermine (PZR). Die App bietet:
+Die PZR Assistent Pro App ist eine professionelle Lösung für die Verwaltung von PZR-Terminen mit **Behandler-Empfehlungen** und **Patientenverwaltung**. Die App bietet:
 
-- ✅ **Informationen über PZR**: Ausführliche Erklärungen zu Ablauf, Empfehlungen und Vorteilen
+- ✅ **Login-System**: Separate Anmeldung für Patienten und Mitarbeiter
+- ✅ **Behandler-Empfehlungen**: Personalisierte Empfehlungen vom Zahnarzt prominent angezeigt
+- ✅ **Patientenverwaltung**: Mitarbeiter können Patienten anlegen und verwalten
+- ✅ **Personalisierte Oberfläche**: Individuelle Putztechnik, Hilfsmittel und Bemerkungen
 - ✅ **Terminverwaltung**: Speichern und organisieren Sie Ihre PZR-Termine
-- ✅ **Erinnerungsfunktion**: Konfigurierbare Benachrichtigungen (24h vorher, 1h vorher, Nachsorge)
+- ✅ **Erweiterte Erinnerungen**: Erinnerungen mit eingebetteten Behandler-Empfehlungen
 - ✅ **Offline-fähig**: Alle Daten werden lokal auf Ihrem Smartphone gespeichert
 - ✅ **Smartphone-optimiert**: Responsive Design für optimale mobile Nutzung
 
@@ -37,35 +40,81 @@ Die PZR Assistent App hilft Ihnen bei der Verwaltung Ihrer professionellen Zahnr
 2. **Öffnen**: Navigieren Sie zu "Downloads" und öffnen Sie `pzr_app.html`
 3. Die App läuft komplett offline auf Ihrem Gerät
 
+## 🔐 Anmeldung
+
+### Demo-Zugangsdaten zum Testen:
+
+**Patient:**
+- Patientennummer: `PAT-12345`
+- PIN: `1234`
+
+**Mitarbeiter:**
+- Mitarbeiter-ID: `MA-001`
+- Passwort: `admin`
+
 ## 🎯 Funktionen im Detail
 
-### 📋 Info-Tab
-- Umfassende Informationen über die professionelle Zahnreinigung
-- Ablauf einer PZR-Behandlung (5 Schritte)
-- Empfehlungen nach der Behandlung
-- Tipps für tägliche Mundhygiene
-- Vorteile der regelmäßigen PZR
+### 👤 Patienten-Interface
 
-### 📅 Termine-Tab
-- Neue Termine hinzufügen mit:
-  - Bezeichnung (z.B. "PZR beim Dr. Müller")
-  - Datum und Uhrzeit
-  - Praxis/Ort
-  - Notizen
-- Übersicht aller Termine mit Status-Badges:
-  - "Heute" für heutige Termine
-  - "In X Tagen" für bevorstehende Termine
-  - "Vergangen" für abgelaufene Termine
-- Termine löschen mit einem Klick
+#### Dashboard
+- **Persönliches Profil**: Patientennummer, Name, Kontaktdaten
+- **Behandler-Empfehlungen**: Prominente Anzeige der wichtigsten Empfehlungen
+- **Nächste Termine**: Übersicht bevorstehender Termine
 
-### 🔔 Erinnerungen-Tab
+#### Empfehlungen
+- **Behandler-Empfehlungen nach PZR**: Individuell vom Zahnarzt festgelegte Hinweise
+- **Putztechnik**: Spezifische Anweisungen zur Zahnputztechnik
+- **Hilfsmittel**: Empfohlene Zahnpflegeprodukte und deren Anwendung
+- **Weitere Bemerkungen**: Zusätzliche individuelle Hinweise
+
+#### Termine
+- Übersicht aller Termine mit Status-Badges
+- "Heute" für heutige Termine
+- "In X Tagen" für bevorstehende Termine
+- "Vergangen" für abgelaufene Termine
+
+#### Erinnerungen
 - **Anpassbare Benachrichtigungen**:
   - ⏰ 24 Stunden vor dem Termin
   - ⏰ 1 Stunde vor dem Termin
   - ⏰ Nachsorge-Erinnerung (6 Monate nach dem Termin)
-- Automatische Erinnerungserstellung für jeden Termin
-- Übersicht aller aktiven Erinnerungen
-- Browser-Benachrichtigungen (müssen einmalig aktiviert werden)
+- **Mit Behandler-Empfehlungen**: Erinnerungen enthalten wichtige Empfehlungen
+- Browser-Benachrichtigungen mit personalisierten Hinweisen
+
+### 👨‍⚕️ Mitarbeiter-Interface
+
+#### Patientenverwaltung
+- **Patientenliste**: Übersicht aller Patienten
+- **Suchfunktion**: Suche nach Patientennummer oder Name
+- **Patientendetails**: Anzeige aller Patienteninformationen
+
+#### Neuen Patienten anlegen
+- Patientennummer vergeben
+- Name und Kontaktdaten erfassen
+- 4-stellige PIN festlegen
+- **Behandler-Empfehlungen** hinterlegen:
+  - Empfehlungen nach PZR
+  - Putztechnik-Anpassungen
+  - Hilfsmittel und Anwendung
+  - Weitere Bemerkungen
+
+#### Patienten bearbeiten
+- Alle Patientendaten aktualisieren
+- Empfehlungen anpassen
+- Individuelle Anweisungen pflegen
+
+## 💡 Neue Highlights
+
+### Behandler-Empfehlungen mit Präsenz
+- **Prominente Darstellung**: Gelb-orange hervorgehobene Karten im Dashboard
+- **In Erinnerungen eingebettet**: Empfehlungen werden direkt in Benachrichtigungen angezeigt
+- **Personalisiert**: Jeder Patient erhält individuelle Anweisungen
+- **Immer sichtbar**: Wichtige Hinweise auf dem Dashboard sofort erkennbar
+
+### Rollenbasiertes System
+- **Patienten**: Personalisierte Ansicht mit eigenen Empfehlungen
+- **Mitarbeiter**: Verwaltung aller Patienten und deren Profile
+- **Getrennte Anmeldung**: Sichere Zugriffskontrolle mit PIN/Passwort
 
 ## 💾 Datenspeicherung
 
@@ -73,29 +122,38 @@ Die PZR Assistent App hilft Ihnen bei der Verwaltung Ihrer professionellen Zahnr
 - **Keine Internetverbindung nötig**: Nach dem ersten Laden läuft alles offline
 - **Datenschutz**: Keine Daten werden an Server gesendet
 - **Daten bleiben erhalten**: Auch nach dem Schließen des Browsers
+- **Patientendaten**: Sicher lokal gespeichert mit PIN-Schutz
 
 ## 🔧 Technische Details
 
 - **Technologie**: Pure HTML/CSS/JavaScript (keine Dependencies)
+- **Dateigröße**: ~54 KB (single file)
 - **Browser-Kompatibilität**: Moderne Browser (Chrome, Firefox, Safari, Edge)
 - **Responsive Design**: Optimiert für alle Bildschirmgrößen
 - **Benachrichtigungen**: Web Notifications API (Standard in modernen Browsern)
+- **Login-System**: Rollenbasierte Zugriffskontrolle
+- **Modal-Interface**: Für Patientenbearbeitung
 
 ## ⚠️ Wichtige Hinweise
 
-1. **Benachrichtigungen aktivieren**: Für Erinnerungen müssen Sie Benachrichtigungen im Browser erlauben
-2. **Browser-Daten nicht löschen**: Ihre Termine und Erinnerungen werden gelöscht, wenn Sie den Browser-Cache leeren
-3. **Backup**: Notieren Sie wichtige Termine zusätzlich anderweitig
-4. **Keine medizinische App**: Dies ist ein Organisations-Tool, kein medizinischer Ratgeber
+1. **Login erforderlich**: Anmeldung mit Patientennummer/PIN oder Mitarbeiter-ID/Passwort
+2. **Demo-Daten**: Vorkonfigurierter Patient zum Testen (PAT-12345 / PIN: 1234)
+3. **Benachrichtigungen aktivieren**: Für Erinnerungen müssen Sie Benachrichtigungen im Browser erlauben
+4. **Browser-Daten nicht löschen**: Alle Daten werden gelöscht, wenn Sie den Browser-Cache leeren
+5. **Backup**: Notieren Sie wichtige Termine zusätzlich anderweitig
+6. **Keine medizinische App**: Dies ist ein Organisations-Tool, kein medizinischer Ratgeber
 
 ## 🎨 Features
 
 - ✨ Moderne, benutzerfreundliche Oberfläche
 - 🎨 Schönes Farbschema (Lila/Blau Gradient)
 - 📱 Touch-optimierte Bedienung
-- 🔔 Push-Benachrichtigungen
+- 🔔 Push-Benachrichtigungen mit Empfehlungen
 - 💫 Animierte Übergänge
 - 🌐 Komplett in Deutsch
+- 🔐 Login-System mit Rollenverwaltung
+- 💡 Prominente Behandler-Empfehlungen
+- 👨‍⚕️ Mitarbeiter-Interface zur Patientenverwaltung
 
 ## 📞 Support
 
