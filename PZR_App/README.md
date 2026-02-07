@@ -51,7 +51,7 @@ Die PZR Assistent Pro App ist eine professionelle Lösung für die Verwaltung vo
 - Patientennummer: `PAT-12345`
 - PIN: `1234`
 
-**Mitarbeiter:**
+**Behandler:**
 - Mitarbeiter-ID: `MA-001`
 - Passwort: `admin`
 

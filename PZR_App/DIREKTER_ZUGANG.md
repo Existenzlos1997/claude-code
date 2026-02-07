@@ -23,7 +23,7 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-fo
 - Patientennummer: `PAT-12345`
 - PIN: `1234`
 
-**Als Mitarbeiter testen:**
+**Als Behandler testen:**
 - Mitarbeiter-ID: `MA-001`
 - Passwort: `admin`
 
