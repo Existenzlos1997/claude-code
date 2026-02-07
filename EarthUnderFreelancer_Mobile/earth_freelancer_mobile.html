@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>EarthUnderFreelancer Mobile - Side Quest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0a2e 50%, #000428 100%);
+            color: #ffffff;
+            overflow: hidden;
+            touch-action: none;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        #gameContainer {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #gameCanvas {
+            flex: 1;
+            background: #000;
+            touch-action: none;
+        }
+
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .stat {
+            background: rgba(0,0,0,0.6);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(0,200,255,0.5);
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10;
+        }
+
+        .controlBtn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(0,100,200,0.6);
+            border: 3px solid rgba(0,200,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            touch-action: manipulation;
+            user-select: none;
+            box-shadow: 0 0 20px rgba(0,200,255,0.5);
+        }
+
+        .controlBtn:active {
+            background: rgba(0,150,255,0.8);
+            transform: scale(0.95);
+        }
+
+        #menuScreen, #factionScreen, #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0,212,255,0.8);
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #88ddff;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #aaa;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            margin: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,100,200,0.5);
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 10px rgba(0,100,200,0.5);
+        }
+
+        .faction {
+            background: rgba(20,20,40,0.8);
+            border: 2px solid #0099ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .faction:active {
+            background: rgba(0,100,200,0.6);
+            transform: scale(0.98);
+        }
+
+        .faction h3 {
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+
+        .faction p {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        #missionInfo {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #00ff00;
+            z-index: 9;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        #scoreDisplay {
+            font-size: 24px;
+            color: #ffdd00;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(255,221,0,0.8);
+        }
+
+        .controls-help {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            text-align: center;
+            z-index: 8;
+            pointer-events: none;
+        }
+
+        @media (max-height: 600px) {
+            h1 { font-size: 24px; }
+            h2 { font-size: 18px; }
+            .btn { padding: 12px 24px; font-size: 16px; }
+            .faction { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="hud">
+            <div id="stats">
+                <div class="stat">💚 <span id="health">100</span></div>
+                <div class="stat">⚡ <span id="shield">100</span></div>
+                <div class="stat">🎯 <span id="score">0</span></div>
+            </div>
+        </div>
+
+        <div id="missionInfo" class="hidden"></div>
+
+        <div id="controls" class="hidden">
+            <div class="controlBtn" id="fireBtn">🔥</div>
+            <div class="controlBtn" id="boostBtn">⚡</div>
+        </div>
+
+        <div id="menuScreen">
+            <h1>🚀 EarthUnderFreelancer</h1>
+            <h2>Mobile Side Quest</h2>
+            <p class="subtitle">Freelancer-Style Space Combat</p>
+            <button class="btn" onclick="showFactionSelect()">Neue Mission Starten</button>
+            <button class="btn" onclick="showInstructions()">Anleitung</button>
+            <p style="margin-top: 30px; font-size: 12px; color: #666;">
+                v1.0 - Browser Edition<br>
+                Touch to Control
+            </p>
+        </div>
+
+        <div id="factionScreen" class="hidden">
+            <h2>Wähle deine Fraktion</h2>
+            <div class="faction" onclick="selectFaction('UEDF')">
+                <h3>🛡️ UEDF</h3>
+                <p>United Earth Defense Force - Schutz & Ordnung</p>
+            </div>
+            <div class="faction" onclick="selectFaction('FTC')">
+                <h3>💰 FTC</h3>
+                <p>Free Traders Coalition - Handel & Profit</p>
+            </div>
+            <div class="faction" onclick="selectFaction('EG')">
+                <h3>🔬 Explorers Guild</h3>
+                <p>Wissenschaft & Entdeckung</p>
+            </div>
+            <div class="faction" onclick="selectFaction('CS')">
+                <h3>☠️ Crimson Syndicate</h3>
+                <p>Freiheit um jeden Preis</p>
+            </div>
+            <div class="faction" onclick="selectFaction('TE')">
+                <h3>⚙️ Technocratic Enclave</h3>
+                <p>Innovation & Effizienz</p>
+            </div>
+            <div class="faction" onclick="selectFaction('CIM')">
+                <h3>🌟 Colonial Independence</h3>
+                <p>Selbstbestimmung & Pioniergeist</p>
+            </div>
+        </div>
+
+        <div id="gameOverScreen" class="hidden">
+            <h1>Mission Beendet</h1>
+            <div id="scoreDisplay">Score: 0</div>
+            <div id="resultMessage"></div>
+            <button class="btn" onclick="restartGame()">Neue Mission</button>
+            <button class="btn" onclick="returnToMenu()">Hauptmenü</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const game = {
+            canvas: null,
+            ctx: null,
+            width: 0,
+            height: 0,
+            player: null,
+            enemies: [],
+            projectiles: [],
+            particles: [],
+            stars: [],
+            score: 0,
+            health: 100,
+            shield: 100,
+            faction: null,
+            gameRunning: false,
+            touchStart: { x: 0, y: 0 },
+            touchCurrent: { x: 0, y: 0 },
+            isTouching: false,
+            lastTime: 0,
+            enemiesDestroyed: 0,
+            missionTime: 0
+        };
+
+        // Initialize
+        function init() {
+            game.canvas = document.getElementById('gameCanvas');
+            game.ctx = game.canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Touch controls
+            game.canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            game.canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            game.canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+            
+            // Button controls
+            document.getElementById('fireBtn').addEventListener('touchstart', fireMissile);
+            document.getElementById('boostBtn').addEventListener('touchstart', activateBoost);
+            
+            createStarfield();
+            loadProgress();
+        }
+
+        function resizeCanvas() {
+            game.width = window.innerWidth;
+            game.height = window.innerHeight;
+            game.canvas.width = game.width;
+            game.canvas.height = game.height;
+        }
+
+        function showFactionSelect() {
+            document.getElementById('menuScreen').classList.add('hidden');
+            document.getElementById('factionScreen').classList.remove('hidden');
+        }
+
+        function selectFaction(faction) {
+            game.faction = faction;
+            startGame();
+        }
+
+        function startGame() {
+            document.getElementById('factionScreen').classList.add('hidden');
+            document.getElementById('controls').classList.remove('hidden');
+            
+            // Initialize player
+            game.player = {
+                x: game.width / 2,
+                y: game.height - 150,
+                vx: 0,
+                vy: 0,
+                angle: 0,
+                speed: 0,
+                maxSpeed: 8,
+                size: 20,
+                boost: false,
+                boostCooldown: 0
+            };
+            
+            game.score = 0;
+            game.health = 100;
+            game.shield = 100;
+            game.enemies = [];
+            game.projectiles = [];
+            game.particles = [];
+            game.enemiesDestroyed = 0;
+            game.missionTime = 0;
+            game.gameRunning = true;
+            
+            showMissionInfo('Mission Start! Zerstöre feindliche Jäger!', 3000);
+            
+            game.lastTime = performance.now();
+            gameLoop(game.lastTime);
+        }
+
+        function gameLoop(currentTime) {
+            if (!game.gameRunning) return;
+            
+            const deltaTime = Math.min((currentTime - game.lastTime) / 1000, 0.1);
+            game.lastTime = currentTime;
+            game.missionTime += deltaTime;
+            
+            update(deltaTime);
+            render();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(dt) {
+            // Update player
+            if (game.isTouching) {
+                const dx = game.touchCurrent.x - game.player.x;
+                const dy = game.touchCurrent.y - game.player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist > 5) {
+                    game.player.angle = Math.atan2(dy, dx);
+                    game.player.speed = Math.min(game.player.maxSpeed, dist / 20);
+                }
+            } else {
+                game.player.speed *= 0.95;
+            }
+            
+            if (game.player.boost && game.player.boostCooldown <= 0) {
+                game.player.speed = game.player.maxSpeed * 2;
+                createParticle(game.player.x, game.player.y, '#00ffff', 3);
+            }
+            
+            game.player.vx = Math.cos(game.player.angle) * game.player.speed;
+            game.player.vy = Math.sin(game.player.angle) * game.player.speed;
+            game.player.x += game.player.vx;
+            game.player.y += game.player.vy;
+            
+            // Keep player in bounds
+            game.player.x = Math.max(game.player.size, Math.min(game.width - game.player.size, game.player.x));
+            game.player.y = Math.max(game.player.size, Math.min(game.height - game.player.size, game.player.y));
+            
+            game.player.boost = false;
+            if (game.player.boostCooldown > 0) game.player.boostCooldown -= dt;
+            
+            // Spawn enemies
+            if (Math.random() < 0.02 && game.enemies.length < 5) {
+                spawnEnemy();
+            }
+            
+            // Update enemies
+            game.enemies.forEach((enemy, i) => {
+                const dx = game.player.x - enemy.x;
+                const dy = game.player.y - enemy.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                enemy.angle = Math.atan2(dy, dx);
+                enemy.x += Math.cos(enemy.angle) * enemy.speed;
+                enemy.y += Math.sin(enemy.angle) * enemy.speed;
+                
+                // Enemy shoots
+                if (Math.random() < 0.01 && dist < 300) {
+                    shootEnemyProjectile(enemy);
+                }
+                
+                // Remove off-screen enemies
+                if (enemy.x < -50 || enemy.x > game.width + 50 || 
+                    enemy.y < -50 || enemy.y > game.height + 50) {
+                    game.enemies.splice(i, 1);
+                }
+            });
+            
+            // Update projectiles
+            game.projectiles.forEach((proj, i) => {
+                proj.x += Math.cos(proj.angle) * proj.speed;
+                proj.y += Math.sin(proj.angle) * proj.speed;
+                proj.life -= dt;
+                
+                if (proj.life <= 0 || proj.x < 0 || proj.x > game.width || 
+                    proj.y < 0 || proj.y > game.height) {
+                    game.projectiles.splice(i, 1);
+                    return;
+                }
+                
+                // Check collisions
+                if (proj.friendly) {
+                    game.enemies.forEach((enemy, ei) => {
+                        const dx = proj.x - enemy.x;
+                        const dy = proj.y - enemy.y;
+                        if (Math.sqrt(dx * dx + dy * dy) < enemy.size) {
+                            game.enemies.splice(ei, 1);
+                            game.projectiles.splice(i, 1);
+                            game.score += 100;
+                            game.enemiesDestroyed++;
+                            createExplosion(enemy.x, enemy.y);
+                            updateHUD();
+                            
+                            if (game.enemiesDestroyed === 10) {
+                                endGame(true);
+                            }
+                        }
+                    });
+                } else {
+                    const dx = proj.x - game.player.x;
+                    const dy = proj.y - game.player.y;
+                    if (Math.sqrt(dx * dx + dy * dy) < game.player.size) {
+                        takeDamage(20);
+                        game.projectiles.splice(i, 1);
+                    }
+                }
+            });
+            
+            // Update particles
+            game.particles.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= dt;
+                p.alpha = p.life / p.maxLife;
+                if (p.life <= 0) {
+                    game.particles.splice(i, 1);
+                }
+            });
+        }
+
+        function render() {
+            const ctx = game.ctx;
+            
+            // Clear
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, game.width, game.height);
+            
+            // Stars
+            game.stars.forEach(star => {
+                ctx.fillStyle = `rgba(255,255,255,${star.brightness})`;
+                ctx.fillRect(star.x, star.y, star.size, star.size);
+            });
+            
+            // Particles
+            game.particles.forEach(p => {
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
+            });
+            ctx.globalAlpha = 1;
+            
+            // Player
+            ctx.save();
+            ctx.translate(game.player.x, game.player.y);
+            ctx.rotate(game.player.angle);
+            
+            // Shield
+            if (game.shield > 0) {
+                ctx.strokeStyle = `rgba(0,200,255,${game.shield/200})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, game.player.size + 5, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            
+            // Ship
+            ctx.fillStyle = getFactionColor(game.faction);
+            ctx.beginPath();
+            ctx.moveTo(game.player.size, 0);
+            ctx.lineTo(-game.player.size, -game.player.size/2);
+            ctx.lineTo(-game.player.size/2, 0);
+            ctx.lineTo(-game.player.size, game.player.size/2);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.restore();
+            
+            // Enemies
+            game.enemies.forEach(enemy => {
+                ctx.save();
+                ctx.translate(enemy.x, enemy.y);
+                ctx.rotate(enemy.angle);
+                ctx.fillStyle = '#ff0000';
+                ctx.beginPath();
+                ctx.moveTo(enemy.size, 0);
+                ctx.lineTo(-enemy.size, -enemy.size/2);
+                ctx.lineTo(-enemy.size/2, 0);
+                ctx.lineTo(-enemy.size, enemy.size/2);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            });
+            
+            // Projectiles
+            game.projectiles.forEach(proj => {
+                ctx.fillStyle = proj.friendly ? '#00ff00' : '#ff0000';
+                ctx.fillRect(proj.x - 2, proj.y - 2, 4, 4);
+            });
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = game.canvas.getBoundingClientRect();
+            game.touchStart.x = touch.clientX - rect.left;
+            game.touchStart.y = touch.clientY - rect.top;
+            game.touchCurrent.x = game.touchStart.x;
+            game.touchCurrent.y = game.touchStart.y;
+            game.isTouching = true;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (game.isTouching) {
+                const touch = e.touches[0];
+                const rect = game.canvas.getBoundingClientRect();
+                game.touchCurrent.x = touch.clientX - rect.left;
+                game.touchCurrent.y = touch.clientY - rect.top;
+            }
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            game.isTouching = false;
+        }
+
+        function fireMissile(e) {
+            e.preventDefault();
+            if (!game.gameRunning) return;
+            
+            game.projectiles.push({
+                x: game.player.x + Math.cos(game.player.angle) * game.player.size,
+                y: game.player.y + Math.sin(game.player.angle) * game.player.size,
+                angle: game.player.angle,
+                speed: 15,
+                life: 2,
+                friendly: true
+            });
+        }
+
+        function activateBoost(e) {
+            e.preventDefault();
+            if (!game.gameRunning || game.player.boostCooldown > 0) return;
+            game.player.boost = true;
+            game.player.boostCooldown = 2;
+        }
+
+        function spawnEnemy() {
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+            
+            if (side === 0) { x = Math.random() * game.width; y = -30; }
+            else if (side === 1) { x = game.width + 30; y = Math.random() * game.height; }
+            else if (side === 2) { x = Math.random() * game.width; y = game.height + 30; }
+            else { x = -30; y = Math.random() * game.height; }
+            
+            game.enemies.push({
+                x: x,
+                y: y,
+                angle: 0,
+                speed: 2 + Math.random(),
+                size: 15,
+                health: 100
+            });
+        }
+
+        function shootEnemyProjectile(enemy) {
+            game.projectiles.push({
+                x: enemy.x,
+                y: enemy.y,
+                angle: enemy.angle,
+                speed: 8,
+                life: 3,
+                friendly: false
+            });
+        }
+
+        function takeDamage(amount) {
+            if (game.shield > 0) {
+                game.shield -= amount;
+                if (game.shield < 0) {
+                    game.health += game.shield;
+                    game.shield = 0;
+                }
+            } else {
+                game.health -= amount;
+            }
+            
+            updateHUD();
+            
+            if (game.health <= 0) {
+                endGame(false);
+            }
+        }
+
+        function createParticle(x, y, color, count = 1) {
+            for (let i = 0; i < count; i++) {
+                game.particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    color: color,
+                    size: 3 + Math.random() * 3,
+                    life: 0.5 + Math.random() * 0.5,
+                    maxLife: 1,
+                    alpha: 1
+                });
+            }
+        }
+
+        function createExplosion(x, y) {
+            createParticle(x, y, '#ff6600', 15);
+            createParticle(x, y, '#ffff00', 10);
+        }
+
+        function createStarfield() {
+            game.stars = [];
+            for (let i = 0; i < 100; i++) {
+                game.stars.push({
+                    x: Math.random() * game.width,
+                    y: Math.random() * game.height,
+                    size: Math.random() < 0.5 ? 1 : 2,
+                    brightness: 0.3 + Math.random() * 0.7
+                });
+            }
+        }
+
+        function getFactionColor(faction) {
+            const colors = {
+                'UEDF': '#0066cc',
+                'FTC': '#00cc66',
+                'EG': '#cc00cc',
+                'CS': '#cc0000',
+                'TE': '#cccccc',
+                'CIM': '#ffcc00'
+            };
+            return colors[faction] || '#ffffff';
+        }
+
+        function updateHUD() {
+            document.getElementById('health').textContent = Math.max(0, Math.floor(game.health));
+            document.getElementById('shield').textContent = Math.max(0, Math.floor(game.shield));
+            document.getElementById('score').textContent = game.score;
+        }
+
+        function showMissionInfo(text, duration = 2000) {
+            const info = document.getElementById('missionInfo');
+            info.textContent = text;
+            info.classList.remove('hidden');
+            setTimeout(() => {
+                info.classList.add('hidden');
+            }, duration);
+        }
+
+        function endGame(won) {
+            game.gameRunning = false;
+            document.getElementById('controls').classList.add('hidden');
+            
+            const resultMessage = document.getElementById('resultMessage');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            
+            scoreDisplay.textContent = `Score: ${game.score}`;
+            
+            if (won) {
+                resultMessage.innerHTML = `
+                    <h2 style="color: #00ff00;">✅ Mission Erfolgreich!</h2>
+                    <p>Feinde zerstört: ${game.enemiesDestroyed}</p>
+                    <p>Zeit: ${Math.floor(game.missionTime)}s</p>
+                    <p>Fraktion: ${game.faction}</p>
+                `;
+            } else {
+                resultMessage.innerHTML = `
+                    <h2 style="color: #ff0000;">💥 Mission Gescheitert</h2>
+                    <p>Feinde zerstört: ${game.enemiesDestroyed}</p>
+                    <p>Überlebenszeit: ${Math.floor(game.missionTime)}s</p>
+                `;
+            }
+            
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            saveProgress();
+        }
+
+        function restartGame() {
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            startGame();
+        }
+
+        function returnToMenu() {
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('menuScreen').classList.remove('hidden');
+        }
+
+        function showInstructions() {
+            alert(
+                '🎮 STEUERUNG:\n\n' +
+                '👆 Touch & Drag - Schiff bewegen\n' +
+                '🔥 Fire Button - Schießen\n' +
+                '⚡ Boost Button - Boost aktivieren\n\n' +
+                '🎯 ZIEL:\n' +
+                'Zerstöre 10 feindliche Jäger!\n\n' +
+                '💚 Grün = Gesundheit\n' +
+                '⚡ Blau = Schilde\n' +
+                '🎯 Gelb = Punkte'
+            );
+        }
+
+        function saveProgress() {
+            const data = {
+                faction: game.faction,
+                highScore: Math.max(game.score, parseInt(localStorage.getItem('highScore') || '0')),
+                lastPlayed: new Date().toISOString()
+            };
+            localStorage.setItem('earthFreelancerMobile', JSON.stringify(data));
+            localStorage.setItem('highScore', data.highScore.toString());
+        }
+
+        function loadProgress() {
+            try {
+                const data = JSON.parse(localStorage.getItem('earthFreelancerMobile') || '{}');
+                if (data.faction) {
+                    console.log('Letzte Fraktion:', data.faction);
+                }
+                if (data.highScore) {
+                    console.log('High Score:', data.highScore);
+                }
+            } catch (e) {
+                console.log('Keine gespeicherten Daten');
+            }
+        }
+
+        // Start
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
