@@ -8,12 +8,17 @@ Die PZR App ist jetzt eine **Progressive Web App (PWA)** und kann auf Android, i
 
 ## 🔗 Direkter Link zur App:
 
-**Aktuelle Version:**
+**Haupt-App (PZR Assistent Pro):**
 ```
 https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_app.html
 ```
 
-> **Nach Merge:** `https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/PZR_App/pzr_app.html`
+**Sync-Demo (Export/Import testen):**
+```
+https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_sync_demo.html
+```
+
+> **Nach Merge:** Links ändern sich zu `/main/` statt `/copilot/add-app-for-pzr-recommendations/`
 
 ---
 
@@ -157,10 +162,20 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-fo
 ✅ **Keine Cloud:** Keine Datenübertragung an Server  
 ✅ **Offline-fähig:** Funktioniert komplett ohne Internet  
 ✅ **Automatische Sync:** Änderungen sofort gespeichert  
-✅ **Multi-Device:** Pro Gerät eigene Daten (localStorage)
+✅ **Export/Import:** Daten zwischen Geräten teilen mit QR-Code
 
-> **Hinweis:** Da Daten lokal gespeichert werden, sind sie geräte-spezifisch.  
-> Für Datenaustausch zwischen Geräten: Später kommt Export/Import-Funktion.
+### 🔄 Cross-Device Sync (Export/Import)
+
+**Daten auf anderem Gerät nutzen:**
+
+1. **PC 1:** Daten exportieren → QR-Code wird angezeigt
+2. **PC 2 / Smartphone:** Daten importieren → QR-Code scannen
+3. **Fertig!** Alle Daten verfügbar
+
+**Demo testen:** Öffnen Sie die Sync-Demo (Link oben) um Export/Import zu testen!
+
+> **Hinweis:** Export/Import ist manuell, keine automatische Cloud-Sync.  
+> Perfekt für gelegentlichen Gerätewechsel und Datensicherung!
 
 ---
 
@@ -216,6 +231,22 @@ https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-fo
 - 📱 **PWA-Installation:** Auf allen Plattformen installierbar
 - 💾 **Verbesserte Sync:** Letzte Änderung wird getrackt
 - 🏢 **Multi-Practice:** Mehrere Praxen nutzbar
+- 🔄 **Export/Import:** Cross-Device Datenaustausch mit QR-Codes (Demo verfügbar!)
+
+---
+
+## 🔄 Sync-Demo: Export/Import testen
+
+Möchten Sie sehen wie Cross-Device Sync funktioniert?
+
+**Öffnen Sie die Sync-Demo:** (Link oben unter "Sync-Demo")
+
+1. Demo-Daten erstellen
+2. Exportieren → QR-Code anzeigen
+3. In anderem Browser/Gerät öffnen
+4. Importieren → Fertig!
+
+Perfekt zum Testen und Verstehen wie Datenaustausch funktioniert.
 
 ---
 
