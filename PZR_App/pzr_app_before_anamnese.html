@@ -656,84 +656,6 @@
         .mic-permission-info strong {
             color: #1976d2;
         }
-
-        /* Medical History (Anamnese) Styles */
-        .anamnese-warning {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .anamnese-warning h3 {
-            color: #f57c00;
-            margin-top: 0;
-        }
-
-        .anamnese-form {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .anamnese-section {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .anamnese-section h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .critical-item {
-            background: #ffebee;
-            border-left: 4px solid #f44336;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-        }
-
-        .critical-item strong {
-            color: #d32f2f;
-        }
-
-        .warning-badge {
-            background: #f44336;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-
-        .last-updated {
-            font-size: 12px;
-            color: #666;
-            font-style: italic;
-            margin-top: 10px;
-        }
-
-        .checkbox-item {
-            margin-bottom: 8px;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: auto;
-            margin-right: 8px;
-        }
-
-        .checkbox-item label {
-            display: inline;
-            font-weight: normal;
-            margin-bottom: 0;
-        }
     </style>
 </head>
 <body>
@@ -797,8 +719,7 @@
             <div id="patientInterface" class="hidden">
                 <div class="tabs">
                     <button class="tab active" onclick="switchTab('dashboard', event)">Dashboard</button>
-                    <button class="tab" onclick="switchTab('profile', event)">Profil</button>
-                    <button class="tab" onclick="switchTab('anamnese', event)">Anamnese</button>
+                    <button class="tab" onclick="switchTab('recommendations', event)">Empfehlungen</button>
                     <button class="tab" onclick="switchTab('appointments', event)">Termine</button>
                     <button class="tab" onclick="switchTab('reminders', event)">Erinnerungen</button>
                 </div>
@@ -827,109 +748,6 @@
                             <div id="upcomingAppointmentsList">
                                 <!-- Will be populated by JavaScript -->
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Profile Edit Tab -->
-                    <div id="profile" class="tab-content">
-                        <h2>Mein Profil bearbeiten</h2>
-                        
-                        <div class="form-group">
-                            <label for="patientEditName">Name</label>
-                            <input type="text" id="patientEditName">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="patientEditEmail">E-Mail</label>
-                            <input type="text" id="patientEditEmail">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="patientEditPhone">Telefon</label>
-                            <input type="text" id="patientEditPhone">
-                        </div>
-
-                        <button class="btn" onclick="savePatientProfile()">Profil speichern</button>
-                    </div>
-
-                    <!-- Medical History (Anamnese) Tab -->
-                    <div id="anamnese" class="tab-content">
-                        <h2>Medizinische Anamnese</h2>
-                        
-                        <div id="anamneseUpdateWarning" class="anamnese-warning" style="display: none;">
-                            <h3>⚠️ Aktualisierung erforderlich</h3>
-                            <p>Ihre Anamnese ist älter als 1 Jahr. Bitte aktualisieren Sie Ihre Angaben.</p>
-                        </div>
-
-                        <div class="anamnese-form">
-                            <div class="anamnese-section">
-                                <h4>🔴 Kritische Angaben</h4>
-                                
-                                <div class="form-group">
-                                    <label for="allergies">Allergien (besonders wichtig!)</label>
-                                    <textarea id="allergies" placeholder="z.B. Penicillin, Latex, Lokalanästhetika..."></textarea>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="medications">Aktuelle Medikamente</label>
-                                    <textarea id="medications" placeholder="z.B. Blutverdünner, Insulin, Antibiotika..."></textarea>
-                                </div>
-
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="bleedingTendency">
-                                    <label for="bleedingTendency">Blutungsneigung</label>
-                                </div>
-
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="heartDisease">
-                                    <label for="heartDisease">Herz-Kreislauf-Erkrankungen</label>
-                                </div>
-
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="diabetes">
-                                    <label for="diabetes">Diabetes</label>
-                                </div>
-
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="pregnancy">
-                                    <label for="pregnancy">Schwangerschaft</label>
-                                </div>
-                            </div>
-
-                            <div class="anamnese-section">
-                                <h4>📋 Weitere Angaben</h4>
-                                
-                                <div class="form-group">
-                                    <label for="chronicConditions">Chronische Erkrankungen</label>
-                                    <textarea id="chronicConditions" placeholder="z.B. Asthma, Epilepsie, Hepatitis..."></textarea>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="previousSurgeries">Frühere Operationen</label>
-                                    <textarea id="previousSurgeries" placeholder="z.B. Herzoperation, Gelenkersatz..."></textarea>
-                                </div>
-
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="smoker">
-                                    <label for="smoker">Raucher</label>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="alcoholConsumption">Alkoholkonsum</label>
-                                    <select id="alcoholConsumption">
-                                        <option value="none">Kein</option>
-                                        <option value="occasional">Gelegentlich</option>
-                                        <option value="regular">Regelmäßig</option>
-                                        <option value="daily">Täglich</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="last-updated" id="anamneseLastUpdated">
-                                Zuletzt aktualisiert: Noch nie
-                            </div>
-
-                            <button class="btn" onclick="saveAnamnese()">Anamnese speichern</button>
                         </div>
                     </div>
 
@@ -1010,7 +828,6 @@
             <div id="employeeInterface" class="hidden">
                 <div class="tabs">
                     <button class="tab active" onclick="switchTab('patientManagement', event)">Patienten</button>
-                    <button class="tab" onclick="switchTab('employeeAppointments', event)">Termine</button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
                 </div>
 
@@ -1025,54 +842,6 @@
                         </div>
 
                         <div id="patientListContainer" class="patient-list">
-                            <!-- Will be populated by JavaScript -->
-                        </div>
-                    </div>
-
-                    <!-- Employee Appointments Tab -->
-                    <div id="employeeAppointments" class="tab-content">
-                        <h2>Termine verwalten</h2>
-                        
-                        <div class="appointment-form">
-                            <h3>Neuer Termin</h3>
-                            
-                            <div class="form-group">
-                                <label for="appointmentPatient">Patient *</label>
-                                <select id="appointmentPatient">
-                                    <option value="">Bitte wählen...</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="appointmentTitle">Bezeichnung</label>
-                                <input type="text" id="appointmentTitle" value="Professionelle Zahnreinigung">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="appointmentDate">Datum *</label>
-                                <input type="date" id="appointmentDate">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="appointmentTime">Uhrzeit *</label>
-                                <input type="time" id="appointmentTime">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="appointmentLocation">Praxis/Ort</label>
-                                <input type="text" id="appointmentLocation" placeholder="z.B. Praxis Dr. Schmidt">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="appointmentNotes">Notizen</label>
-                                <textarea id="appointmentNotes" placeholder="Zusätzliche Informationen..."></textarea>
-                            </div>
-
-                            <button class="btn" onclick="createAppointment()">Termin erstellen</button>
-                        </div>
-
-                        <h3>Alle Termine</h3>
-                        <div id="employeeAppointmentsList">
                             <!-- Will be populated by JavaScript -->
                         </div>
                     </div>
@@ -1381,7 +1150,7 @@
         function initDemoData() {
             const savedPatients = localStorage.getItem('pzrPatients');
             if (!savedPatients) {
-                // Create demo patient with medical history
+                // Create demo patient
                 patients = [{
                     id: 'PAT-12345',
                     patientNumber: 'PAT-12345',
@@ -1393,44 +1162,11 @@
                     brushingTechnique: 'Bass-Technik empfohlen: Zahnbürste im 45-Grad-Winkel ansetzen, kleine rüttelnde Bewegungen. Mindestens 3 Minuten putzen.',
                     toolsUsage: 'Interdentalbürsten Größe 3 für Backenzähne, Größe 2 für Frontzähne. Elektrische Zahnbürste mit Drucksensor verwenden. Mundspülung 2x täglich.',
                     notes: 'Nächster Termin in 6 Monaten. Bei Zahnfleischbluten bitte früher kommen.',
-                    created: new Date().toISOString(),
-                    // Medical History
-                    anamnese: {
-                        allergies: '',
-                        medications: '',
-                        bleedingTendency: false,
-                        heartDisease: false,
-                        diabetes: false,
-                        pregnancy: false,
-                        chronicConditions: '',
-                        previousSurgeries: '',
-                        smoker: false,
-                        alcoholConsumption: 'none',
-                        lastUpdated: null
-                    }
+                    created: new Date().toISOString()
                 }];
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             } else {
                 patients = JSON.parse(savedPatients);
-                // Ensure all patients have anamnese object
-                patients.forEach(p => {
-                    if (!p.anamnese) {
-                        p.anamnese = {
-                            allergies: '',
-                            medications: '',
-                            bleedingTendency: false,
-                            heartDisease: false,
-                            diabetes: false,
-                            pregnancy: false,
-                            chronicConditions: '',
-                            previousSurgeries: '',
-                            smoker: false,
-                            alcoholConsumption: 'none',
-                            lastUpdated: null
-                        };
-                    }
-                });
-                localStorage.setItem('pzrPatients', JSON.stringify(patients));
             }
 
             // Create demo employee
@@ -1496,22 +1232,6 @@
             const patient = patients.find(p => p.patientNumber === patientNumber && p.pin === pin);
             
             if (patient) {
-                // Check if anamnese needs update (older than 1 year)
-                if (patient.anamnese && patient.anamnese.lastUpdated) {
-                    const lastUpdate = new Date(patient.anamnese.lastUpdated);
-                    const oneYearAgo = new Date();
-                    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                    
-                    if (lastUpdate < oneYearAgo) {
-                        alert('Ihre medizinische Anamnese ist älter als 1 Jahr.\n\nBitte aktualisieren Sie Ihre Angaben nach dem Login im Tab "Anamnese".');
-                    }
-                }
-                
-                // Check if anamnese was never filled
-                if (!patient.anamnese.lastUpdated) {
-                    alert('Bitte füllen Sie Ihre medizinische Anamnese aus.\n\nNach dem Login finden Sie das Formular im Tab "Anamnese".');
-                }
-                
                 currentUser = patient;
                 currentRole = 'patient';
                 showMainApp();
@@ -1603,21 +1323,6 @@
             
             // Load reminders
             updateRemindersList();
-            
-            // Load profile edit fields
-            loadProfileEditFields();
-            
-            // Load anamnese
-            loadAnamneseData();
-        }
-
-        // Load profile edit fields
-        function loadProfileEditFields() {
-            if (!currentUser) return;
-            
-            document.getElementById('patientEditName').value = currentUser.name || '';
-            document.getElementById('patientEditEmail').value = currentUser.email || '';
-            document.getElementById('patientEditPhone').value = currentUser.phone || '';
         }
 
         // Load recommendations
@@ -2024,268 +1729,6 @@
                     }
                 });
             }, 60000); // Check every minute
-        }
-
-        // Save patient profile
-        function savePatientProfile() {
-            if (!currentUser || currentRole !== 'patient') return;
-            
-            const name = document.getElementById('patientEditName').value.trim();
-            const email = document.getElementById('patientEditEmail').value.trim();
-            const phone = document.getElementById('patientEditPhone').value.trim();
-            
-            if (!name) {
-                alert('Bitte geben Sie einen Namen ein.');
-                return;
-            }
-            
-            currentUser.name = name;
-            currentUser.email = email;
-            currentUser.phone = phone;
-            
-            // Update in patients array
-            const index = patients.findIndex(p => p.id === currentUser.id);
-            if (index >= 0) {
-                patients[index] = currentUser;
-            }
-            
-            saveData();
-            loadPatientDashboard();
-            alert('Profil erfolgreich gespeichert!');
-        }
-
-        // Load anamnese data
-        function loadAnamneseData() {
-            if (!currentUser || !currentUser.anamnese) return;
-            
-            const a = currentUser.anamnese;
-            
-            document.getElementById('allergies').value = a.allergies || '';
-            document.getElementById('medications').value = a.medications || '';
-            document.getElementById('bleedingTendency').checked = a.bleedingTendency || false;
-            document.getElementById('heartDisease').checked = a.heartDisease || false;
-            document.getElementById('diabetes').checked = a.diabetes || false;
-            document.getElementById('pregnancy').checked = a.pregnancy || false;
-            document.getElementById('chronicConditions').value = a.chronicConditions || '';
-            document.getElementById('previousSurgeries').value = a.previousSurgeries || '';
-            document.getElementById('smoker').checked = a.smoker || false;
-            document.getElementById('alcoholConsumption').value = a.alcoholConsumption || 'none';
-            
-            // Update last updated display
-            const lastUpdatedEl = document.getElementById('anamneseLastUpdated');
-            if (a.lastUpdated) {
-                const date = new Date(a.lastUpdated);
-                lastUpdatedEl.textContent = `Zuletzt aktualisiert: ${formatDate(date.toISOString().split('T')[0])}`;
-                
-                // Check if older than 1 year
-                const oneYearAgo = new Date();
-                oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                if (date < oneYearAgo) {
-                    document.getElementById('anamneseUpdateWarning').style.display = 'block';
-                } else {
-                    document.getElementById('anamneseUpdateWarning').style.display = 'none';
-                }
-            } else {
-                lastUpdatedEl.textContent = 'Zuletzt aktualisiert: Noch nie';
-                document.getElementById('anamneseUpdateWarning').style.display = 'block';
-            }
-        }
-
-        // Save anamnese
-        function saveAnamnese() {
-            if (!currentUser || currentRole !== 'patient') return;
-            
-            if (!currentUser.anamnese) {
-                currentUser.anamnese = {};
-            }
-            
-            currentUser.anamnese.allergies = document.getElementById('allergies').value.trim();
-            currentUser.anamnese.medications = document.getElementById('medications').value.trim();
-            currentUser.anamnese.bleedingTendency = document.getElementById('bleedingTendency').checked;
-            currentUser.anamnese.heartDisease = document.getElementById('heartDisease').checked;
-            currentUser.anamnese.diabetes = document.getElementById('diabetes').checked;
-            currentUser.anamnese.pregnancy = document.getElementById('pregnancy').checked;
-            currentUser.anamnese.chronicConditions = document.getElementById('chronicConditions').value.trim();
-            currentUser.anamnese.previousSurgeries = document.getElementById('previousSurgeries').value.trim();
-            currentUser.anamnese.smoker = document.getElementById('smoker').checked;
-            currentUser.anamnese.alcoholConsumption = document.getElementById('alcoholConsumption').value;
-            currentUser.anamnese.lastUpdated = new Date().toISOString();
-            
-            // Update in patients array
-            const index = patients.findIndex(p => p.id === currentUser.id);
-            if (index >= 0) {
-                patients[index] = currentUser;
-            }
-            
-            saveData();
-            loadAnamneseData();
-            alert('Anamnese erfolgreich gespeichert!');
-        }
-
-        // Create appointment (employee)
-        function createAppointment() {
-            const patientId = document.getElementById('appointmentPatient').value;
-            const title = document.getElementById('appointmentTitle').value.trim();
-            const date = document.getElementById('appointmentDate').value;
-            const time = document.getElementById('appointmentTime').value;
-            const location = document.getElementById('appointmentLocation').value.trim();
-            const notes = document.getElementById('appointmentNotes').value.trim();
-            
-            if (!patientId || !date || !time) {
-                alert('Bitte wählen Sie einen Patienten, Datum und Uhrzeit aus.');
-                return;
-            }
-            
-            const appointment = {
-                id: Date.now(),
-                patientId: patientId,
-                title: title || 'Professionelle Zahnreinigung',
-                date,
-                time,
-                location,
-                notes,
-                created: new Date().toISOString()
-            };
-            
-            appointments.push(appointment);
-            appointments.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
-            
-            // Create reminders for the appointment
-            createRemindersForAppointment(appointment);
-            
-            saveData();
-            loadEmployeeAppointmentsList();
-            
-            // Clear form
-            document.getElementById('appointmentPatient').value = '';
-            document.getElementById('appointmentTitle').value = 'Professionelle Zahnreinigung';
-            document.getElementById('appointmentDate').value = '';
-            document.getElementById('appointmentTime').value = '';
-            document.getElementById('appointmentLocation').value = '';
-            document.getElementById('appointmentNotes').value = '';
-            
-            alert('Termin erfolgreich erstellt!');
-        }
-
-        // Create reminders for appointment
-        function createRemindersForAppointment(appointment) {
-            const appointmentDate = new Date(appointment.date + ' ' + appointment.time);
-            
-            // 24h reminder
-            if (document.getElementById('reminder24h') && document.getElementById('reminder24h').checked) {
-                const reminder24h = new Date(appointmentDate);
-                reminder24h.setHours(reminder24h.getHours() - 24);
-                
-                reminders.push({
-                    id: Date.now() + (reminderIdCounter++),
-                    appointmentId: appointment.id,
-                    patientId: appointment.patientId,
-                    time: reminder24h.toISOString(),
-                    message: `Morgen um ${appointment.time} Uhr: ${appointment.title}`,
-                    type: '24h'
-                });
-            }
-
-            // 1h reminder
-            if (document.getElementById('reminder1h') && document.getElementById('reminder1h').checked) {
-                const reminder1h = new Date(appointmentDate);
-                reminder1h.setHours(reminder1h.getHours() - 1);
-                
-                reminders.push({
-                    id: Date.now() + (reminderIdCounter++),
-                    appointmentId: appointment.id,
-                    patientId: appointment.patientId,
-                    time: reminder1h.toISOString(),
-                    message: `In 1 Stunde: ${appointment.title}`,
-                    type: '1h'
-                });
-            }
-
-            // Aftercare reminder (6 months)
-            if (document.getElementById('reminderAftercare') && document.getElementById('reminderAftercare').checked) {
-                const reminderAftercare = new Date(appointmentDate);
-                reminderAftercare.setMonth(reminderAftercare.getMonth() + 6);
-                
-                reminders.push({
-                    id: Date.now() + (reminderIdCounter++),
-                    appointmentId: appointment.id,
-                    patientId: appointment.patientId,
-                    time: reminderAftercare.toISOString(),
-                    message: `Zeit für die nächste PZR! Letzter Termin war vor 6 Monaten.`,
-                    type: 'aftercare'
-                });
-            }
-
-            scheduleNotifications();
-        }
-
-        // Load employee appointments list
-        function loadEmployeeAppointmentsList() {
-            const container = document.getElementById('employeeAppointmentsList');
-            
-            if (appointments.length === 0) {
-                container.innerHTML = '<p class="empty-state">Noch keine Termine vorhanden.</p>';
-                return;
-            }
-
-            const now = new Date();
-            container.innerHTML = appointments.map(apt => {
-                const patient = patients.find(p => p.id === apt.patientId);
-                const appointmentDate = new Date(apt.date + ' ' + apt.time);
-                const isUpcoming = appointmentDate > now;
-                const isPast = appointmentDate < now;
-                const isToday = appointmentDate.toDateString() === now.toDateString();
-                
-                let badge = '';
-                if (isToday) {
-                    badge = '<span class="badge">Heute</span>';
-                } else if (isUpcoming) {
-                    const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
-                    badge = `<span class="badge upcoming">In ${daysUntil} Tag${daysUntil > 1 ? 'en' : ''}</span>`;
-                } else {
-                    badge = '<span class="badge past">Vergangen</span>';
-                }
-
-                // Check for critical medical history
-                let warning = '';
-                if (patient && patient.anamnese) {
-                    const critical = [];
-                    if (patient.anamnese.allergies) critical.push('Allergien');
-                    if (patient.anamnese.bleedingTendency) critical.push('Blutungsneigung');
-                    if (patient.anamnese.heartDisease) critical.push('Herzerkrankung');
-                    if (patient.anamnese.diabetes) critical.push('Diabetes');
-                    if (patient.anamnese.pregnancy) critical.push('Schwangerschaft');
-                    if (patient.anamnese.medications) critical.push('Medikamente');
-                    
-                    if (critical.length > 0) {
-                        warning = `<p style="color: #f44336; font-weight: 600;">⚠️ Wichtig: ${critical.join(', ')}</p>`;
-                    }
-                }
-
-                return `
-                    <div class="appointment-item">
-                        <h4>${apt.title}${badge}</h4>
-                        <p>👤 Patient: ${patient ? patient.name + ' (' + patient.patientNumber + ')' : 'Unbekannt'}</p>
-                        <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
-                        ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
-                        ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
-                        ${warning}
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Load patient list and populate appointment select
-        function loadEmployeeDashboard() {
-            loadPatientList();
-            loadEmployeeAppointmentsList();
-            
-            // Populate patient select for appointments
-            const select = document.getElementById('appointmentPatient');
-            if (select) {
-                select.innerHTML = '<option value="">Bitte wählen...</option>' + 
-                    patients.map(p => `<option value="${p.id}">${p.name} (${p.patientNumber})</option>`).join('');
-            }
         }
 
         // Initialize app

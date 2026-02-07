@@ -1,0 +1,19 @@
+Medical History Fields (Anamnese):
+1. Allergien (Allergies)
+2. Aktuelle Medikamente (Current Medications)
+3. Chronische Erkrankungen (Chronic Conditions)
+4. Frühere Operationen (Previous Surgeries)
+5. Herz-Kreislauf-Erkrankungen (Cardiovascular Diseases)
+6. Diabetes
+7. Blutungsneigung (Bleeding Tendency)
+8. Schwangerschaft (Pregnancy)
+9. Raucher/Nichtraucher (Smoker/Non-smoker)
+10. Alkoholkonsum (Alcohol Consumption)
+
+Critical Items (Auto-highlight in RED):
+- Allergies
+- Bleeding tendency
+- Heart conditions
+- Diabetes
+- Pregnancy
+- Current medications
