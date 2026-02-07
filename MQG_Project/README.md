@@ -9,6 +9,26 @@
 
 ## 🚀 SCHNELLSTART: GPS-freies Ortungssystem JETZT testen!
 
+### 📱 Auf dem Smartphone (30 Sekunden!)
+
+**NEU:** Direkt auf Ihrem Smartphone testen - KEINE Installation nötig!
+
+1. **Öffnen Sie:** `smartphone_app.html` auf Ihrem Smartphone
+2. **Erlauben Sie:** Sensor-Zugriff (Browser fragt automatisch)
+3. **Starten Sie:** Tippen auf "▶️ Sensoren starten"
+4. **Beobachten Sie:** ICQ-Werte in Echtzeit!
+
+**Funktioniert auf:**
+- ✅ iOS Safari (iPhone/iPad)
+- ✅ Android Chrome
+- ✅ Android Firefox
+
+**📖 Anleitung:** `SMARTPHONE_ANLEITUNG.md`
+
+---
+
+### 💻 Auf dem Computer (Python)
+
 ```bash
 cd MQG_Project
 python test_gps_free_positioning.py
@@ -52,6 +72,21 @@ Die MQG-Theorie wurde durch **60 umfassende Experimente** wissenschaftlich valid
 **Genauigkeit**: 1-2 Meter indoor ohne GPS!  
 **Demo**: Siehe `demo_positioning.py` und `src/positioning/`  
 **Interaktiver Test**: `python test_gps_free_positioning.py`
+
+### 💡 Ist das System neu? Was ist Innovation?
+
+**📖 Lesen Sie:** `INNOVATION_ANALYSE.md` - Umfassende Analyse
+
+**Kurz:**
+- **🆕 VÖLLIG NEU:** ICQ als Qualitätsmetrik (MQG-spezifisch)
+- **🆕 VÖLLIG NEU:** ICQ-gewichtete Sensor-Fusion
+- **♻️ BEKANNT:** WiFi-Fingerprinting, BLE, IMU (seit 2000/2010/1950)
+- **🔧 INNOVATION:** Kombination bekannter Sensoren mit neuer Theorie (MQG)
+
+**Was MQG hinzufügt:**
+- Kohärenz als Qualitätsmaß (nicht nur Fehlermaß)
+- Theoretische Fundierung (r = -0.9997 mit Entropie)
+- Einheitlicher Rahmen für heterogene Daten
 
 **Mehr Info**: `VALIDATION_BEDEUTUNG.md` erklärt, was die experimentelle Bestätigung bedeutet
 
