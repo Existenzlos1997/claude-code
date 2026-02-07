@@ -588,6 +588,74 @@
         .close-btn:hover {
             color: #333;
         }
+
+        /* Voice Recording Styles */
+        .voice-input-container {
+            position: relative;
+        }
+
+        .voice-btn {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+            z-index: 10;
+        }
+
+        .voice-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .voice-btn.recording {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+            }
+            50% {
+                box-shadow: 0 2px 20px rgba(244, 67, 54, 0.6);
+            }
+        }
+
+        .voice-status {
+            font-size: 12px;
+            color: #4CAF50;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .voice-status.recording {
+            color: #f44336;
+        }
+
+        .voice-status.error {
+            color: #ff9800;
+        }
+
+        .mic-permission-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .mic-permission-info strong {
+            color: #1976d2;
+        }
     </style>
 </head>
 <body>
@@ -809,24 +877,36 @@
 
                         <h3>Behandler-Empfehlungen</h3>
                         
-                        <div class="form-group">
+                        <div class="mic-permission-info">
+                            <strong>🎤 Spracheingabe:</strong> Klicken Sie auf das Mikrofon-Symbol neben den Feldern, um Empfehlungen per Sprache zu erfassen.
+                        </div>
+                        
+                        <div class="form-group voice-input-container">
                             <label for="newRecommendations">Empfehlungen nach PZR</label>
                             <textarea id="newRecommendations" placeholder="z.B. Fokus auf Zahnzwischenräume, verstärkte Pflege im Unterkiefer..."></textarea>
+                            <button type="button" class="voice-btn" onclick="toggleVoiceInput('newRecommendations')" title="Spracheingabe">🎤</button>
+                            <div id="newRecommendations-status" class="voice-status"></div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group voice-input-container">
                             <label for="newBrushingTechnique">Putztechnik-Anpassungen</label>
                             <textarea id="newBrushingTechnique" placeholder="z.B. Bass-Technik empfohlen, kreisende Bewegungen vermeiden..."></textarea>
+                            <button type="button" class="voice-btn" onclick="toggleVoiceInput('newBrushingTechnique')" title="Spracheingabe">🎤</button>
+                            <div id="newBrushingTechnique-status" class="voice-status"></div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group voice-input-container">
                             <label for="newToolsUsage">Hilfsmittel und Anwendung</label>
                             <textarea id="newToolsUsage" placeholder="z.B. Interdentalbürsten Größe 3, elektrische Zahnbürste..."></textarea>
+                            <button type="button" class="voice-btn" onclick="toggleVoiceInput('newToolsUsage')" title="Spracheingabe">🎤</button>
+                            <div id="newToolsUsage-status" class="voice-status"></div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group voice-input-container">
                             <label for="newNotes">Weitere Bemerkungen</label>
                             <textarea id="newNotes" placeholder="Zusätzliche Hinweise..."></textarea>
+                            <button type="button" class="voice-btn" onclick="toggleVoiceInput('newNotes')" title="Spracheingabe">🎤</button>
+                            <div id="newNotes-status" class="voice-status"></div>
                         </div>
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
@@ -867,24 +947,36 @@
 
                 <h3>Behandler-Empfehlungen</h3>
                 
-                <div class="form-group">
+                <div class="mic-permission-info">
+                    <strong>🎤 Spracheingabe:</strong> Klicken Sie auf das Mikrofon-Symbol neben den Feldern, um Empfehlungen per Sprache zu erfassen.
+                </div>
+                
+                <div class="form-group voice-input-container">
                     <label for="editRecommendations">Empfehlungen nach PZR</label>
                     <textarea id="editRecommendations"></textarea>
+                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editRecommendations')" title="Spracheingabe">🎤</button>
+                    <div id="editRecommendations-status" class="voice-status"></div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group voice-input-container">
                     <label for="editBrushingTechnique">Putztechnik-Anpassungen</label>
                     <textarea id="editBrushingTechnique"></textarea>
+                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editBrushingTechnique')" title="Spracheingabe">🎤</button>
+                    <div id="editBrushingTechnique-status" class="voice-status"></div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group voice-input-container">
                     <label for="editToolsUsage">Hilfsmittel und Anwendung</label>
                     <textarea id="editToolsUsage"></textarea>
+                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editToolsUsage')" title="Spracheingabe">🎤</button>
+                    <div id="editToolsUsage-status" class="voice-status"></div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group voice-input-container">
                     <label for="editNotes">Weitere Bemerkungen</label>
                     <textarea id="editNotes"></textarea>
+                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editNotes')" title="Spracheingabe">🎤</button>
+                    <div id="editNotes-status" class="voice-status"></div>
                 </div>
 
                 <div class="action-buttons">
@@ -904,6 +996,155 @@
         let reminders = [];
         let notificationInterval = null;
         let reminderIdCounter = 1;
+
+        // Voice Recognition State
+        let recognition = null;
+        let currentRecordingField = null;
+        let isRecording = false;
+
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'de-DE';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = function() {
+                    isRecording = true;
+                    if (currentRecordingField) {
+                        const statusEl = document.getElementById(currentRecordingField + '-status');
+                        if (statusEl) {
+                            statusEl.textContent = '🎤 Aufnahme läuft... (Klicken Sie erneut zum Stoppen)';
+                            statusEl.classList.add('recording');
+                        }
+                    }
+                };
+
+                recognition.onresult = function(event) {
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+
+                    if (currentRecordingField) {
+                        const textarea = document.getElementById(currentRecordingField);
+                        if (textarea) {
+                            if (finalTranscript) {
+                                // Add final transcript to textarea
+                                const currentValue = textarea.value;
+                                textarea.value = currentValue + (currentValue ? ' ' : '') + finalTranscript;
+                            }
+                        }
+
+                        const statusEl = document.getElementById(currentRecordingField + '-status');
+                        if (statusEl && interimTranscript) {
+                            statusEl.textContent = '🎤 ' + interimTranscript;
+                        }
+                    }
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    stopVoiceInput();
+                    
+                    let errorMessage = 'Fehler bei der Spracherkennung';
+                    if (event.error === 'no-speech') {
+                        errorMessage = 'Keine Sprache erkannt';
+                    } else if (event.error === 'not-allowed') {
+                        errorMessage = 'Mikrofonzugriff verweigert';
+                    } else if (event.error === 'network') {
+                        errorMessage = 'Netzwerkfehler';
+                    }
+
+                    if (currentRecordingField) {
+                        const statusEl = document.getElementById(currentRecordingField + '-status');
+                        if (statusEl) {
+                            statusEl.textContent = '⚠️ ' + errorMessage;
+                            statusEl.classList.add('error');
+                            setTimeout(() => {
+                                statusEl.textContent = '';
+                                statusEl.classList.remove('error');
+                            }, 3000);
+                        }
+                    }
+                };
+
+                recognition.onend = function() {
+                    isRecording = false;
+                    if (currentRecordingField) {
+                        const button = document.querySelector(`[onclick="toggleVoiceInput('${currentRecordingField}')"]`);
+                        if (button) {
+                            button.classList.remove('recording');
+                        }
+                        const statusEl = document.getElementById(currentRecordingField + '-status');
+                        if (statusEl) {
+                            statusEl.textContent = '✓ Aufnahme beendet';
+                            statusEl.classList.remove('recording');
+                            setTimeout(() => {
+                                statusEl.textContent = '';
+                            }, 2000);
+                        }
+                    }
+                    currentRecordingField = null;
+                };
+            }
+        }
+
+        // Toggle voice input for a specific field
+        function toggleVoiceInput(fieldId) {
+            if (!recognition) {
+                alert('Spracherkennung wird in Ihrem Browser nicht unterstützt.\n\nBitte verwenden Sie Chrome, Edge oder Safari.');
+                return;
+            }
+
+            const button = document.querySelector(`[onclick="toggleVoiceInput('${fieldId}')"]`);
+            
+            if (isRecording && currentRecordingField === fieldId) {
+                // Stop recording
+                stopVoiceInput();
+            } else {
+                // Stop any existing recording
+                if (isRecording) {
+                    stopVoiceInput();
+                }
+                
+                // Start new recording
+                currentRecordingField = fieldId;
+                
+                if (button) {
+                    button.classList.add('recording');
+                }
+
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                    if (error.name === 'InvalidStateError') {
+                        // Recognition is already running, stop and restart
+                        recognition.stop();
+                        setTimeout(() => {
+                            recognition.start();
+                        }, 100);
+                    }
+                }
+            }
+        }
+
+        // Stop voice input
+        function stopVoiceInput() {
+            if (recognition && isRecording) {
+                recognition.stop();
+            }
+        }
 
         // Initialize demo data
         function initDemoData() {
@@ -1491,9 +1732,11 @@
         }
 
         // Initialize app
+        // Initialize app
         window.onload = function() {
             initDemoData();
             loadData();
+            initSpeechRecognition();
             scheduleNotifications();
         };
     </script>
