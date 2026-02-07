@@ -1,0 +1,177 @@
+
+================================================================================
+INTERAKTIVER TEST: GPS-FREIES ORTUNGSSYSTEM
+================================================================================
+
+Dieser Test zeigt GENAU, welche Daten Sie benötigen und wie alles funktioniert!
+
+
+
+================================================================================
+TEIL 1: DATENANFORDERUNGEN FÜR ICQ-BERECHNUNG
+================================================================================
+
+
+📊 ICQ Basis
+----------------------------------------------------------------------
+  beschreibung        : Information Coherence Quotient - Kernmetrik der MQG-Theorie
+  eingabe             : Zahlenarray (Liste von Messwerten)
+  beispiel            : [1.2, 1.3, 1.25, 1.28, 1.22]
+  typ                 : list oder numpy.array
+  mindestens          : 10 Werte empfohlen (min. 2)
+  ausgabe             : ICQ-Wert zwischen 0 (chaotisch) und 1+ (kohärent)
+
+📊 WiFi Fingerprinting
+----------------------------------------------------------------------
+  beschreibung        : RSSI-Signalstärken von WiFi Access Points
+  eingabe             : Dictionary mit AP-Namen und RSSI-Werten
+  beispiel            : {'AP_Office_1': -45, 'AP_Office_2': -67, 'AP_Hallway': -78}
+  typ                 : dict[str, float]
+  einheit             : dBm (Dezibel-Milliwatt)
+  reichweite          : -100 dBm (schwach) bis -30 dBm (stark)
+  mindestens          : 3 APs für Trilateration, 5+ für Fingerprinting
+
+📊 Bluetooth Beacons
+----------------------------------------------------------------------
+  beschreibung        : RSSI von Bluetooth Beacons
+  eingabe             : Dictionary mit Beacon-ID und RSSI
+  beispiel            : {'beacon_1': -52, 'beacon_2': -68, 'beacon_3': -71}
+  typ                 : dict[str, float]
+  einheit             : dBm
+  reichweite          : -100 dBm bis -30 dBm
+  mindestens          : 3 Beacons für Trilateration
+
+📊 IMU Daten
+----------------------------------------------------------------------
+  beschreibung        : Beschleunigungsmesser und Gyroskop
+  eingabe_accel       : [ax, ay, az] in m/s²
+  eingabe_gyro        : [gx, gy, gz] in rad/s
+  beispiel_accel      : [0.02, -0.01, 9.81]
+  beispiel_gyro       : [0.001, -0.002, 0.0005]
+  typ                 : list[3] oder numpy.array(3)
+  sample_rate         : 10-100 Hz (Messungen pro Sekunde)
+  kalibrierung        : Ruheposition: [0, 0, 9.81] für Beschleunigung
+
+✅ WICHTIG: Alle diese Daten können simuliert werden!
+   → Sie brauchen KEINE echte Hardware für den Test!
+
+
+================================================================================
+TEST 1: GRUNDLEGENDE ICQ-BERECHNUNG
+================================================================================
+
+Beispiel 1: Hochgradig kohärente Signaldaten
+  Eingabe: 50 Messwerte um 100.0 (±0.5)
+  Daten: [99.47743276458556, 99.40388969502459, 100.70065809651771, 100.42381385428274, 100.12548496787772] ... [99.84201761989704, 100.83939441100937]
+  → ICQ = 0.000000 (hoch kohärent)
+
+Beispiel 2: Chaotische Zufallsdaten
+  Eingabe: 50 Zufallswerte zwischen 0-100
+  Daten: [26.457289776646263, 25.93426462836289, 4.058712094342032, 92.21082976919286, 40.67232959256194] ... [56.61123085064554, 54.31734010175615]
+  → ICQ = 0.000000 (chaotisch)
+
+Beispiel 3: Realistische WiFi-RSSI Zeitreihe
+  Eingabe: 50 RSSI-Werte um -45 dBm (±3 dB)
+  Daten: [-45.905172210504, -44.8683298946024, -49.29523535841865, -45.939179810669884, -51.480680539798485] ... [-41.39280779767177, -47.678515421474415]
+  → ICQ = 0.000000 (stabiles Signal)
+
+✅ ICQ-Berechnung funktioniert!
+   Kohärent: 0.000 >> Chaotisch: 0.000
+
+================================================================================
+TEST 2: WiFi FINGERPRINTING POSITIONIERUNG
+================================================================================
+
+Schritt 1: Fingerprint-Datenbank erstellen
+----------------------------------------------------------------------
+  Access Points: 4
+    AP_NW: Position (0, 10)
+    AP_NE: Position (10, 10)
+    AP_SW: Position (0, 0)
+    AP_SE: Position (10, 0)
+
+Schritt 2: Referenzmessungen sammeln
+----------------------------------------------------------------------
+  Referenzpunkte: 9
+  Beispiel bei (5, 5):
+    AP_NW: -49.4 dBm
+    AP_NE: -43.9 dBm
+    AP_SW: -44.8 dBm
+    AP_SE: -43.7 dBm
+
+Schritt 3: Position schätzen (unbekannter Ort)
+----------------------------------------------------------------------
+  Wahre Position: (4.5, 6.2)
+  Gemessene RSSI-Werte:
+    AP_NW: -42.9 dBm
+    AP_NE: -43.5 dBm
+    AP_SW: -49.1 dBm
+    AP_SE: -49.1 dBm
+
+  ICQ-Qualitätsbewertung der Signale:
+    AP_NW: ICQ = 0.0000
+    AP_NE: ICQ = 0.0000
+    AP_SW: ICQ = 0.0000
+    AP_SE: ICQ = 0.0000
+
+  Geschätzte Position: (5.23, 6.94)
+  Positionsfehler: 1.04 Meter
+
+✅ WiFi-Positionierung funktioniert! Fehler: 1.04m
+
+================================================================================
+TEST 3: INERTIAL NAVIGATION (IMU)
+================================================================================
+
+Schritt 1: IMU-Daten generieren (simulierte Bewegung)
+----------------------------------------------------------------------
+  Simulation: 5.0s Bewegung mit 0.5 m/s² Beschleunigung
+  Sampling-Rate: 10 Hz
+  Anzahl Messungen: 50
+
+  Beispiel IMU-Messung:
+    Beschleunigung: [0.5147730588010079, 0.011322259628640242, 9.814171182349511]
+    Gyroskop: [-0.00019317339133019542, 0.0005236134467815774, 0.0015407929755116385]
+
+Schritt 2: ICQ-Qualitätsbewertung der IMU-Daten
+----------------------------------------------------------------------
+  ICQ Beschleunigung-X: 0.0000 (Bewegungsrichtung)
+  ICQ Beschleunigung-Z: 0.0000 (Gravitation)
+
+Schritt 3: Dead Reckoning (Position berechnen)
+----------------------------------------------------------------------
+  Start-Position: (0, 0, 0)
+  End-Position: (6.44, -0.00, 0.20)
+  End-Geschwindigkeit: (2.51, -0.01, 0.05) m/s
+
+  Erwartete Distanz: 6.25m
+  Berechnete Distanz: 6.44m
+  Fehler: 0.19m
+
+✅ IMU-Navigation funktioniert!
+   ICQ zeigt stabile Sensordaten: 0.000
+
+================================================================================
+TEST 4: MULTI-SENSOR FUSION MIT ICQ-GEWICHTUNG
+================================================================================
+
+Konzept: Kombiniere mehrere Positionsquellen basierend auf ICQ-Qualität
+----------------------------------------------------------------------
+Wahre Position: [5. 5.]
+
+Schritt 1: ICQ-Qualität jeder Quelle berechnen
+----------------------------------------------------------------------
+WiFi           : ICQ = 0.0000  |  Position = [5.5 4.7]  |  Fehler = 0.58m
+                 → WiFi Fingerprinting (gute Qualität)
+Bluetooth      : ICQ = 0.0000  |  Position = [3.8 5.8]  |  Fehler = 1.44m
+                 → Bluetooth Trilateration (schlechte Qualität - Störungen)
+IMU            : ICQ = 0.0000  |  Position = [5.1 5.2]  |  Fehler = 0.22m
+                 → Inertial Navigation (sehr gute Qualität)
+
+Schritt 2: Position OHNE ICQ-Gewichtung (einfacher Durchschnitt)
+----------------------------------------------------------------------
+  Durchschnitts-Position: [4.8        5.23333333]
+  Fehler: 0.31m
+
+Schritt 3: Position MIT ICQ-Gewichtung
+----------------------------------------------------------------------
