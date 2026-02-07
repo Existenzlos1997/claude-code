@@ -1,11 +1,34 @@
 # 📱 Smartphone-Anleitung: MQG GPS-freie Positionierung
 
+## 🚀 DIREKTER DOWNLOAD-LINK
+
+**Öffnen Sie diesen Link auf Ihrem Smartphone:**
+```
+https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app.html
+```
+
+Dann: **Seite speichern** → **Datei öffnen** → **"Sensoren starten"** → Fertig! ✅
+
+📋 **Detaillierte Download-Anleitung:** Siehe `DOWNLOAD_LINKS.md`
+
+---
+
 ## Sofort-Start (30 Sekunden)
 
-### Methode 1: Lokale HTML-Datei öffnen (EMPFOHLEN)
+### Methode 1: Direkter GitHub Link (EINFACHSTE METHODE!)
+
+1. **Link auf Smartphone öffnen:**
+   - Klicken Sie auf: https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app.html
+   - Die App wird direkt im Browser angezeigt
+
+2. **Seite speichern (optional aber empfohlen):**
+   - iPhone: Teilen → "Zu Dateien hinzufügen"
+   - Android: ⋮ Menü → "Seite speichern"
+
+### Methode 2: Lokale HTML-Datei übertragen
 
 1. **Datei auf Smartphone übertragen:**
-   - Kopieren Sie `smartphone_app.html` auf Ihr Smartphone
+   - Laden Sie `smartphone_app.html` herunter
    - Per E-Mail, Cloud (Dropbox, Google Drive), oder USB
 
 2. **Öffnen:**

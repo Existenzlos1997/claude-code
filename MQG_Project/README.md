@@ -13,17 +13,28 @@
 
 **NEU:** Direkt auf Ihrem Smartphone testen - KEINE Installation nötig!
 
-1. **Öffnen Sie:** `smartphone_app.html` auf Ihrem Smartphone
-2. **Erlauben Sie:** Sensor-Zugriff (Browser fragt automatisch)
-3. **Starten Sie:** Tippen auf "▶️ Sensoren starten"
-4. **Beobachten Sie:** ICQ-Werte in Echtzeit!
+**🔗 DIREKTER DOWNLOAD-LINK:**
+```
+https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/develop-mqg-theory/MQG_Project/smartphone_app.html
+```
+
+**So geht's:**
+1. **Öffnen Sie den Link oben** auf Ihrem Smartphone
+2. **Speichern Sie die Seite:**
+   - iPhone: Teilen → "Zu Dateien hinzufügen"
+   - Android: ⋮ Menü → "Seite speichern"
+3. **Öffnen Sie die Datei** und erlauben Sie Sensor-Zugriff
+4. **Tippen Sie:** "▶️ Sensoren starten"
+5. **Bewegen Sie das Smartphone** → Sehen Sie ICQ in Echtzeit!
 
 **Funktioniert auf:**
 - ✅ iOS Safari (iPhone/iPad)
 - ✅ Android Chrome
 - ✅ Android Firefox
 
-**📖 Anleitung:** `SMARTPHONE_ANLEITUNG.md`
+**📖 Detaillierte Anleitung:** 
+- `DOWNLOAD_LINKS.md` - Alle Download-Methoden
+- `SMARTPHONE_ANLEITUNG.md` - Vollständige Smartphone-Anleitung
 
 ---
 
