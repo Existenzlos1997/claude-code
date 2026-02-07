@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PZR Assistent - Professionelle Zahnreinigung</title>
+    <title>PZR Assistent Pro - Professionelle Zahnreinigung</title>
     <style>
         * {
             margin: 0;
@@ -24,6 +24,142 @@
             margin: 0 auto;
         }
 
+        /* Login Screen Styles */
+        .login-screen {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        .login-screen h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .login-screen p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .role-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .role-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .role-btn .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .role-btn .label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        /* Main App Styles */
         .header {
             text-align: center;
             color: white;
@@ -40,22 +176,35 @@
             opacity: 0.9;
         }
 
+        .header .logout-btn {
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            font-size: 13px;
+        }
+
         .tabs {
             display: flex;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 5px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .tab {
             flex: 1;
+            min-width: 80px;
             padding: 12px;
             text-align: center;
             background: transparent;
             border: none;
             color: white;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             border-radius: 12px;
@@ -131,69 +280,114 @@
             margin-bottom: 5px;
         }
 
-        .appointment-form {
-            margin-bottom: 25px;
+        /* Practitioner Recommendations Card */
+        .recommendations-card {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe5a0 100%);
+            border-left: 4px solid #ffa726;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.2);
         }
 
-        .form-group {
+        .recommendations-card h3 {
+            color: #f57c00;
+            margin-top: 0;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recommendations-card .icon {
+            font-size: 24px;
+        }
+
+        .recommendation-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid #ffa726;
+        }
+
+        .recommendation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .recommendation-item strong {
+            color: #f57c00;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Patient Profile Card */
+        .profile-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 12px;
             margin-bottom: 20px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
+        .profile-card h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .profile-field {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .profile-field label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .profile-field .value {
             font-weight: 600;
-            font-size: 14px;
+            color: #1976d2;
         }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="time"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            font-family: inherit;
+        /* Employee Dashboard Styles */
+        .patient-list {
+            display: grid;
+            gap: 15px;
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 28px;
+        .patient-card {
+            background: #f8f9fa;
+            padding: 15px;
             border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
+            border-left: 4px solid #667eea;
             cursor: pointer;
-            width: 100%;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        .patient-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
         }
 
-        .btn:active {
-            transform: translateY(0);
+        .patient-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .patient-card p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
         }
 
         .appointment-item {
@@ -268,6 +462,25 @@
             opacity: 0.3;
         }
 
+        .badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge.upcoming {
+            background: #ff9800;
+        }
+
+        .badge.past {
+            background: #9e9e9e;
+        }
+
         .notification-permission {
             background: #fff3cd;
             border: 2px solid #ffc107;
@@ -311,209 +524,809 @@
             font-weight: normal;
         }
 
-        .badge {
-            display: inline-block;
-            background: #4caf50;
-            color: white;
-            padding: 4px 10px;
+        .hidden {
+            display: none !important;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
             border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 8px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .badge.upcoming {
-            background: #ff9800;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        .badge.past {
-            background: #9e9e9e;
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #333;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🦷 PZR Assistent</h1>
-            <p>Professionelle Zahnreinigung - Ihr persönlicher Begleiter</p>
-        </div>
-
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('info', event)">Info</button>
-            <button class="tab" onclick="switchTab('appointments', event)">Termine</button>
-            <button class="tab" onclick="switchTab('reminders', event)">Erinnerungen</button>
-        </div>
-
-        <div class="content">
-            <!-- Info Tab -->
-            <div id="info" class="tab-content active">
-                <h2>Was ist eine PZR?</h2>
-                <div class="info-card">
-                    <h4>Professionelle Zahnreinigung (PZR)</h4>
-                    <p>Die professionelle Zahnreinigung ist eine wichtige Vorsorgemaßnahme für gesunde Zähne und Zahnfleisch. Sie ergänzt die tägliche Mundhygiene und sollte regelmäßig durchgeführt werden.</p>
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-screen">
+            <h1>🦷 PZR Assistent Pro</h1>
+            <p>Professionelle Zahnreinigung mit Behandler-Empfehlungen</p>
+            
+            <div class="role-selector">
+                <div class="role-btn" id="patientRole" onclick="selectRole('patient')">
+                    <div class="icon">👤</div>
+                    <div class="label">Patient</div>
                 </div>
-
-                <h3>Ablauf einer PZR</h3>
-                <div class="info-card">
-                    <h4>1. Untersuchung</h4>
-                    <p>Zunächst werden Zähne und Zahnfleisch untersucht, um Problemstellen zu identifizieren.</p>
-                </div>
-                <div class="info-card">
-                    <h4>2. Zahnsteinentfernung</h4>
-                    <p>Harte Beläge (Zahnstein) werden mit speziellen Instrumenten entfernt.</p>
-                </div>
-                <div class="info-card">
-                    <h4>3. Reinigung</h4>
-                    <p>Weiche Beläge und Verfärbungen werden mit Pulverstrahlgerät oder Bürstchen beseitigt.</p>
-                </div>
-                <div class="info-card">
-                    <h4>4. Politur</h4>
-                    <p>Die Zähne werden poliert, um die Oberfläche zu glätten und neue Beläge zu erschweren.</p>
-                </div>
-                <div class="info-card">
-                    <h4>5. Fluoridierung</h4>
-                    <p>Abschließend wird ein Fluoridlack aufgetragen, um den Zahnschmelz zu härten.</p>
-                </div>
-
-                <h3>Empfehlungen nach der PZR</h3>
-                <div class="info-card">
-                    <h4>Direkt nach der Behandlung</h4>
-                    <ul>
-                        <li>1 Stunde nicht essen oder trinken</li>
-                        <li>2 Stunden nicht rauchen</li>
-                        <li>24 Stunden keine stark färbenden Lebensmittel (Kaffee, Tee, Rotwein, Curry)</li>
-                    </ul>
-                </div>
-
-                <div class="info-card">
-                    <h4>Tägliche Mundhygiene</h4>
-                    <ul>
-                        <li>2x täglich Zähne putzen (morgens und abends)</li>
-                        <li>Mindestens 2 Minuten putzen</li>
-                        <li>Zahnseide oder Interdentalbürsten verwenden</li>
-                        <li>Fluoridhaltige Zahnpasta benutzen</li>
-                        <li>Mundspülung kann zusätzlich helfen</li>
-                    </ul>
-                </div>
-
-                <div class="info-card">
-                    <h4>Regelmäßigkeit</h4>
-                    <ul>
-                        <li>PZR alle 6 Monate empfohlen</li>
-                        <li>Bei erhöhtem Risiko (Parodontitis) alle 3-4 Monate</li>
-                        <li>Halbjährliche Kontrolluntersuchung beim Zahnarzt</li>
-                    </ul>
-                </div>
-
-                <h3>Vorteile der PZR</h3>
-                <div class="info-card">
-                    <ul>
-                        <li>Vorbeugung von Karies und Zahnfleischerkrankungen</li>
-                        <li>Entfernung von Verfärbungen und Belägen</li>
-                        <li>Frischeres Mundgefühl</li>
-                        <li>Längerer Erhalt der eigenen Zähne</li>
-                        <li>Früherkennung von Zahnproblemen</li>
-                    </ul>
+                <div class="role-btn" id="employeeRole" onclick="selectRole('employee')">
+                    <div class="icon">👨‍⚕️</div>
+                    <div class="label">Mitarbeiter</div>
                 </div>
             </div>
 
-            <!-- Appointments Tab -->
-            <div id="appointments" class="tab-content">
-                <h2>Meine Termine</h2>
-                
-                <div class="appointment-form">
-                    <h3>Neuer Termin</h3>
-                    <div class="form-group">
-                        <label for="appointmentTitle">Bezeichnung</label>
-                        <input type="text" id="appointmentTitle" placeholder="z.B. PZR beim Dr. Müller" value="Professionelle Zahnreinigung">
-                    </div>
-                    <div class="form-group">
-                        <label for="appointmentDate">Datum</label>
-                        <input type="date" id="appointmentDate">
-                    </div>
-                    <div class="form-group">
-                        <label for="appointmentTime">Uhrzeit</label>
-                        <input type="time" id="appointmentTime">
-                    </div>
-                    <div class="form-group">
-                        <label for="appointmentLocation">Praxis/Ort</label>
-                        <input type="text" id="appointmentLocation" placeholder="z.B. Dr. Müller, Hauptstraße 123">
-                    </div>
-                    <div class="form-group">
-                        <label for="appointmentNotes">Notizen</label>
-                        <textarea id="appointmentNotes" placeholder="Zusätzliche Informationen..."></textarea>
-                    </div>
-                    <button class="btn" onclick="addAppointment()">Termin hinzufügen</button>
+            <div id="patientLogin" class="hidden">
+                <div class="form-group">
+                    <label for="patientNumber">Patientennummer</label>
+                    <input type="text" id="patientNumber" placeholder="z.B. PAT-12345">
                 </div>
-
-                <h3>Kommende Termine</h3>
-                <div id="appointmentsList"></div>
+                <div class="form-group">
+                    <label for="patientPin">PIN</label>
+                    <input type="password" id="patientPin" placeholder="Ihre 4-stellige PIN">
+                </div>
+                <button class="btn" onclick="loginPatient()">Anmelden</button>
             </div>
 
-            <!-- Reminders Tab -->
-            <div id="reminders" class="tab-content">
-                <h2>Erinnerungen</h2>
+            <div id="employeeLogin" class="hidden">
+                <div class="form-group">
+                    <label for="employeeId">Mitarbeiter-ID</label>
+                    <input type="text" id="employeeId" placeholder="z.B. MA-001">
+                </div>
+                <div class="form-group">
+                    <label for="employeePassword">Passwort</label>
+                    <input type="password" id="employeePassword" placeholder="Passwort">
+                </div>
+                <button class="btn" onclick="loginEmployee()">Anmelden</button>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                Demo-Zugänge:<br>
+                Patient: PAT-12345 / PIN: 1234<br>
+                Mitarbeiter: MA-001 / Passwort: admin
+            </p>
+        </div>
+
+        <!-- Main App (hidden initially) -->
+        <div id="mainApp" class="hidden">
+            <div class="header">
+                <h1>🦷 PZR Assistent Pro</h1>
+                <p id="userGreeting">Willkommen</p>
+                <button class="logout-btn" onclick="logout()">Abmelden</button>
+            </div>
+
+            <!-- Patient Interface -->
+            <div id="patientInterface" class="hidden">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('dashboard', event)">Dashboard</button>
+                    <button class="tab" onclick="switchTab('recommendations', event)">Empfehlungen</button>
+                    <button class="tab" onclick="switchTab('appointments', event)">Termine</button>
+                    <button class="tab" onclick="switchTab('reminders', event)">Erinnerungen</button>
+                </div>
+
+                <div class="content">
+                    <!-- Dashboard Tab -->
+                    <div id="dashboard" class="tab-content active">
+                        <h2>Mein Dashboard</h2>
+                        
+                        <div class="profile-card">
+                            <h3>👤 Mein Profil</h3>
+                            <div class="profile-info" id="patientProfileInfo">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="recommendations-card" id="dashboardRecommendations">
+                            <h3><span class="icon">💡</span> Behandler-Empfehlungen</h3>
+                            <div id="quickRecommendations">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div id="upcomingAppointments">
+                            <h3>📅 Nächste Termine</h3>
+                            <div id="upcomingAppointmentsList">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations Tab -->
+                    <div id="recommendations" class="tab-content">
+                        <h2>Behandler-Empfehlungen</h2>
+                        
+                        <div class="recommendations-card">
+                            <h3><span class="icon">🦷</span> Empfehlungen nach Ihrer letzten PZR</h3>
+                            <div id="practitionerRecommendations">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h4>📋 Putztechnik</h4>
+                            <div id="brushingTechnique">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h4>🔧 Hilfsmittel</h4>
+                            <div id="toolsUsage">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h4>📝 Weitere Bemerkungen</h4>
+                            <div id="additionalNotes">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointments Tab -->
+                    <div id="appointments" class="tab-content">
+                        <h2>Meine Termine</h2>
+                        <div id="appointmentsList">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Reminders Tab -->
+                    <div id="reminders" class="tab-content">
+                        <h2>Erinnerungen</h2>
+                        
+                        <div id="notificationPermission" class="notification-permission" style="display: none;">
+                            <strong>⚠️ Benachrichtigungen aktivieren</strong>
+                            <p>Um Erinnerungen zu erhalten, müssen Sie Benachrichtigungen erlauben.</p>
+                            <button onclick="requestNotificationPermission()">Benachrichtigungen aktivieren</button>
+                        </div>
+
+                        <div class="reminder-settings">
+                            <h3>Erinnerungseinstellungen</h3>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="reminder24h" checked>
+                                <label for="reminder24h">24 Stunden vor dem Termin</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="reminder1h" checked>
+                                <label for="reminder1h">1 Stunde vor dem Termin</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="reminderAftercare">
+                                <label for="reminderAftercare">Nachsorge-Erinnerung (nach 6 Monaten)</label>
+                            </div>
+                        </div>
+
+                        <h3>Aktive Erinnerungen</h3>
+                        <div id="remindersList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Interface -->
+            <div id="employeeInterface" class="hidden">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('patientManagement', event)">Patienten</button>
+                    <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
+                </div>
+
+                <div class="content">
+                    <!-- Patient Management Tab -->
+                    <div id="patientManagement" class="tab-content active">
+                        <h2>Patientenverwaltung</h2>
+                        
+                        <div class="form-group">
+                            <input type="text" id="patientSearch" placeholder="Suche nach Patientennummer oder Name..." 
+                                   onkeyup="searchPatients()">
+                        </div>
+
+                        <div id="patientListContainer" class="patient-list">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Create Patient Tab -->
+                    <div id="createPatient" class="tab-content">
+                        <h2>Neuen Patienten anlegen</h2>
+                        
+                        <div class="form-group">
+                            <label for="newPatientNumber">Patientennummer *</label>
+                            <input type="text" id="newPatientNumber" placeholder="z.B. PAT-12345">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPatientName">Name *</label>
+                            <input type="text" id="newPatientName" placeholder="Vor- und Nachname">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPatientPin">PIN (4 Ziffern) *</label>
+                            <input type="password" id="newPatientPin" placeholder="1234" maxlength="4">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPatientEmail">E-Mail</label>
+                            <input type="text" id="newPatientEmail" placeholder="patient@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPatientPhone">Telefon</label>
+                            <input type="text" id="newPatientPhone" placeholder="+49 123 456789">
+                        </div>
+
+                        <h3>Behandler-Empfehlungen</h3>
+                        
+                        <div class="form-group">
+                            <label for="newRecommendations">Empfehlungen nach PZR</label>
+                            <textarea id="newRecommendations" placeholder="z.B. Fokus auf Zahnzwischenräume, verstärkte Pflege im Unterkiefer..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newBrushingTechnique">Putztechnik-Anpassungen</label>
+                            <textarea id="newBrushingTechnique" placeholder="z.B. Bass-Technik empfohlen, kreisende Bewegungen vermeiden..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newToolsUsage">Hilfsmittel und Anwendung</label>
+                            <textarea id="newToolsUsage" placeholder="z.B. Interdentalbürsten Größe 3, elektrische Zahnbürste..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newNotes">Weitere Bemerkungen</label>
+                            <textarea id="newNotes" placeholder="Zusätzliche Hinweise..."></textarea>
+                        </div>
+
+                        <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Patient Modal -->
+        <div id="editPatientModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Patient bearbeiten</h2>
+                    <button class="close-btn" onclick="closeEditModal()">&times;</button>
+                </div>
                 
-                <div id="notificationPermission" class="notification-permission" style="display: none;">
-                    <strong>⚠️ Benachrichtigungen aktivieren</strong>
-                    <p>Um Erinnerungen zu erhalten, müssen Sie Benachrichtigungen erlauben.</p>
-                    <button onclick="requestNotificationPermission()">Benachrichtigungen aktivieren</button>
+                <input type="hidden" id="editPatientId">
+                
+                <div class="form-group">
+                    <label for="editPatientNumber">Patientennummer</label>
+                    <input type="text" id="editPatientNumber" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPatientName">Name</label>
+                    <input type="text" id="editPatientName">
                 </div>
 
-                <div class="reminder-settings">
-                    <h3>Erinnerungseinstellungen</h3>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="reminder24h" checked>
-                        <label for="reminder24h">24 Stunden vor dem Termin</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="reminder1h" checked>
-                        <label for="reminder1h">1 Stunde vor dem Termin</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="reminderAftercare">
-                        <label for="reminderAftercare">Nachsorge-Erinnerung (nach 6 Monaten)</label>
-                    </div>
+                <div class="form-group">
+                    <label for="editPatientEmail">E-Mail</label>
+                    <input type="text" id="editPatientEmail">
                 </div>
 
-                <h3>Aktive Erinnerungen</h3>
-                <div id="remindersList"></div>
+                <div class="form-group">
+                    <label for="editPatientPhone">Telefon</label>
+                    <input type="text" id="editPatientPhone">
+                </div>
 
-                <div class="info-card" style="margin-top: 20px;">
-                    <h4>💡 Tipp</h4>
-                    <p>Erinnerungen werden automatisch für Ihre Termine erstellt. Sie können die Benachrichtigungszeiten oben anpassen.</p>
+                <h3>Behandler-Empfehlungen</h3>
+                
+                <div class="form-group">
+                    <label for="editRecommendations">Empfehlungen nach PZR</label>
+                    <textarea id="editRecommendations"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editBrushingTechnique">Putztechnik-Anpassungen</label>
+                    <textarea id="editBrushingTechnique"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editToolsUsage">Hilfsmittel und Anwendung</label>
+                    <textarea id="editToolsUsage"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editNotes">Weitere Bemerkungen</label>
+                    <textarea id="editNotes"></textarea>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn" onclick="savePatientChanges()">Speichern</button>
+                    <button class="btn btn-secondary" onclick="closeEditModal()">Abbrechen</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize the app
+        // Application State
+        let currentUser = null;
+        let currentRole = null;
+        let patients = [];
         let appointments = [];
         let reminders = [];
         let notificationInterval = null;
         let reminderIdCounter = 1;
 
+        // Initialize demo data
+        function initDemoData() {
+            const savedPatients = localStorage.getItem('pzrPatients');
+            if (!savedPatients) {
+                // Create demo patient
+                patients = [{
+                    id: 'PAT-12345',
+                    patientNumber: 'PAT-12345',
+                    name: 'Max Mustermann',
+                    pin: '1234',
+                    email: 'max@example.com',
+                    phone: '+49 123 456789',
+                    recommendations: 'Besonderer Fokus auf die Zahnzwischenräume im Oberkiefer. Leichte Zahnfleischentzündung im Bereich der hinteren Backenzähne erkannt - bitte verstärkt pflegen.',
+                    brushingTechnique: 'Bass-Technik empfohlen: Zahnbürste im 45-Grad-Winkel ansetzen, kleine rüttelnde Bewegungen. Mindestens 3 Minuten putzen.',
+                    toolsUsage: 'Interdentalbürsten Größe 3 für Backenzähne, Größe 2 für Frontzähne. Elektrische Zahnbürste mit Drucksensor verwenden. Mundspülung 2x täglich.',
+                    notes: 'Nächster Termin in 6 Monaten. Bei Zahnfleischbluten bitte früher kommen.',
+                    created: new Date().toISOString()
+                }];
+                localStorage.setItem('pzrPatients', JSON.stringify(patients));
+            } else {
+                patients = JSON.parse(savedPatients);
+            }
+
+            // Create demo employee
+            const employees = [{
+                id: 'MA-001',
+                employeeId: 'MA-001',
+                password: 'admin',
+                name: 'Dr. Schmidt'
+            }];
+            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
+        }
+
         // Load data from localStorage
         function loadData() {
+            const savedPatients = localStorage.getItem('pzrPatients');
             const savedAppointments = localStorage.getItem('pzrAppointments');
             const savedReminders = localStorage.getItem('pzrReminders');
             
+            if (savedPatients) {
+                patients = JSON.parse(savedPatients);
+            }
             if (savedAppointments) {
                 appointments = JSON.parse(savedAppointments);
             }
             if (savedReminders) {
                 reminders = JSON.parse(savedReminders);
             }
-            
-            updateAppointmentsList();
-            updateRemindersList();
         }
 
         // Save data to localStorage
         function saveData() {
+            localStorage.setItem('pzrPatients', JSON.stringify(patients));
             localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
             localStorage.setItem('pzrReminders', JSON.stringify(reminders));
+        }
+
+        // Role selection
+        function selectRole(role) {
+            document.getElementById('patientRole').classList.remove('selected');
+            document.getElementById('employeeRole').classList.remove('selected');
+            document.getElementById('patientLogin').classList.add('hidden');
+            document.getElementById('employeeLogin').classList.add('hidden');
+
+            if (role === 'patient') {
+                document.getElementById('patientRole').classList.add('selected');
+                document.getElementById('patientLogin').classList.remove('hidden');
+            } else {
+                document.getElementById('employeeRole').classList.add('selected');
+                document.getElementById('employeeLogin').classList.remove('hidden');
+            }
+        }
+
+        // Login as patient
+        function loginPatient() {
+            const patientNumber = document.getElementById('patientNumber').value.trim();
+            const pin = document.getElementById('patientPin').value.trim();
+
+            if (!patientNumber || !pin) {
+                alert('Bitte Patientennummer und PIN eingeben.');
+                return;
+            }
+
+            const patient = patients.find(p => p.patientNumber === patientNumber && p.pin === pin);
+            
+            if (patient) {
+                currentUser = patient;
+                currentRole = 'patient';
+                showMainApp();
+            } else {
+                alert('Ungültige Patientennummer oder PIN.');
+            }
+        }
+
+        // Login as employee
+        function loginEmployee() {
+            const employeeId = document.getElementById('employeeId').value.trim();
+            const password = document.getElementById('employeePassword').value.trim();
+
+            if (!employeeId || !password) {
+                alert('Bitte Mitarbeiter-ID und Passwort eingeben.');
+                return;
+            }
+
+            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
+            const employee = employees.find(e => e.employeeId === employeeId && e.password === password);
+            
+            if (employee) {
+                currentUser = employee;
+                currentRole = 'employee';
+                showMainApp();
+            } else {
+                alert('Ungültige Anmeldedaten.');
+            }
+        }
+
+        // Show main app after login
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+
+            if (currentRole === 'patient') {
+                document.getElementById('userGreeting').textContent = `Willkommen, ${currentUser.name}`;
+                document.getElementById('patientInterface').classList.remove('hidden');
+                document.getElementById('employeeInterface').classList.add('hidden');
+                loadPatientDashboard();
+            } else {
+                document.getElementById('userGreeting').textContent = `Willkommen, ${currentUser.name}`;
+                document.getElementById('employeeInterface').classList.remove('hidden');
+                document.getElementById('patientInterface').classList.add('hidden');
+                loadEmployeeDashboard();
+            }
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            currentRole = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('patientNumber').value = '';
+            document.getElementById('patientPin').value = '';
+            document.getElementById('employeeId').value = '';
+            document.getElementById('employeePassword').value = '';
+        }
+
+        // Load patient dashboard
+        function loadPatientDashboard() {
+            // Load profile info
+            const profileInfo = document.getElementById('patientProfileInfo');
+            profileInfo.innerHTML = `
+                <div class="profile-field">
+                    <label>Patientennummer</label>
+                    <div class="value">${currentUser.patientNumber}</div>
+                </div>
+                <div class="profile-field">
+                    <label>Name</label>
+                    <div class="value">${currentUser.name}</div>
+                </div>
+                <div class="profile-field">
+                    <label>E-Mail</label>
+                    <div class="value">${currentUser.email || '-'}</div>
+                </div>
+                <div class="profile-field">
+                    <label>Telefon</label>
+                    <div class="value">${currentUser.phone || '-'}</div>
+                </div>
+            `;
+
+            // Load recommendations
+            loadRecommendations();
+            
+            // Load appointments
+            loadPatientAppointments();
+            
+            // Load reminders
+            updateRemindersList();
+        }
+
+        // Load recommendations
+        function loadRecommendations() {
+            const quickRec = document.getElementById('quickRecommendations');
+            const practRec = document.getElementById('practitionerRecommendations');
+            
+            if (currentUser.recommendations) {
+                const recItems = currentUser.recommendations.split('.').filter(r => r.trim());
+                quickRec.innerHTML = recItems.slice(0, 2).map(rec => `
+                    <div class="recommendation-item">
+                        <strong>Wichtig:</strong> ${rec.trim()}.
+                    </div>
+                `).join('');
+                
+                practRec.innerHTML = recItems.map(rec => `
+                    <div class="recommendation-item">
+                        <strong>💡</strong> ${rec.trim()}.
+                    </div>
+                `).join('');
+            } else {
+                quickRec.innerHTML = '<p>Keine Empfehlungen vorhanden.</p>';
+                practRec.innerHTML = '<p>Keine Empfehlungen vorhanden.</p>';
+            }
+
+            document.getElementById('brushingTechnique').innerHTML = 
+                currentUser.brushingTechnique || '<p>Keine speziellen Anweisungen.</p>';
+            
+            document.getElementById('toolsUsage').innerHTML = 
+                currentUser.toolsUsage || '<p>Keine speziellen Hilfsmittel angegeben.</p>';
+            
+            document.getElementById('additionalNotes').innerHTML = 
+                currentUser.notes || '<p>Keine weiteren Bemerkungen.</p>';
+        }
+
+        // Load patient appointments
+        function loadPatientAppointments() {
+            const patientAppointments = appointments.filter(a => a.patientId === currentUser.id);
+            const now = new Date();
+            const upcoming = patientAppointments.filter(a => new Date(a.date + ' ' + a.time) >= now)
+                                                 .slice(0, 3);
+            
+            const upcomingList = document.getElementById('upcomingAppointmentsList');
+            if (upcoming.length > 0) {
+                upcomingList.innerHTML = upcoming.map(apt => {
+                    const appointmentDate = new Date(apt.date + ' ' + apt.time);
+                    const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
+                    
+                    return `
+                        <div class="appointment-item">
+                            <h4>${apt.title}</h4>
+                            <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                            <p>⏰ In ${daysUntil} Tag${daysUntil > 1 ? 'en' : ''}</p>
+                            ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                upcomingList.innerHTML = '<p class="empty-state">Keine bevorstehenden Termine.</p>';
+            }
+
+            // Load all appointments
+            const appointmentsList = document.getElementById('appointmentsList');
+            if (patientAppointments.length > 0) {
+                appointmentsList.innerHTML = patientAppointments.map(apt => {
+                    const appointmentDate = new Date(apt.date + ' ' + apt.time);
+                    const isUpcoming = appointmentDate > now;
+                    const isPast = appointmentDate < now;
+                    const isToday = appointmentDate.toDateString() === now.toDateString();
+                    
+                    let badge = '';
+                    if (isToday) {
+                        badge = '<span class="badge">Heute</span>';
+                    } else if (isUpcoming) {
+                        const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
+                        badge = `<span class="badge upcoming">In ${daysUntil} Tag${daysUntil > 1 ? 'en' : ''}</span>`;
+                    } else {
+                        badge = '<span class="badge past">Vergangen</span>';
+                    }
+
+                    return `
+                        <div class="appointment-item">
+                            <h4>${apt.title}${badge}</h4>
+                            <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                            ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
+                            ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                appointmentsList.innerHTML = '<p class="empty-state">Noch keine Termine vorhanden.</p>';
+            }
+        }
+
+        // Load employee dashboard
+        function loadEmployeeDashboard() {
+            loadPatientList();
+        }
+
+        // Load patient list for employees
+        function loadPatientList() {
+            const container = document.getElementById('patientListContainer');
+            
+            if (patients.length === 0) {
+                container.innerHTML = '<p class="empty-state">Keine Patienten vorhanden.</p>';
+                return;
+            }
+
+            container.innerHTML = patients.map(patient => `
+                <div class="patient-card" onclick="editPatient('${patient.id}')">
+                    <h4>👤 ${patient.name}</h4>
+                    <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
+                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                    <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
+                    <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
+                </div>
+            `).join('');
+        }
+
+        // Search patients
+        function searchPatients() {
+            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
+            const filtered = patients.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) ||
+                p.patientNumber.toLowerCase().includes(searchTerm)
+            );
+
+            const container = document.getElementById('patientListContainer');
+            if (filtered.length === 0) {
+                container.innerHTML = '<p class="empty-state">Keine Patienten gefunden.</p>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(patient => `
+                <div class="patient-card" onclick="editPatient('${patient.id}')">
+                    <h4>👤 ${patient.name}</h4>
+                    <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
+                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                    <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
+                    <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
+                </div>
+            `).join('');
+        }
+
+        // Create new patient
+        function createNewPatient() {
+            const patientNumber = document.getElementById('newPatientNumber').value.trim();
+            const name = document.getElementById('newPatientName').value.trim();
+            const pin = document.getElementById('newPatientPin').value.trim();
+            const email = document.getElementById('newPatientEmail').value.trim();
+            const phone = document.getElementById('newPatientPhone').value.trim();
+            const recommendations = document.getElementById('newRecommendations').value.trim();
+            const brushingTechnique = document.getElementById('newBrushingTechnique').value.trim();
+            const toolsUsage = document.getElementById('newToolsUsage').value.trim();
+            const notes = document.getElementById('newNotes').value.trim();
+
+            if (!patientNumber || !name || !pin) {
+                alert('Bitte füllen Sie alle Pflichtfelder aus (Patientennummer, Name, PIN).');
+                return;
+            }
+
+            if (pin.length !== 4 || !/^\d+$/.test(pin)) {
+                alert('PIN muss genau 4 Ziffern enthalten.');
+                return;
+            }
+
+            if (patients.find(p => p.patientNumber === patientNumber)) {
+                alert('Diese Patientennummer existiert bereits.');
+                return;
+            }
+
+            const newPatient = {
+                id: patientNumber,
+                patientNumber,
+                name,
+                pin,
+                email,
+                phone,
+                recommendations,
+                brushingTechnique,
+                toolsUsage,
+                notes,
+                created: new Date().toISOString()
+            };
+
+            patients.push(newPatient);
+            saveData();
+
+            // Clear form
+            document.getElementById('newPatientNumber').value = '';
+            document.getElementById('newPatientName').value = '';
+            document.getElementById('newPatientPin').value = '';
+            document.getElementById('newPatientEmail').value = '';
+            document.getElementById('newPatientPhone').value = '';
+            document.getElementById('newRecommendations').value = '';
+            document.getElementById('newBrushingTechnique').value = '';
+            document.getElementById('newToolsUsage').value = '';
+            document.getElementById('newNotes').value = '';
+
+            alert('Patient erfolgreich angelegt!');
+            loadPatientList();
+        }
+
+        // Edit patient
+        function editPatient(patientId) {
+            const patient = patients.find(p => p.id === patientId);
+            if (!patient) return;
+
+            document.getElementById('editPatientId').value = patient.id;
+            document.getElementById('editPatientNumber').value = patient.patientNumber;
+            document.getElementById('editPatientName').value = patient.name;
+            document.getElementById('editPatientEmail').value = patient.email || '';
+            document.getElementById('editPatientPhone').value = patient.phone || '';
+            document.getElementById('editRecommendations').value = patient.recommendations || '';
+            document.getElementById('editBrushingTechnique').value = patient.brushingTechnique || '';
+            document.getElementById('editToolsUsage').value = patient.toolsUsage || '';
+            document.getElementById('editNotes').value = patient.notes || '';
+
+            document.getElementById('editPatientModal').classList.add('active');
+        }
+
+        // Save patient changes
+        function savePatientChanges() {
+            const patientId = document.getElementById('editPatientId').value;
+            const patient = patients.find(p => p.id === patientId);
+            
+            if (!patient) return;
+
+            patient.name = document.getElementById('editPatientName').value.trim();
+            patient.email = document.getElementById('editPatientEmail').value.trim();
+            patient.phone = document.getElementById('editPatientPhone').value.trim();
+            patient.recommendations = document.getElementById('editRecommendations').value.trim();
+            patient.brushingTechnique = document.getElementById('editBrushingTechnique').value.trim();
+            patient.toolsUsage = document.getElementById('editToolsUsage').value.trim();
+            patient.notes = document.getElementById('editNotes').value.trim();
+
+            saveData();
+            closeEditModal();
+            loadPatientList();
+            alert('Änderungen gespeichert!');
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editPatientModal').classList.remove('active');
         }
 
         // Switch tabs
@@ -524,13 +1337,6 @@
             });
             if (event && event.target) {
                 event.target.classList.add('active');
-            } else {
-                // Fallback: find the tab by data or content
-                document.querySelectorAll('.tab').forEach(tab => {
-                    if (tab.textContent.toLowerCase().includes(tabName.substring(0, 4))) {
-                        tab.classList.add('active');
-                    }
-                });
             }
 
             // Update tab content
@@ -545,152 +1351,6 @@
             }
         }
 
-        // Add appointment
-        function addAppointment() {
-            const title = document.getElementById('appointmentTitle').value;
-            const date = document.getElementById('appointmentDate').value;
-            const time = document.getElementById('appointmentTime').value;
-            const location = document.getElementById('appointmentLocation').value;
-            const notes = document.getElementById('appointmentNotes').value;
-
-            if (!title || !date || !time) {
-                alert('Bitte füllen Sie mindestens Bezeichnung, Datum und Uhrzeit aus.');
-                return;
-            }
-
-            const appointment = {
-                id: Date.now(),
-                title,
-                date,
-                time,
-                location,
-                notes,
-                created: new Date().toISOString()
-            };
-
-            appointments.push(appointment);
-            appointments.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
-            
-            createRemindersForAppointment(appointment);
-            saveData();
-            updateAppointmentsList();
-            updateRemindersList();
-
-            // Clear form
-            document.getElementById('appointmentTitle').value = 'Professionelle Zahnreinigung';
-            document.getElementById('appointmentDate').value = '';
-            document.getElementById('appointmentTime').value = '';
-            document.getElementById('appointmentLocation').value = '';
-            document.getElementById('appointmentNotes').value = '';
-
-            alert('Termin erfolgreich hinzugefügt!');
-        }
-
-        // Delete appointment
-        function deleteAppointment(id) {
-            if (confirm('Möchten Sie diesen Termin wirklich löschen?')) {
-                appointments = appointments.filter(apt => apt.id !== id);
-                reminders = reminders.filter(rem => rem.appointmentId !== id);
-                saveData();
-                updateAppointmentsList();
-                updateRemindersList();
-            }
-        }
-
-        // Update appointments list
-        function updateAppointmentsList() {
-            const container = document.getElementById('appointmentsList');
-            
-            if (appointments.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zm0-12H5V5h14v2zM7 11h5v5H7z"/>
-                        </svg>
-                        <p>Noch keine Termine vorhanden.<br>Fügen Sie Ihren ersten Termin hinzu!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const now = new Date();
-            container.innerHTML = appointments.map(apt => {
-                const appointmentDate = new Date(apt.date + ' ' + apt.time);
-                const isUpcoming = appointmentDate > now;
-                const isPast = appointmentDate < now;
-                const isToday = appointmentDate.toDateString() === now.toDateString();
-                
-                let badge = '';
-                if (isToday) {
-                    badge = '<span class="badge">Heute</span>';
-                } else if (isUpcoming) {
-                    const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
-                    badge = `<span class="badge upcoming">In ${daysUntil} Tag${daysUntil > 1 ? 'en' : ''}</span>`;
-                } else {
-                    badge = '<span class="badge past">Vergangen</span>';
-                }
-
-                return `
-                    <div class="appointment-item">
-                        <h4>${apt.title}${badge}</h4>
-                        <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
-                        ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
-                        ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
-                        <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Löschen</button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Create reminders for appointment
-        function createRemindersForAppointment(appointment) {
-            const appointmentDate = new Date(appointment.date + ' ' + appointment.time);
-            
-            // 24h reminder
-            if (document.getElementById('reminder24h').checked) {
-                const reminder24h = new Date(appointmentDate);
-                reminder24h.setHours(reminder24h.getHours() - 24);
-                
-                reminders.push({
-                    id: Date.now() + (reminderIdCounter++),
-                    appointmentId: appointment.id,
-                    time: reminder24h.toISOString(),
-                    message: `Morgen um ${appointment.time} Uhr: ${appointment.title}`,
-                    type: '24h'
-                });
-            }
-
-            // 1h reminder
-            if (document.getElementById('reminder1h').checked) {
-                const reminder1h = new Date(appointmentDate);
-                reminder1h.setHours(reminder1h.getHours() - 1);
-                
-                reminders.push({
-                    id: Date.now() + (reminderIdCounter++),
-                    appointmentId: appointment.id,
-                    time: reminder1h.toISOString(),
-                    message: `In 1 Stunde: ${appointment.title}`,
-                    type: '1h'
-                });
-            }
-
-            // Aftercare reminder (6 months)
-            if (document.getElementById('reminderAftercare').checked) {
-                const reminderAftercare = new Date(appointmentDate);
-                reminderAftercare.setMonth(reminderAftercare.getMonth() + 6);
-                
-                reminders.push({
-                    id: Date.now() + (reminderIdCounter++),
-                    appointmentId: appointment.id,
-                    time: reminderAftercare.toISOString(),
-                    message: `Zeit für die nächste PZR! Letzter Termin war vor 6 Monaten.`,
-                    type: 'aftercare'
-                });
-            }
-
-            scheduleNotifications();
-        }
-
         // Update reminders list
         function updateRemindersList() {
             const container = document.getElementById('remindersList');
@@ -698,10 +1358,7 @@
             if (reminders.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-                        </svg>
-                        <p>Keine aktiven Erinnerungen.<br>Fügen Sie einen Termin hinzu, um Erinnerungen zu erstellen!</p>
+                        <p>Keine aktiven Erinnerungen.<br>Termine werden vom Behandler angelegt.</p>
                     </div>
                 `;
                 return;
@@ -713,7 +1370,7 @@
             if (activeReminders.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <p>Alle Erinnerungen sind abgelaufen.<br>Fügen Sie neue Termine hinzu!</p>
+                        <p>Alle Erinnerungen sind abgelaufen.<br>Neue Termine werden vom Behandler angelegt.</p>
                     </div>
                 `;
                 return;
@@ -730,12 +1387,21 @@
                     case 'aftercare': typeLabel = 'Nachsorge (6 Monate)'; break;
                 }
 
+                // Include recommendations in reminder
+                let recommendationHint = '';
+                if (currentUser && currentUser.recommendations) {
+                    recommendationHint = `<p style="margin-top: 8px; padding: 8px; background: #fff3cd; border-radius: 6px; font-size: 12px;">
+                        💡 <strong>Denken Sie daran:</strong> ${currentUser.recommendations.split('.')[0]}.
+                    </p>`;
+                }
+
                 return `
                     <div class="reminder-item">
                         <h4>🔔 ${rem.message}</h4>
                         <p>⏰ ${formatDate(reminderDate.toISOString().split('T')[0])} um ${reminderDate.toTimeString().slice(0,5)} Uhr</p>
                         <p>📋 ${typeLabel}</p>
                         ${appointment ? `<p>🦷 Termin: ${appointment.title}</p>` : ''}
+                        ${recommendationHint}
                     </div>
                 `;
             }).join('');
@@ -779,7 +1445,7 @@
             Notification.requestPermission().then(permission => {
                 checkNotificationPermission();
                 if (permission === 'granted') {
-                    new Notification('PZR Assistent', {
+                    new Notification('PZR Assistent Pro', {
                         body: 'Benachrichtigungen wurden aktiviert! Sie erhalten jetzt Erinnerungen für Ihre Termine.'
                     });
                     scheduleNotifications();
@@ -807,8 +1473,16 @@
                     
                     // Trigger notification if within 1 minute
                     if (timeDiff > 0 && timeDiff < 60000) {
+                        let body = reminder.message;
+                        
+                        // Add practitioner recommendations to notification
+                        if (currentUser && currentUser.recommendations) {
+                            const firstRec = currentUser.recommendations.split('.')[0];
+                            body += `\n\n💡 Denken Sie daran: ${firstRec}.`;
+                        }
+                        
                         new Notification('🦷 PZR Erinnerung', {
-                            body: reminder.message,
+                            body: body,
                             requireInteraction: true
                         });
                     }
@@ -816,26 +1490,10 @@
             }, 60000); // Check every minute
         }
 
-        // Set default date to today
-        function setDefaultDate() {
-            const today = new Date();
-            const dateInput = document.getElementById('appointmentDate');
-            const timeInput = document.getElementById('appointmentTime');
-            
-            // Set date to next week
-            const nextWeek = new Date(today);
-            nextWeek.setDate(nextWeek.getDate() + 7);
-            dateInput.value = nextWeek.toISOString().split('T')[0];
-            
-            // Set time to 10:00
-            timeInput.value = '10:00';
-        }
-
-        // Initialize
+        // Initialize app
         window.onload = function() {
+            initDemoData();
             loadData();
-            setDefaultDate();
-            checkNotificationPermission();
             scheduleNotifications();
         };
     </script>
