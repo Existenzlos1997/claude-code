@@ -7,6 +7,26 @@
 
 ---
 
+## 🚀 SCHNELLSTART: GPS-freies Ortungssystem JETZT testen!
+
+```bash
+cd MQG_Project
+python test_gps_free_positioning.py
+```
+
+**Das zeigt in 30 Sekunden:**
+- ✅ Welche Daten Sie für ICQ brauchen (nur ein Array!)
+- ✅ Wie WiFi-Positionierung funktioniert (1-2m Genauigkeit)
+- ✅ Wie IMU-Navigation funktioniert
+- ✅ Wie Sensor Fusion mit ICQ-Gewichtung funktioniert
+
+**📖 Dokumentation:**
+- `SCHNELLSTART_GPS.md` - Sofort loslegen
+- `DATEN_ANFORDERUNGEN.md` - Was Sie brauchen (detailliert)
+- `PRAKTISCHER_EINSTIEG.md` - Code-Beispiele
+
+---
+
 ## 🎉 WICHTIG: Experimentelle Validierung Abgeschlossen!
 
 Die MQG-Theorie wurde durch **60 umfassende Experimente** wissenschaftlich validiert:
@@ -31,7 +51,7 @@ Die MQG-Theorie wurde durch **60 umfassende Experimente** wissenschaftlich valid
 
 **Genauigkeit**: 1-2 Meter indoor ohne GPS!  
 **Demo**: Siehe `demo_positioning.py` und `src/positioning/`  
-**Guide**: Siehe `PRAKTISCHER_EINSTIEG.md` für Code-Beispiele
+**Interaktiver Test**: `python test_gps_free_positioning.py`
 
 **Mehr Info**: `VALIDATION_BEDEUTUNG.md` erklärt, was die experimentelle Bestätigung bedeutet
 
