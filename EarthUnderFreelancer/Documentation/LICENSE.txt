@@ -1,0 +1,107 @@
+EarthUnderFreelancer - End User License Agreement (EULA)
+=========================================================
+
+Version 1.0
+Last Updated: 2024
+
+PLEASE READ THIS END USER LICENSE AGREEMENT ("AGREEMENT") CAREFULLY BEFORE 
+INSTALLING OR USING EARTHUNDERFREELANCER ("GAME").
+
+BY INSTALLING, COPYING, OR OTHERWISE USING THE GAME, YOU AGREE TO BE BOUND 
+BY THE TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THE TERMS OF THIS 
+AGREEMENT, DO NOT INSTALL OR USE THE GAME.
+
+1. LICENSE GRANT
+----------------
+EarthUnder Studios ("Licensor") grants you a non-exclusive, non-transferable, 
+limited license to install and use the Game for your personal, non-commercial 
+use, subject to the terms of this Agreement.
+
+2. RESTRICTIONS
+---------------
+You may not:
+a) Copy, modify, or distribute the Game;
+b) Reverse engineer, decompile, or disassemble the Game;
+c) Rent, lease, or lend the Game;
+d) Use the Game for any commercial purpose;
+e) Remove any proprietary notices or labels on the Game;
+f) Use cheats, exploits, automation software, bots, hacks, or any unauthorized 
+   third-party software designed to modify the Game;
+g) Interfere with or disrupt servers or networks connected to the Game.
+
+3. ONLINE SERVICES
+------------------
+The Game may require an internet connection and access to online services. 
+These services may be modified, suspended, or discontinued at any time without 
+prior notice.
+
+4. USER ACCOUNTS
+----------------
+You may need to create an account to access certain features. You are 
+responsible for maintaining the confidentiality of your account credentials.
+
+5. IN-GAME PURCHASES
+--------------------
+The Game may offer in-game purchases. All purchases are final and non-refundable 
+unless required by applicable law.
+
+6. VIRTUAL ITEMS
+----------------
+Virtual items acquired in the Game have no real-world value and cannot be 
+exchanged for real currency. You do not own virtual items; you have a limited 
+license to use them within the Game.
+
+7. USER CONDUCT
+---------------
+You agree to:
+a) Comply with all applicable laws and regulations;
+b) Respect other players;
+c) Not engage in harassment, abuse, or offensive behavior;
+d) Not exploit bugs or glitches;
+e) Report any violations or security issues.
+
+8. PRIVACY
+----------
+Your use of the Game is subject to our Privacy Policy, which is incorporated 
+into this Agreement by reference.
+
+9. INTELLECTUAL PROPERTY
+------------------------
+The Game and all content therein are protected by copyright and other 
+intellectual property laws. All rights not expressly granted are reserved.
+
+10. DISCLAIMER OF WARRANTIES
+----------------------------
+THE GAME IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+11. LIMITATION OF LIABILITY
+---------------------------
+IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, 
+CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF OR RELATED TO YOUR USE OF 
+THE GAME.
+
+12. TERMINATION
+---------------
+This license is effective until terminated. Licensor may terminate this 
+Agreement at any time if you fail to comply with its terms. Upon termination, 
+you must destroy all copies of the Game.
+
+13. GOVERNING LAW
+-----------------
+This Agreement shall be governed by and construed in accordance with applicable 
+laws.
+
+14. CHANGES TO AGREEMENT
+------------------------
+Licensor reserves the right to modify this Agreement at any time. Continued use 
+of the Game after any modification constitutes acceptance of the modified 
+Agreement.
+
+15. CONTACT
+-----------
+For questions about this Agreement, please contact:
+support@earthunderfreelancer.com
+
+© 2024 EarthUnder Studios. All Rights Reserved.
