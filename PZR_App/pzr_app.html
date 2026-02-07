@@ -3,22 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PZR Assistent Pro - Professionelle Zahnreinigung Management App">
-    <meta name="theme-color" content="#667eea">
-    
-    <!-- iOS Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PZR Assistent">
-    
-    <!-- Android Meta Tags -->
-    <meta name="mobile-web-app-capable" content="yes">
-    
     <title>PZR Assistent Pro - Professionelle Zahnreinigung</title>
-    
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlBaUiBBc3Npc3RlbnQgUHJvIiwKICAic2hvcnRfbmFtZSI6ICJQWlIgQXBwIiwKICAiZGVzY3JpcHRpb24iOiAiUHJvZmVzc2lvbmVsbGUgWmFobnJlaW5pZ3VuZyBNYW5hZ2VtZW50IiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjNjY3ZWVhIiwKICAidGhlbWVfY29sb3IiOiAiIzY2N2VlYSIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyB2aWV3Qm94PScwIDAgMTkyIDE5Mic+JTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzNjY3ZWVhJy8+JTNDdGV4dCB4PScxNScgeT0nMTM1JyBmb250LXNpemU9JzEyMCcgZm9udC1mYW1pbHk9J0FyaWFsJyBmaWxsPSd3aGl0ZSc+JUYwJTlGJUE2JUI3JTNDL3RleHQ+JTNDL3N2Zz4iLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9LAogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgdmlld0JveD0nMCAwIDUxMiA1MTInPiUzQ3JlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIGZpbGw9JyUyMzY2N2VlYScvPiUzQ3RleHQgeD0nNjAnIHk9JzM4MCcgZm9udC1zaXplPSczMjAnIGZvbnQtZmFtaWx5PSdBcmlhbCcgZmlsbD0nd2hpdGUnPiVGMCU5RiVBNiVCNyUzQy90ZXh0PiUzQy9zdmc+IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==">
-    
     <style>
         * {
             margin: 0;
@@ -753,14 +738,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- PWA Install Banner -->
-        <div id="installBanner" style="display: none; background: #43a047; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <p style="margin-bottom: 10px; font-weight: 600;">📱 App installieren</p>
-            <p style="font-size: 13px; margin-bottom: 10px;">Installieren Sie PZR Assistent als App auf Ihrem Gerät für schnellen Zugriff!</p>
-            <button onclick="installPWA()" style="background: white; color: #43a047; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600; cursor: pointer; margin-right: 10px;">Jetzt installieren</button>
-            <button onclick="dismissInstallBanner()" style="background: transparent; color: white; border: 1px solid white; padding: 10px 20px; border-radius: 5px; font-weight: 600; cursor: pointer;">Später</button>
-        </div>
-
         <!-- Login Screen -->
         <div id="loginScreen" class="login-screen">
             <h1>🦷 PZR Assistent Pro</h1>
@@ -792,12 +769,6 @@
 
             <div id="employeeLogin" class="hidden">
                 <div class="form-group">
-                    <label for="practiceSelect">Praxis wählen</label>
-                    <select id="practiceSelect" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
-                        <option value="">Bitte wählen...</option>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="employeeId">Mitarbeiter-ID</label>
                     <input type="text" id="employeeId" placeholder="z.B. MA-001">
                 </div>
@@ -806,65 +777,13 @@
                     <input type="password" id="employeePassword" placeholder="Passwort">
                 </div>
                 <button class="btn" onclick="loginEmployee()">Anmelden</button>
-                <button class="btn" onclick="showPracticeRegistration()" style="margin-top: 10px; background: #43a047;">Praxis registrieren</button>
             </div>
 
             <p style="margin-top: 20px; font-size: 12px; color: #999;">
                 Demo-Zugänge:<br>
                 Patient: PAT-12345 / PIN: 1234<br>
-                Behandler: MA-001 / Passwort: admin
+                Mitarbeiter: MA-001 / Passwort: admin
             </p>
-        </div>
-
-        <!-- Practice Registration Screen -->
-        <div id="registrationScreen" class="login-screen" style="display: none; max-width: 500px;">
-            <h1>🏥 Praxis Registrierung</h1>
-            <p>Neue Praxis anlegen</p>
-            
-            <div class="form-group">
-                <label for="regPracticeName">Praxis-Name *</label>
-                <input type="text" id="regPracticeName" placeholder="z.B. Zahnarztpraxis Dr. Schmidt">
-            </div>
-            
-            <div class="form-group">
-                <label for="regAddress">Adresse *</label>
-                <input type="text" id="regAddress" placeholder="Straße und Hausnummer">
-            </div>
-            
-            <div class="form-group">
-                <label for="regCity">Stadt *</label>
-                <input type="text" id="regCity" placeholder="PLZ und Ort">
-            </div>
-            
-            <div class="form-group">
-                <label for="regPhone">Telefon *</label>
-                <input type="text" id="regPhone" placeholder="+49...">
-            </div>
-            
-            <div class="form-group">
-                <label for="regEmail">E-Mail *</label>
-                <input type="email" id="regEmail" placeholder="praxis@example.com">
-            </div>
-            
-            <h3 style="margin-top: 30px; margin-bottom: 15px; color: #667eea;">Administrator-Account</h3>
-            
-            <div class="form-group">
-                <label for="regAdminName">Name des Administrators *</label>
-                <input type="text" id="regAdminName" placeholder="z.B. Dr. Schmidt">
-            </div>
-            
-            <div class="form-group">
-                <label for="regAdminPassword">Passwort *</label>
-                <input type="password" id="regAdminPassword" placeholder="Mindestens 6 Zeichen">
-            </div>
-            
-            <div class="form-group">
-                <label for="regAdminPasswordConfirm">Passwort bestätigen *</label>
-                <input type="password" id="regAdminPasswordConfirm" placeholder="Passwort wiederholen">
-            </div>
-            
-            <button class="btn" onclick="registerPractice()">Praxis registrieren</button>
-            <button class="btn" onclick="showLogin()" style="margin-top: 10px; background: #999;">Zurück zur Anmeldung</button>
         </div>
 
         <!-- Main App (hidden initially) -->
@@ -1095,7 +1014,6 @@
                     <button class="tab active" onclick="switchTab('patientManagement', event)">Patienten</button>
                     <button class="tab" onclick="switchTab('employeeAppointments', event)">Termine</button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
-                    <button class="tab" id="employeeManagementTab" onclick="switchTab('employeeManagement', event)" style="display: none;">Mitarbeiter</button>
                 </div>
 
                 <div class="content">
@@ -1226,49 +1144,6 @@
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
                     </div>
-
-                    <!-- Employee Management Tab (Admin only) -->
-                    <div id="employeeManagement" class="tab-content">
-                        <h2>Mitarbeiterverwaltung</h2>
-                        <p style="margin-bottom: 20px; color: #666;">Nur für Praxis-Administratoren</p>
-                        
-                        <div class="appointment-form">
-                            <h3>Neuer Mitarbeiter</h3>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeName">Name *</label>
-                                <input type="text" id="newEmployeeName" placeholder="z.B. Dr. Müller">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeRole">Rolle *</label>
-                                <select id="newEmployeeRole">
-                                    <option value="practitioner">Behandler</option>
-                                    <option value="hygienist">Dentalhygieniker/in</option>
-                                    <option value="assistant">Zahnarzthelfer/in</option>
-                                    <option value="reception">Rezeption</option>
-                                    <option value="admin">Administrator</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeePassword">Passwort *</label>
-                                <input type="password" id="newEmployeePassword" placeholder="Mindestens 6 Zeichen">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeEmail">E-Mail</label>
-                                <input type="email" id="newEmployeeEmail" placeholder="optional">
-                            </div>
-                            
-                            <button class="btn" onclick="addEmployee()">Mitarbeiter hinzufügen</button>
-                        </div>
-                        
-                        <h3 style="margin-top: 30px;">Aktuelle Mitarbeiter</h3>
-                        <div id="employeeListContainer" class="patient-list">
-                            <!-- Will be populated by JavaScript -->
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1346,76 +1221,9 @@
     </div>
 
     <script>
-        // PWA Installation
-        let deferredPrompt;
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installBanner').style.display = 'block';
-        });
-
-        function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('App wurde installiert');
-                    }
-                    deferredPrompt = null;
-                    document.getElementById('installBanner').style.display = 'none';
-                });
-            }
-        }
-
-        function dismissInstallBanner() {
-            document.getElementById('installBanner').style.display = 'none';
-            localStorage.setItem('pwaInstallDismissed', 'true');
-        }
-
-        window.addEventListener('appinstalled', () => {
-            console.log('PWA wurde erfolgreich installiert');
-            document.getElementById('installBanner').style.display = 'none';
-        });
-
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                // Inline Service Worker
-                const swCode = `
-                    const CACHE_NAME = 'pzr-app-v1';
-                    
-                    self.addEventListener('install', (event) => {
-                        self.skipWaiting();
-                    });
-                    
-                    self.addEventListener('activate', (event) => {
-                        event.waitUntil(clients.claim());
-                    });
-                    
-                    self.addEventListener('fetch', (event) => {
-                        event.respondWith(
-                            caches.match(event.request).then((response) => {
-                                return response || fetch(event.request);
-                            })
-                        );
-                    });
-                `;
-                
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                
-                navigator.serviceWorker.register(swUrl)
-                    .then(reg => console.log('Service Worker registriert'))
-                    .catch(err => console.log('Service Worker Fehler:', err));
-            });
-        }
-
         // Application State
         let currentUser = null;
         let currentRole = null;
-        let currentPractice = null;
-        let practices = [];
         let patients = [];
         let appointments = [];
         let reminders = [];
@@ -1573,29 +1381,11 @@
 
         // Initialize demo data
         function initDemoData() {
-            // Initialize practices
-            const savedPractices = localStorage.getItem('pzrPractices');
-            if (!savedPractices) {
-                practices = [{
-                    id: 'PRACTICE-001',
-                    name: 'Demo Zahnarztpraxis',
-                    address: 'Musterstraße 123',
-                    city: '12345 Musterstadt',
-                    phone: '+49 123 456789',
-                    email: 'info@demo-praxis.de',
-                    created: new Date().toISOString()
-                }];
-                localStorage.setItem('pzrPractices', JSON.stringify(practices));
-            } else {
-                practices = JSON.parse(savedPractices);
-            }
-
             const savedPatients = localStorage.getItem('pzrPatients');
             if (!savedPatients) {
                 // Create demo patient with medical history
                 patients = [{
                     id: 'PAT-12345',
-                    practiceId: 'PRACTICE-001',
                     patientNumber: 'PAT-12345',
                     name: 'Max Mustermann',
                     pin: '1234',
@@ -1606,7 +1396,6 @@
                     toolsUsage: 'Interdentalbürsten Größe 3 für Backenzähne, Größe 2 für Frontzähne. Elektrische Zahnbürste mit Drucksensor verwenden. Mundspülung 2x täglich.',
                     notes: 'Nächster Termin in 6 Monaten. Bei Zahnfleischbluten bitte früher kommen.',
                     created: new Date().toISOString(),
-                    lastModified: new Date().toISOString(),
                     // Medical History
                     anamnese: {
                         allergies: '',
@@ -1625,10 +1414,8 @@
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             } else {
                 patients = JSON.parse(savedPatients);
-                // Ensure all patients have practiceId and lastModified
+                // Ensure all patients have anamnese object
                 patients.forEach(p => {
-                    if (!p.practiceId) p.practiceId = 'PRACTICE-001';
-                    if (!p.lastModified) p.lastModified = p.created || new Date().toISOString();
                     if (!p.anamnese) {
                         p.anamnese = {
                             allergies: '',
@@ -1648,25 +1435,14 @@
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             }
 
-            // Create demo employees for the practice
-            const savedEmployees = localStorage.getItem('pzrEmployees');
-            if (!savedEmployees) {
-                const employees = [{
-                    id: 'MA-001',
-                    practiceId: 'PRACTICE-001',
-                    employeeId: 'MA-001',
-                    password: 'admin',
-                    name: 'Dr. Schmidt',
-                    role: 'admin',
-                    email: 'schmidt@demo-praxis.de',
-                    created: new Date().toISOString(),
-                    active: true
-                }];
-                localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-            }
-            
-            // Populate practice selector
-            populatePracticeSelector();
+            // Create demo employee
+            const employees = [{
+                id: 'MA-001',
+                employeeId: 'MA-001',
+                password: 'admin',
+                name: 'Dr. Schmidt'
+            }];
+            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
         }
 
         // Load data from localStorage
@@ -2506,260 +2282,11 @@
             loadPatientList();
             loadEmployeeAppointmentsList();
             
-            // Show employee management tab only for admins
-            if (currentUser && currentUser.role === 'admin') {
-                document.getElementById('employeeManagementTab').style.display = 'block';
-            }
-            
             // Populate patient select for appointments
             const select = document.getElementById('appointmentPatient');
             if (select) {
                 select.innerHTML = '<option value="">Bitte wählen...</option>' + 
-                    patients.filter(p => p.practiceId === currentPractice.id).map(p => 
-                        `<option value="${p.id}">${p.name} (${p.patientNumber})</option>`
-                    ).join('');
-            }
-        }
-
-        // Practice Management Functions
-        function populatePracticeSelector() {
-            const practices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
-            const select = document.getElementById('practiceSelect');
-            if (select) {
-                select.innerHTML = '<option value="">Bitte wählen...</option>' + 
-                    practices.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-            }
-        }
-
-        function showPracticeRegistration() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('registrationScreen').style.display = 'block';
-        }
-
-        function showLogin() {
-            document.getElementById('registrationScreen').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'block';
-        }
-
-        function registerPractice() {
-            const name = document.getElementById('regPracticeName').value.trim();
-            const address = document.getElementById('regAddress').value.trim();
-            const city = document.getElementById('regCity').value.trim();
-            const phone = document.getElementById('regPhone').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const adminName = document.getElementById('regAdminName').value.trim();
-            const password = document.getElementById('regAdminPassword').value.trim();
-            const passwordConfirm = document.getElementById('regAdminPasswordConfirm').value.trim();
-
-            if (!name || !address || !city || !phone || !email || !adminName || !password) {
-                alert('Bitte füllen Sie alle Pflichtfelder aus.');
-                return;
-            }
-
-            if (password.length < 6) {
-                alert('Das Passwort muss mindestens 6 Zeichen lang sein.');
-                return;
-            }
-
-            if (password !== passwordConfirm) {
-                alert('Die Passwörter stimmen nicht überein.');
-                return;
-            }
-
-            // Generate unique practice ID
-            const practiceId = 'PRACTICE-' + Date.now();
-            const employeeId = 'MA-' + Date.now();
-
-            // Create practice
-            const practice = {
-                id: practiceId,
-                name: name,
-                address: address,
-                city: city,
-                phone: phone,
-                email: email,
-                created: new Date().toISOString()
-            };
-
-            // Create admin employee
-            const admin = {
-                id: employeeId,
-                practiceId: practiceId,
-                employeeId: employeeId,
-                password: password,
-                name: adminName,
-                role: 'admin',
-                email: email,
-                created: new Date().toISOString(),
-                active: true
-            };
-
-            // Save to localStorage
-            const practices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
-            practices.push(practice);
-            localStorage.setItem('pzrPractices', JSON.stringify(practices));
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            employees.push(admin);
-            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-
-            alert(`Praxis erfolgreich registriert!\n\nIhre Zugangsdaten:\nMitarbeiter-ID: ${employeeId}\nPasswort: ${password}\n\nBitte notieren Sie diese Daten!`);
-
-            // Clear form
-            document.getElementById('regPracticeName').value = '';
-            document.getElementById('regAddress').value = '';
-            document.getElementById('regCity').value = '';
-            document.getElementById('regPhone').value = '';
-            document.getElementById('regEmail').value = '';
-            document.getElementById('regAdminName').value = '';
-            document.getElementById('regAdminPassword').value = '';
-            document.getElementById('regAdminPasswordConfirm').value = '';
-
-            // Reload practice selector and go back to login
-            populatePracticeSelector();
-            showLogin();
-        }
-
-        // Employee Management Functions
-        function addEmployee() {
-            if (!currentUser || currentUser.role !== 'admin') {
-                alert('Nur Administratoren können Mitarbeiter hinzufügen.');
-                return;
-            }
-
-            const name = document.getElementById('newEmployeeName').value.trim();
-            const role = document.getElementById('newEmployeeRole').value;
-            const password = document.getElementById('newEmployeePassword').value.trim();
-            const email = document.getElementById('newEmployeeEmail').value.trim();
-
-            if (!name || !password) {
-                alert('Bitte füllen Sie alle Pflichtfelder aus.');
-                return;
-            }
-
-            if (password.length < 6) {
-                alert('Das Passwort muss mindestens 6 Zeichen lang sein.');
-                return;
-            }
-
-            const employeeId = 'MA-' + Date.now();
-            const employee = {
-                id: employeeId,
-                practiceId: currentPractice.id,
-                employeeId: employeeId,
-                password: password,
-                name: name,
-                role: role,
-                email: email,
-                created: new Date().toISOString(),
-                active: true
-            };
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            employees.push(employee);
-            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-
-            alert(`Mitarbeiter erfolgreich angelegt!\n\nMitarbeiter-ID: ${employeeId}\nPasswort: ${password}\n\nBitte geben Sie diese Daten an den Mitarbeiter weiter.`);
-
-            // Clear form
-            document.getElementById('newEmployeeName').value = '';
-            document.getElementById('newEmployeePassword').value = '';
-            document.getElementById('newEmployeeEmail').value = '';
-
-            loadEmployeeList();
-        }
-
-        function loadEmployeeList() {
-            const container = document.getElementById('employeeListContainer');
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const practiceEmployees = employees.filter(e => e.practiceId === currentPractice.id && e.active);
-
-            if (practiceEmployees.length === 0) {
-                container.innerHTML = '<p class="empty-state">Noch keine Mitarbeiter vorhanden.</p>';
-                return;
-            }
-
-            container.innerHTML = practiceEmployees.map(emp => `
-                <div class="patient-card">
-                    <div class="patient-header">
-                        <span><strong>${emp.name}</strong></span>
-                        <span class="patient-number">${emp.employeeId}</span>
-                    </div>
-                    <div class="patient-details">
-                        <p>👤 Rolle: ${getRoleLabel(emp.role)}</p>
-                        ${emp.email ? `<p>📧 ${emp.email}</p>` : ''}
-                        <p>📅 Angelegt: ${formatDate(emp.created)}</p>
-                    </div>
-                    ${currentUser.id !== emp.id ? `<button class="btn" style="background: #f44336; margin-top: 10px;" onclick="deactivateEmployee('${emp.id}')">Deaktivieren</button>` : ''}
-                </div>
-            `).join('');
-        }
-
-        function getRoleLabel(role) {
-            const labels = {
-                'admin': 'Administrator',
-                'practitioner': 'Behandler',
-                'hygienist': 'Dentalhygieniker/in',
-                'assistant': 'Zahnarzthelfer/in',
-                'reception': 'Rezeption'
-            };
-            return labels[role] || role;
-        }
-
-        function deactivateEmployee(employeeId) {
-            if (!confirm('Möchten Sie diesen Mitarbeiter wirklich deaktivieren?')) {
-                return;
-            }
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const employee = employees.find(e => e.id === employeeId);
-            if (employee) {
-                employee.active = false;
-                localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-                loadEmployeeList();
-                alert('Mitarbeiter wurde deaktiviert.');
-            }
-        }
-
-        // Update login employee function
-        function loginEmployee() {
-            const practiceId = document.getElementById('practiceSelect').value;
-            const employeeId = document.getElementById('employeeId').value.trim();
-            const password = document.getElementById('employeePassword').value.trim();
-
-            if (!practiceId) {
-                alert('Bitte wählen Sie eine Praxis aus.');
-                return;
-            }
-
-            if (!employeeId || !password) {
-                alert('Bitte Mitarbeiter-ID und Passwort eingeben.');
-                return;
-            }
-
-            const practices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
-            const practice = practices.find(p => p.id === practiceId);
-
-            if (!practice) {
-                alert('Praxis nicht gefunden.');
-                return;
-            }
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const employee = employees.find(e => 
-                e.practiceId === practiceId && 
-                e.employeeId === employeeId && 
-                e.password === password &&
-                e.active !== false
-            );
-            
-            if (employee) {
-                currentUser = employee;
-                currentRole = 'employee';
-                currentPractice = practice;
-                showMainApp();
-            } else {
-                alert('Ungültige Anmeldedaten.');
+                    patients.map(p => `<option value="${p.id}">${p.name} (${p.patientNumber})</option>`).join('');
             }
         }
 
