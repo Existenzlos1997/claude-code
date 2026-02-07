@@ -1,238 +1,360 @@
-# PZR Assistent Pro - Smartphone App mit Anamnese
+# PZR Assistent Pro - Installierbare Progressive Web App
 
-## 📱 Direkter Download Link
+## 📱 INSTALLIERBAR AUF ALLEN PLATTFORMEN!
 
-**Öffnen Sie diesen Link auf Ihrem Smartphone:**
+Die PZR App ist jetzt eine **Progressive Web App (PWA)** - installierbar wie eine native App auf Android, iOS und Desktop!
+
+---
+
+## 🔗 Direkter Link
 
 ```
 https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_app.html
 ```
 
-> **Hinweis:** Nach dem Merge des Pull Requests ändert sich die URL zu:  
-> `https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/PZR_App/pzr_app.html`
+> Nach Merge: `.../main/PZR_App/pzr_app.html`
 
-## 🦷 Was ist die PZR App Pro?
+---
 
-Die PZR Assistent Pro App ist eine professionelle Lösung für die Verwaltung von PZR-Terminen mit **Behandler-Empfehlungen**, **Patientenverwaltung** und **medizinischer Anamnese**. Die App bietet:
+## 🦷 Was ist PZR Assistent Pro?
 
-- ✅ **Login-System**: Separate Anmeldung für Patienten und Mitarbeiter
-- ✅ **Behandler-Empfehlungen**: Personalisierte Empfehlungen vom Zahnarzt prominent angezeigt
-- ✅ **Patientenverwaltung**: Mitarbeiter können Patienten anlegen und verwalten
-- ✅ **Personalisierte Oberfläche**: Individuelle Putztechnik, Hilfsmittel und Bemerkungen
-- ✅ **Medizinische Anamnese**: Vollständige medizinische Vorgeschichte mit kritischen Markierungen
-- ✅ **Terminverwaltung**: Mitarbeiter erstellen Termine, Patienten sehen sie automatisch
-- ✅ **Profil-Bearbeitung**: Patienten können eigene Daten aktualisieren
-- ✅ **Erweiterte Erinnerungen**: Erinnerungen mit eingebetteten Behandler-Empfehlungen
-- ✅ **Jährliche Anamnese-Aktualisierung**: Automatische Erinnerung zur Aktualisierung
-- ✅ **Offline-fähig**: Alle Daten werden lokal auf Ihrem Smartphone gespeichert
-- ✅ **Smartphone-optimiert**: Responsive Design für optimale mobile Nutzung
+Eine professionelle Lösung für Zahnarztpraxen zur Verwaltung von PZR-Terminen mit **Multi-User-System**, **Praxis-Verwaltung** und **medizinischer Anamnese**.
 
-## 📲 So verwenden Sie die App auf dem Smartphone
+### 🆕 NEU: Multi-Practice Support!
 
-### Option 1: Direkt im Browser öffnen (Empfohlen)
+- 🏥 **Praxis-Registrierung:** Jede Praxis kann sich selbst registrieren
+- 👥 **Multi-User:** Mehrere Mitarbeiter pro Praxis
+- 🔐 **Admin-System:** Erster Benutzer wird automatisch Administrator
+- 👨‍⚕️ **Mitarbeiter-Verwaltung:** Admins können Mitarbeiter hinzufügen
+- 📱 **PWA-Installation:** Auf allen Plattformen installierbar
+- 🏢 **Daten-Trennung:** Jede Praxis hat eigene Daten
 
-1. **Link öffnen**: Tippen Sie auf den obigen Link oder geben Sie ihn in Ihrem Smartphone-Browser ein
-2. **Lesezeichen setzen**: Speichern Sie die Seite als Lesezeichen für schnellen Zugriff
-3. **Zum Homescreen hinzufügen** (optional):
-   - **iPhone/iPad**: Safari-Menü → "Zum Home-Bildschirm" → "Hinzufügen"
-   - **Android**: Chrome-Menü (⋮) → "Zum Startbildschirm hinzufügen"
+---
 
-### Option 2: HTML-Datei herunterladen und lokal öffnen
+## 📲 Installation (Empfohlen!)
 
-1. **Herunterladen**: Öffnen Sie den Link und speichern Sie die Seite
-2. **Öffnen**: Navigieren Sie zu "Downloads" und öffnen Sie `pzr_app.html`
-3. Die App läuft komplett offline auf Ihrem Gerät
+### 🤖 Android Installation
+
+1. Link in Chrome/Edge/Brave öffnen
+2. **Install-Banner** erscheint → "Jetzt installieren"
+3. Oder: Menü (⋮) → "App installieren"
+4. ✅ App erscheint auf dem Startbildschirm
+
+### 🍎 iOS Installation
+
+1. Link in **Safari** öffnen (wichtig!)
+2. Teilen (⬆️) → "Zum Home-Bildschirm"
+3. "Hinzufügen" bestätigen
+4. ✅ App öffnet wie eine native App
+
+### 💻 Desktop Installation
+
+1. Chrome/Edge öffnen
+2. Install-Symbol in Adressleiste (⊕)
+3. "Installieren" klicken
+4. ✅ App öffnet in eigenem Fenster
+
+---
 
 ## 🔐 Anmeldung
 
-### Demo-Zugangsdaten zum Testen:
+### Demo-Zugangsdaten:
 
 **Patient:**
 - Patientennummer: `PAT-12345`
 - PIN: `1234`
 
 **Behandler:**
+- Praxis: `Demo Zahnarztpraxis` wählen
 - Mitarbeiter-ID: `MA-001`
 - Passwort: `admin`
 
-## 🎯 Funktionen im Detail
+### Neue Praxis registrieren:
 
-### 👤 Patienten-Interface
-
-#### Dashboard
-- **Persönliches Profil**: Patientennummer, Name, Kontaktdaten
-- **Behandler-Empfehlungen**: Prominente Anzeige der wichtigsten Empfehlungen
-- **Nächste Termine**: Übersicht bevorstehender Termine
-
-#### Profil (NEU!)
-- **Eigene Daten bearbeiten**: Name, E-Mail, Telefon
-- **Selbstverwaltung**: Patienten können ihre Kontaktdaten aktualisieren
-- **Speichern**: Änderungen werden sofort gespeichert
-
-#### Medizinische Anamnese (NEU!)
-- **Kritische Angaben** (rot markiert bei Mitarbeitern):
-  - Allergien (z.B. Penicillin, Latex)
-  - Aktuelle Medikamente
-  - Blutungsneigung
-  - Herz-Kreislauf-Erkrankungen
-  - Diabetes
-  - Schwangerschaft
-- **Weitere Angaben**:
-  - Chronische Erkrankungen
-  - Frühere Operationen
-  - Raucher/Nichtraucher
-  - Alkoholkonsum
-- **Jährliche Aktualisierung**: Automatische Erinnerung nach 1 Jahr
-- **Zugriffskontrolle**: Warnung beim Login wenn Aktualisierung fällig
-
-#### Empfehlungen
-- **Behandler-Empfehlungen nach PZR**: Individuell vom Zahnarzt festgelegte Hinweise
-- **Putztechnik**: Spezifische Anweisungen zur Zahnputztechnik
-- **Hilfsmittel**: Empfohlene Zahnpflegeprodukte und deren Anwendung
-- **Weitere Bemerkungen**: Zusätzliche individuelle Hinweise
-
-#### Termine
-- Übersicht aller Termine mit Status-Badges
-- "Heute" für heutige Termine
-- "In X Tagen" für bevorstehende Termine
-- "Vergangen" für abgelaufene Termine
-
-#### Erinnerungen
-- **Anpassbare Benachrichtigungen**:
-  - ⏰ 24 Stunden vor dem Termin
-  - ⏰ 1 Stunde vor dem Termin
-  - ⏰ Nachsorge-Erinnerung (6 Monate nach dem Termin)
-- **Mit Behandler-Empfehlungen**: Erinnerungen enthalten wichtige Empfehlungen
-- Browser-Benachrichtigungen mit personalisierten Hinweisen
-
-### 👨‍⚕️ Mitarbeiter-Interface
-
-#### Patientenverwaltung
-- **Patientenliste**: Übersicht aller Patienten
-- **Suchfunktion**: Suche nach Patientennummer oder Name
-- **Patientendetails**: Anzeige aller Patienteninformationen
-- **Kritische Informationen**: Auto-Markierung wichtiger medizinischer Daten
-
-#### Termine erstellen (NEU!)
-- **Terminplanung**: Termine für Patienten erstellen
-- **Patienten-Auswahl**: Dropdown mit allen Patienten
-- **Termindetails**: Datum, Uhrzeit, Ort, Notizen
-- **Automatische Erinnerungen**: Patienten werden automatisch erinnert
-- **Kritische Warnungen**: Anzeige wichtiger medizinischer Informationen bei Terminen
-- **Termin-Übersicht**: Alle Termine mit Status und Patientendetails
-
-#### Neuen Patienten anlegen
-- Patientennummer vergeben
-- Name und Kontaktdaten erfassen
-- 4-stellige PIN festlegen
-- **Behandler-Empfehlungen** hinterlegen:
-  - Empfehlungen nach PZR
-  - Putztechnik-Anpassungen
-  - Hilfsmittel und Anwendung
-  - Weitere Bemerkungen
-- **🎤 Spracheingabe**: Klicken Sie auf das Mikrofon-Symbol neben den Feldern, um Empfehlungen per Sprache zu erfassen
-
-#### Patienten bearbeiten
-- Alle Patientendaten aktualisieren
-- Empfehlungen anpassen
-- Individuelle Anweisungen pflegen
-- **🎤 Spracheingabe** für schnelle Erfassung
-
-## 💡 Neue Highlights
-
-### 🏥 Medizinische Anamnese (NEU!)
-- **Vollständiges medizinisches Profil**: Allergien, Medikamente, Erkrankungen
-- **Kritische Markierungen**: Wichtige Informationen automatisch rot hervorgehoben
-- **Automatische Warnungen**: Mitarbeiter sehen kritische Infos bei Terminen
-- **Jährliche Aktualisierung**: Erinnerung zur Aktualisierung nach 1 Jahr
-- **Pflichtfeld-Logik**: Warnung bei fehlender oder veralteter Anamnese
-
-### 📅 Terminverwaltung durch Mitarbeiter (NEU!)
-- **Mitarbeiter erstellen Termine**: Termine für Patienten anlegen
-- **Patienten sehen Termine automatisch**: Synchronisierung über Patienten-ID
-- **Kritische Informationen sichtbar**: Auto-Anzeige wichtiger medizinischer Daten
-- **Automatische Erinnerungen**: Basierend auf Patient-Einstellungen
-
-### 👤 Profil-Selbstverwaltung (NEU!)
-- **Patienten können eigene Daten bearbeiten**: Name, E-Mail, Telefon
-- **Einfache Aktualisierung**: Direkt im Patient-Interface
-- **Sofortige Speicherung**: Änderungen werden sofort übernommen
-
-### 🎤 Sprachaufnahme für Empfehlungen
-- **Mikrofonzugriff**: Automatische Sprache-zu-Text-Konvertierung
-- **Fokussiert**: Nur Empfehlungen aufzeichnen, ohne alles drum herum
-- **Einfache Bedienung**: Klick auf Mikrofon-Symbol → Sprechen → Klick zum Stoppen
-- **Deutsche Spracherkennung**: Optimiert für medizinische Fachbegriffe
-- **Visuelle Anzeige**: Pulsierender Button während Aufnahme
-- **Echtzeit-Transkript**: Sehen Sie, was erfasst wird, während Sie sprechen
-- **Nachbearbeitung möglich**: Text kann nach Aufnahme angepasst werden
-
-### Behandler-Empfehlungen mit Präsenz
-- **Prominente Darstellung**: Gelb-orange hervorgehobene Karten im Dashboard
-- **In Erinnerungen eingebettet**: Empfehlungen werden direkt in Benachrichtigungen angezeigt
-- **Personalisiert**: Jeder Patient erhält individuelle Anweisungen
-- **Immer sichtbar**: Wichtige Hinweise auf dem Dashboard sofort erkennbar
-
-### Rollenbasiertes System
-- **Patienten**: Personalisierte Ansicht mit eigenen Empfehlungen
-- **Mitarbeiter**: Verwaltung aller Patienten und deren Profile
-- **Getrennte Anmeldung**: Sichere Zugriffskontrolle mit PIN/Passwort
-
-## 💾 Datenspeicherung
-
-- **Alle Daten bleiben auf Ihrem Gerät**: Die App verwendet localStorage
-- **Keine Internetverbindung nötig**: Nach dem ersten Laden läuft alles offline
-- **Datenschutz**: Keine Daten werden an Server gesendet
-- **Daten bleiben erhalten**: Auch nach dem Schließen des Browsers
-- **Patientendaten**: Sicher lokal gespeichert mit PIN-Schutz
-
-## 🔧 Technische Details
-
-- **Technologie**: Pure HTML/CSS/JavaScript (keine Dependencies)
-- **Dateigröße**: ~85 KB (single file, ~2400 Zeilen Code)
-- **Browser-Kompatibilität**: 
-  - Moderne Browser (Chrome, Firefox, Safari, Edge)
-  - Spracherkennung: Chrome, Edge, Safari (Web Speech API)
-- **Responsive Design**: Optimiert für alle Bildschirmgrößen
-- **Benachrichtigungen**: Web Notifications API (Standard in modernen Browsern)
-- **Login-System**: Rollenbasierte Zugriffskontrolle
-- **Modal-Interface**: Für Patientenbearbeitung
-- **Spracherkennung**: Web Speech API mit deutscher Spracherkennung (de-DE)
-- **Medizinische Anamnese**: Umfangreiches medizinisches Profil mit Auto-Highlighting
-- **Datenmigration**: Automatische Migration bestehender Patientendaten
-
-## ⚠️ Wichtige Hinweise
-
-1. **Login erforderlich**: Anmeldung mit Patientennummer/PIN oder Mitarbeiter-ID/Passwort
-2. **Demo-Daten**: Vorkonfigurierter Patient zum Testen (PAT-12345 / PIN: 1234)
-3. **Benachrichtigungen aktivieren**: Für Erinnerungen müssen Sie Benachrichtigungen im Browser erlauben
-4. **Browser-Daten nicht löschen**: Alle Daten werden gelöscht, wenn Sie den Browser-Cache leeren
-5. **Backup**: Notieren Sie wichtige Termine zusätzlich anderweitig
-6. **Keine medizinische App**: Dies ist ein Organisations-Tool, kein medizinischer Ratgeber
-
-## 🎨 Features
-
-- ✨ Moderne, benutzerfreundliche Oberfläche
-- 🎨 Schönes Farbschema (Lila/Blau Gradient)
-- 📱 Touch-optimierte Bedienung
-- 🔔 Push-Benachrichtigungen mit Empfehlungen
-- 💫 Animierte Übergänge
-- 🌐 Komplett in Deutsch
-- 🔐 Login-System mit Rollenverwaltung
-- 💡 Prominente Behandler-Empfehlungen
-- 👨‍⚕️ Mitarbeiter-Interface zur Patientenverwaltung
-- 🎤 Sprachaufnahme für Empfehlungen (Web Speech API)
-- ⚡ Echtzeit-Sprache-zu-Text-Konvertierung
-- 🏥 Vollständige medizinische Anamnese
-- 🔴 Auto-Markierung kritischer medizinischer Informationen
-- 📅 Terminverwaltung durch Mitarbeiter
-- 👤 Profil-Selbstverwaltung für Patienten
-- 📆 Jährliche Anamnese-Aktualisierungs-Erinnerung
-
-## 📞 Support
-
-Bei Fragen oder Problemen können Sie ein Issue im Repository erstellen.
+1. "Behandler" Rolle wählen
+2. "Praxis registrieren" Button klicken
+3. Praxis-Daten und Admin-Account eingeben
+4. Zugangsdaten notieren!
 
 ---
 
-**Viel Erfolg mit Ihrer Zahngesundheit! 🦷✨**
+## ✨ Hauptfunktionen
+
+### 👤 Patienten-Interface
+
+**Dashboard:**
+- Behandler-Empfehlungen prominent angezeigt
+- Nächste Termine im Überblick
+- Profilinformationen
+
+**Profil bearbeiten:**
+- Name, E-Mail, Telefon selbst aktualisieren
+- Sofortige Speicherung
+- Immer aktuelle Kontaktdaten
+
+**Medizinische Anamnese:**
+- Vollständiges medizinisches Profil
+- Allergien, Medikamente, Erkrankungen
+- Kritische Infos werden rot markiert
+- Jährliche Aktualisierungs-Erinnerung
+- Warnung bei Login wenn > 1 Jahr alt
+
+**Empfehlungen:**
+- Individuelle PZR-Empfehlungen
+- Putztechnik-Anweisungen
+- Hilfsmittel und Verwendung
+- Weitere Bemerkungen
+
+**Termine:**
+- Vom Behandler erstellte Termine
+- Status-Anzeige (Heute, Bevorstehend, Vergangen)
+- Automatische Aktualisierung
+
+**Erinnerungen:**
+- 24h vor Termin - mit Empfehlungen
+- 1h vor Termin - mit Empfehlungen
+- Nachsorge nach 6 Monaten
+- Browser-Push-Benachrichtigungen
+
+### 👨‍⚕️ Behandler-Interface
+
+**Patienten verwalten:**
+- Neue Patienten anlegen
+- Patientennummern zuweisen
+- Profile bearbeiten
+- Suchfunktion
+- Kritische medizinische Infos sehen
+
+**Termine erstellen:**
+- Termin für Patient anlegen
+- Datum, Uhrzeit, Ort, Notizen
+- Automatische Erinnerungen für Patient
+- Kritische Anamnese-Infos werden angezeigt
+
+**Empfehlungen erfassen:**
+- PZR-Empfehlungen eingeben
+- Putztechnik-Anpassungen
+- Hilfsmittel und Anwendung
+- Bemerkungen hinzufügen
+
+**🎤 Sprachaufnahme:**
+- Mikrofon-Symbol bei jedem Feld
+- Automatische Sprache-zu-Text
+- Deutsche Spracherkennung
+- Echtzeit-Transkription
+
+### 🏥 Admin-Interface (zusätzlich)
+
+**Praxis-Verwaltung:**
+- Praxis-Daten einsehen
+- Mitarbeiter hinzufügen
+- Rollen zuweisen
+- Mitarbeiter deaktivieren
+
+**Mitarbeiter-Rollen:**
+- Administrator
+- Behandler
+- Dentalhygieniker/in
+- Zahnarzthelfer/in
+- Rezeption
+
+---
+
+## 🎯 Technische Features
+
+### Progressive Web App (PWA)
+
+- ✅ **Installierbar:** Wie eine native App
+- ✅ **Offline-fähig:** Funktioniert ohne Internet
+- ✅ **Schnell:** Service Worker für Performance
+- ✅ **Sicher:** HTTPS, isoliert wie native App
+- ✅ **Updates:** Automatisch über Browser
+- ✅ **Plattformübergreifend:** Android, iOS, Desktop
+
+### Datenspeicherung
+
+- ✅ **LocalStorage:** Alle Daten lokal gespeichert
+- ✅ **Keine Cloud:** Keine Serververbindung
+- ✅ **Datenschutz:** Daten bleiben auf Gerät
+- ✅ **DSGVO-konform:** Keine externe Verarbeitung
+- ✅ **Multi-Practice:** Daten pro Praxis getrennt
+
+### Medizinische Anamnese
+
+**Kritische Felder (rot markiert):**
+- Allergien
+- Aktuelle Medikamente
+- Blutungsneigung
+- Herz-Kreislauf-Erkrankungen
+- Diabetes
+- Schwangerschaft
+
+**Weitere Felder:**
+- Chronische Erkrankungen
+- Vorherige Operationen
+- Raucher (Ja/Nein)
+- Alkoholkonsum
+
+**Auto-Reminder:**
+- Warnung beim Login wenn > 1 Jahr alt
+- Hinweis wenn nie ausgefüllt
+- "Letztes Update" Anzeige
+
+---
+
+## 💡 Anwendungsfälle
+
+### Für Zahnarztpraxen:
+
+1. **Praxis registrieren**
+2. **Admin-Account** erstellen
+3. **Mitarbeiter** hinzufügen
+4. **Patienten** anlegen
+5. **Termine** erstellen
+6. **Empfehlungen** erfassen
+
+### Für Patienten:
+
+1. **Zugangsdaten** vom Behandler erhalten
+2. **App installieren** auf Smartphone
+3. **Anmelden** mit Patientennummer + PIN
+4. **Anamnese** ausfüllen
+5. **Termine** einsehen
+6. **Empfehlungen** befolgen
+
+---
+
+## 🔒 Datenschutz & Sicherheit
+
+### DSGVO-konform:
+
+- ✅ Daten nur lokal gespeichert
+- ✅ Keine Cloud-Synchronisation
+- ✅ Keine Datenübertragung an Server
+- ✅ Volle Kontrolle über Daten
+- ✅ Kein Account bei Drittanbietern
+- ✅ Keine Tracking-Cookies
+- ✅ Keine externe Datenverarbeitung
+
+### Sicherheit:
+
+- 🔐 PIN-geschützte Patientendaten
+- 🔐 Passwort-geschützte Mitarbeiter-Accounts
+- 🔐 Rollenbasierte Zugriffskontrolle
+- 🔐 Daten bleiben auf dem Gerät
+
+---
+
+## 📱 Kompatibilität
+
+### Voll unterstützt:
+
+- ✅ Android 5.0+ (Chrome, Edge, Brave)
+- ✅ iOS 11.3+ (Safari)
+- ✅ Windows 10+ (Chrome, Edge)
+- ✅ macOS (Chrome, Edge, Safari)
+- ✅ Linux (Chrome, Firefox, Edge)
+
+### Browser-Features:
+
+| Feature | Chrome/Edge | Safari | Firefox |
+|---------|-------------|--------|---------|
+| PWA Installation | ✅ | ✅ | ⚠️ |
+| Offline-Modus | ✅ | ✅ | ✅ |
+| Spracherkennung | ✅ | ✅ | ❌ |
+| Push-Benachrichtigungen | ✅ | ✅ | ✅ |
+| LocalStorage | ✅ | ✅ | ✅ |
+
+---
+
+## 🚀 Schnellstart
+
+1. **Link öffnen** im Browser
+2. **"Jetzt installieren"** klicken
+3. **Anmelden:**
+   - Als Patient: PAT-12345 / 1234
+   - Als Behandler: MA-001 / admin
+4. **Erkunden:**
+   - Dashboard ansehen
+   - Profil bearbeiten
+   - Anamnese ausfüllen
+5. **App nutzen** wie eine native App!
+
+---
+
+## 📚 Dokumentation
+
+- **DIREKTER_ZUGANG.md:** Installations-Anleitung
+- **VERBESSERUNGSVORSCHLAEGE.md:** Feature-Vorschläge
+- **README.md:** Diese Datei
+
+---
+
+## 🆕 Changelog
+
+### Version 3.0 (Aktuell)
+- ✅ PWA-Installation auf allen Plattformen
+- ✅ Praxis-Registrierung
+- ✅ Multi-User-System
+- ✅ Admin-Mitarbeiter-Verwaltung
+- ✅ Multi-Practice Support
+- ✅ Verbesserte Datensynchronisation
+
+### Version 2.0
+- ✅ Medizinische Anamnese
+- ✅ Profil-Bearbeitung für Patienten
+- ✅ Terminverwaltung für Behandler
+- ✅ Sprachaufnahme für Empfehlungen
+- ✅ Auto-Markierung kritischer Infos
+
+### Version 1.0
+- ✅ Login-System
+- ✅ Behandler-Empfehlungen
+- ✅ Termin-Übersicht
+- ✅ Erinnerungen
+
+---
+
+## 💪 Vorteile der PWA
+
+### Für Praxen:
+- ⚡ Keine App-Store-Gebühren
+- 📱 Sofortige Updates
+- 🔒 Volle Datenkontrolle
+- 💾 Keine Server-Kosten
+- 🎯 Einfache Bereitstellung
+
+### Für Patienten:
+- 📲 Einfache Installation
+- 📴 Offline nutzbar
+- 🔔 Push-Benachrichtigungen
+- ⚡ Schneller Start
+- 💾 Datenschutz
+
+---
+
+## 🛠️ Technischer Stack
+
+- **Frontend:** Pure HTML/CSS/JavaScript
+- **Storage:** LocalStorage API
+- **Speech:** Web Speech API (de-DE)
+- **PWA:** Service Worker, Web App Manifest
+- **Notifications:** Notification API
+- **Offline:** Service Worker Cache
+- **Size:** ~105KB single-file
+- **Dependencies:** Keine!
+
+---
+
+## 📞 Support
+
+Bei Fragen oder Problemen:
+- GitHub Issues erstellen
+- Dokumentation lesen
+- Demo-Zugänge testen
+
+---
+
+**Viel Erfolg mit der PZR Assistent Pro App! 🦷✨**
+
+Entwickelt für professionelle Zahnarztpraxen mit Fokus auf Datenschutz und Benutzerfreundlichkeit.
