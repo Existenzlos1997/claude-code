@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PZR Assistent - Professionelle Zahnreinigung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            min-height: 400px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .info-card p, .info-card ul {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .info-card ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .info-card li {
+            margin-bottom: 5px;
+        }
+
+        .appointment-form {
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .appointment-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #764ba2;
+            position: relative;
+        }
+
+        .appointment-item h4 {
+            color: #764ba2;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .appointment-item p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .appointment-item .delete-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .appointment-item .delete-btn:hover {
+            background: #ff3838;
+        }
+
+        .reminder-item {
+            background: #fff8e1;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #ffa726;
+        }
+
+        .reminder-item h4 {
+            color: #f57c00;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .reminder-item p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .notification-permission {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .notification-permission button {
+            margin-top: 10px;
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .reminder-settings {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge.upcoming {
+            background: #ff9800;
+        }
+
+        .badge.past {
+            background: #9e9e9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦷 PZR Assistent</h1>
+            <p>Professionelle Zahnreinigung - Ihr persönlicher Begleiter</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('info')">Info</button>
+            <button class="tab" onclick="switchTab('appointments')">Termine</button>
+            <button class="tab" onclick="switchTab('reminders')">Erinnerungen</button>
+        </div>
+
+        <div class="content">
+            <!-- Info Tab -->
+            <div id="info" class="tab-content active">
+                <h2>Was ist eine PZR?</h2>
+                <div class="info-card">
+                    <h4>Professionelle Zahnreinigung (PZR)</h4>
+                    <p>Die professionelle Zahnreinigung ist eine wichtige Vorsorgemaßnahme für gesunde Zähne und Zahnfleisch. Sie ergänzt die tägliche Mundhygiene und sollte regelmäßig durchgeführt werden.</p>
+                </div>
+
+                <h3>Ablauf einer PZR</h3>
+                <div class="info-card">
+                    <h4>1. Untersuchung</h4>
+                    <p>Zunächst werden Zähne und Zahnfleisch untersucht, um Problemstellen zu identifizieren.</p>
+                </div>
+                <div class="info-card">
+                    <h4>2. Zahnsteinentfernung</h4>
+                    <p>Harte Beläge (Zahnstein) werden mit speziellen Instrumenten entfernt.</p>
+                </div>
+                <div class="info-card">
+                    <h4>3. Reinigung</h4>
+                    <p>Weiche Beläge und Verfärbungen werden mit Pulverstrahlgerät oder Bürstchen beseitigt.</p>
+                </div>
+                <div class="info-card">
+                    <h4>4. Politur</h4>
+                    <p>Die Zähne werden poliert, um die Oberfläche zu glätten und neue Beläge zu erschweren.</p>
+                </div>
+                <div class="info-card">
+                    <h4>5. Fluoridierung</h4>
+                    <p>Abschließend wird ein Fluoridlack aufgetragen, um den Zahnschmelz zu härten.</p>
+                </div>
+
+                <h3>Empfehlungen nach der PZR</h3>
+                <div class="info-card">
+                    <h4>Direkt nach der Behandlung</h4>
+                    <ul>
+                        <li>1 Stunde nicht essen oder trinken</li>
+                        <li>2 Stunden nicht rauchen</li>
+                        <li>24 Stunden keine stark färbenden Lebensmittel (Kaffee, Tee, Rotwein, Curry)</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h4>Tägliche Mundhygiene</h4>
+                    <ul>
+                        <li>2x täglich Zähne putzen (morgens und abends)</li>
+                        <li>Mindestens 2 Minuten putzen</li>
+                        <li>Zahnseide oder Interdentalbürsten verwenden</li>
+                        <li>Fluoridhaltige Zahnpasta benutzen</li>
+                        <li>Mundspülung kann zusätzlich helfen</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h4>Regelmäßigkeit</h4>
+                    <ul>
+                        <li>PZR alle 6 Monate empfohlen</li>
+                        <li>Bei erhöhtem Risiko (Parodontitis) alle 3-4 Monate</li>
+                        <li>Halbjährliche Kontrolluntersuchung beim Zahnarzt</li>
+                    </ul>
+                </div>
+
+                <h3>Vorteile der PZR</h3>
+                <div class="info-card">
+                    <ul>
+                        <li>Vorbeugung von Karies und Zahnfleischerkrankungen</li>
+                        <li>Entfernung von Verfärbungen und Belägen</li>
+                        <li>Frischeres Mundgefühl</li>
+                        <li>Längerer Erhalt der eigenen Zähne</li>
+                        <li>Früherkennung von Zahnproblemen</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Appointments Tab -->
+            <div id="appointments" class="tab-content">
+                <h2>Meine Termine</h2>
+                
+                <div class="appointment-form">
+                    <h3>Neuer Termin</h3>
+                    <div class="form-group">
+                        <label for="appointmentTitle">Bezeichnung</label>
+                        <input type="text" id="appointmentTitle" placeholder="z.B. PZR beim Dr. Müller" value="Professionelle Zahnreinigung">
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentDate">Datum</label>
+                        <input type="date" id="appointmentDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Uhrzeit</label>
+                        <input type="time" id="appointmentTime">
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentLocation">Praxis/Ort</label>
+                        <input type="text" id="appointmentLocation" placeholder="z.B. Dr. Müller, Hauptstraße 123">
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentNotes">Notizen</label>
+                        <textarea id="appointmentNotes" placeholder="Zusätzliche Informationen..."></textarea>
+                    </div>
+                    <button class="btn" onclick="addAppointment()">Termin hinzufügen</button>
+                </div>
+
+                <h3>Kommende Termine</h3>
+                <div id="appointmentsList"></div>
+            </div>
+
+            <!-- Reminders Tab -->
+            <div id="reminders" class="tab-content">
+                <h2>Erinnerungen</h2>
+                
+                <div id="notificationPermission" class="notification-permission" style="display: none;">
+                    <strong>⚠️ Benachrichtigungen aktivieren</strong>
+                    <p>Um Erinnerungen zu erhalten, müssen Sie Benachrichtigungen erlauben.</p>
+                    <button onclick="requestNotificationPermission()">Benachrichtigungen aktivieren</button>
+                </div>
+
+                <div class="reminder-settings">
+                    <h3>Erinnerungseinstellungen</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="reminder24h" checked>
+                        <label for="reminder24h">24 Stunden vor dem Termin</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="reminder1h" checked>
+                        <label for="reminder1h">1 Stunde vor dem Termin</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="reminderAftercare">
+                        <label for="reminderAftercare">Nachsorge-Erinnerung (nach 6 Monaten)</label>
+                    </div>
+                </div>
+
+                <h3>Aktive Erinnerungen</h3>
+                <div id="remindersList"></div>
+
+                <div class="info-card" style="margin-top: 20px;">
+                    <h4>💡 Tipp</h4>
+                    <p>Erinnerungen werden automatisch für Ihre Termine erstellt. Sie können die Benachrichtigungszeiten oben anpassen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize the app
+        let appointments = [];
+        let reminders = [];
+
+        // Load data from localStorage
+        function loadData() {
+            const savedAppointments = localStorage.getItem('pzrAppointments');
+            const savedReminders = localStorage.getItem('pzrReminders');
+            
+            if (savedAppointments) {
+                appointments = JSON.parse(savedAppointments);
+            }
+            if (savedReminders) {
+                reminders = JSON.parse(savedReminders);
+            }
+            
+            updateAppointmentsList();
+            updateRemindersList();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
+            localStorage.setItem('pzrReminders', JSON.stringify(reminders));
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+
+            // Check notification permission when opening reminders tab
+            if (tabName === 'reminders') {
+                checkNotificationPermission();
+            }
+        }
+
+        // Add appointment
+        function addAppointment() {
+            const title = document.getElementById('appointmentTitle').value;
+            const date = document.getElementById('appointmentDate').value;
+            const time = document.getElementById('appointmentTime').value;
+            const location = document.getElementById('appointmentLocation').value;
+            const notes = document.getElementById('appointmentNotes').value;
+
+            if (!title || !date || !time) {
+                alert('Bitte füllen Sie mindestens Bezeichnung, Datum und Uhrzeit aus.');
+                return;
+            }
+
+            const appointment = {
+                id: Date.now(),
+                title,
+                date,
+                time,
+                location,
+                notes,
+                created: new Date().toISOString()
+            };
+
+            appointments.push(appointment);
+            appointments.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+            
+            createRemindersForAppointment(appointment);
+            saveData();
+            updateAppointmentsList();
+            updateRemindersList();
+
+            // Clear form
+            document.getElementById('appointmentTitle').value = 'Professionelle Zahnreinigung';
+            document.getElementById('appointmentDate').value = '';
+            document.getElementById('appointmentTime').value = '';
+            document.getElementById('appointmentLocation').value = '';
+            document.getElementById('appointmentNotes').value = '';
+
+            alert('Termin erfolgreich hinzugefügt!');
+        }
+
+        // Delete appointment
+        function deleteAppointment(id) {
+            if (confirm('Möchten Sie diesen Termin wirklich löschen?')) {
+                appointments = appointments.filter(apt => apt.id !== id);
+                reminders = reminders.filter(rem => rem.appointmentId !== id);
+                saveData();
+                updateAppointmentsList();
+                updateRemindersList();
+            }
+        }
+
+        // Update appointments list
+        function updateAppointmentsList() {
+            const container = document.getElementById('appointmentsList');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zm0-12H5V5h14v2zM7 11h5v5H7z"/>
+                        </svg>
+                        <p>Noch keine Termine vorhanden.<br>Fügen Sie Ihren ersten Termin hinzu!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const now = new Date();
+            container.innerHTML = appointments.map(apt => {
+                const appointmentDate = new Date(apt.date + ' ' + apt.time);
+                const isUpcoming = appointmentDate > now;
+                const isPast = appointmentDate < now;
+                const isToday = appointmentDate.toDateString() === now.toDateString();
+                
+                let badge = '';
+                if (isToday) {
+                    badge = '<span class="badge">Heute</span>';
+                } else if (isUpcoming) {
+                    const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
+                    badge = `<span class="badge upcoming">In ${daysUntil} Tag${daysUntil > 1 ? 'en' : ''}</span>`;
+                } else {
+                    badge = '<span class="badge past">Vergangen</span>';
+                }
+
+                return `
+                    <div class="appointment-item">
+                        <h4>${apt.title}${badge}</h4>
+                        <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                        ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
+                        ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
+                        <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Löschen</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Create reminders for appointment
+        function createRemindersForAppointment(appointment) {
+            const appointmentDate = new Date(appointment.date + ' ' + appointment.time);
+            
+            // 24h reminder
+            if (document.getElementById('reminder24h').checked) {
+                const reminder24h = new Date(appointmentDate);
+                reminder24h.setHours(reminder24h.getHours() - 24);
+                
+                reminders.push({
+                    id: Date.now() + 1,
+                    appointmentId: appointment.id,
+                    time: reminder24h.toISOString(),
+                    message: `Morgen um ${appointment.time} Uhr: ${appointment.title}`,
+                    type: '24h'
+                });
+            }
+
+            // 1h reminder
+            if (document.getElementById('reminder1h').checked) {
+                const reminder1h = new Date(appointmentDate);
+                reminder1h.setHours(reminder1h.getHours() - 1);
+                
+                reminders.push({
+                    id: Date.now() + 2,
+                    appointmentId: appointment.id,
+                    time: reminder1h.toISOString(),
+                    message: `In 1 Stunde: ${appointment.title}`,
+                    type: '1h'
+                });
+            }
+
+            // Aftercare reminder (6 months)
+            if (document.getElementById('reminderAftercare').checked) {
+                const reminderAftercare = new Date(appointmentDate);
+                reminderAftercare.setMonth(reminderAftercare.getMonth() + 6);
+                
+                reminders.push({
+                    id: Date.now() + 3,
+                    appointmentId: appointment.id,
+                    time: reminderAftercare.toISOString(),
+                    message: `Zeit für die nächste PZR! Letzter Termin war vor 6 Monaten.`,
+                    type: 'aftercare'
+                });
+            }
+
+            scheduleNotifications();
+        }
+
+        // Update reminders list
+        function updateRemindersList() {
+            const container = document.getElementById('remindersList');
+            
+            if (reminders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                        </svg>
+                        <p>Keine aktiven Erinnerungen.<br>Fügen Sie einen Termin hinzu, um Erinnerungen zu erstellen!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const now = new Date();
+            const activeReminders = reminders.filter(rem => new Date(rem.time) > now);
+            
+            if (activeReminders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Alle Erinnerungen sind abgelaufen.<br>Fügen Sie neue Termine hinzu!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = activeReminders.map(rem => {
+                const reminderDate = new Date(rem.time);
+                const appointment = appointments.find(apt => apt.id === rem.appointmentId);
+                
+                let typeLabel = '';
+                switch(rem.type) {
+                    case '24h': typeLabel = '24 Stunden vorher'; break;
+                    case '1h': typeLabel = '1 Stunde vorher'; break;
+                    case 'aftercare': typeLabel = 'Nachsorge (6 Monate)'; break;
+                }
+
+                return `
+                    <div class="reminder-item">
+                        <h4>🔔 ${rem.message}</h4>
+                        <p>⏰ ${formatDate(reminderDate.toISOString().split('T')[0])} um ${reminderDate.toTimeString().slice(0,5)} Uhr</p>
+                        <p>📋 ${typeLabel}</p>
+                        ${appointment ? `<p>🦷 Termin: ${appointment.title}</p>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('de-DE', options);
+        }
+
+        // Check notification permission
+        function checkNotificationPermission() {
+            if (!('Notification' in window)) {
+                return;
+            }
+
+            const permissionDiv = document.getElementById('notificationPermission');
+            
+            if (Notification.permission === 'default') {
+                permissionDiv.style.display = 'block';
+            } else if (Notification.permission === 'granted') {
+                permissionDiv.style.display = 'none';
+            } else {
+                permissionDiv.innerHTML = `
+                    <strong>❌ Benachrichtigungen blockiert</strong>
+                    <p>Benachrichtigungen wurden blockiert. Bitte aktivieren Sie diese in Ihren Browser-Einstellungen.</p>
+                `;
+                permissionDiv.style.display = 'block';
+            }
+        }
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                alert('Ihr Browser unterstützt keine Benachrichtigungen.');
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                checkNotificationPermission();
+                if (permission === 'granted') {
+                    new Notification('PZR Assistent', {
+                        body: 'Benachrichtigungen wurden aktiviert! Sie erhalten jetzt Erinnerungen für Ihre Termine.',
+                        icon: '🦷'
+                    });
+                    scheduleNotifications();
+                }
+            });
+        }
+
+        // Schedule notifications
+        function scheduleNotifications() {
+            if (!('Notification' in window) || Notification.permission !== 'granted') {
+                return;
+            }
+
+            // Check reminders every minute
+            setInterval(() => {
+                const now = new Date();
+                reminders.forEach(reminder => {
+                    const reminderTime = new Date(reminder.time);
+                    const timeDiff = reminderTime - now;
+                    
+                    // Trigger notification if within 1 minute
+                    if (timeDiff > 0 && timeDiff < 60000) {
+                        new Notification('🦷 PZR Erinnerung', {
+                            body: reminder.message,
+                            icon: '🦷',
+                            requireInteraction: true
+                        });
+                    }
+                });
+            }, 60000); // Check every minute
+        }
+
+        // Set default date to today
+        function setDefaultDate() {
+            const today = new Date();
+            const dateInput = document.getElementById('appointmentDate');
+            const timeInput = document.getElementById('appointmentTime');
+            
+            // Set date to next week
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            dateInput.value = nextWeek.toISOString().split('T')[0];
+            
+            // Set time to 10:00
+            timeInput.value = '10:00';
+        }
+
+        // Initialize
+        window.onload = function() {
+            loadData();
+            setDefaultDate();
+            checkNotificationPermission();
+            scheduleNotifications();
+        };
+    </script>
+</body>
+</html>
