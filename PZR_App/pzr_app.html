@@ -1352,6 +1352,48 @@
         // PWA Installation
         let deferredPrompt;
         
+        // Initialize Demo Data for testing
+        function initDemoData() {
+            // Demo Employee
+            if (!localStorage.getItem('pzrEmployees')) {
+                const demoEmployees = [{
+                    id: 'MA-001',
+                    password: 'admin',
+                    practiceId: 'demo-practice',
+                    name: 'Demo Behandler',
+                    role: 'Behandler',
+                    active: true
+                }];
+                localStorage.setItem('pzrEmployees', JSON.stringify(demoEmployees));
+            }
+            
+            // Demo Patients
+            const existingPatients = JSON.parse(localStorage.getItem('pzrPatients') || '[]');
+            if (existingPatients.length === 0) {
+                const demoPatients = [
+                    {
+                        number: 'PAT-12345',
+                        pin: '1234',
+                        practiceId: 'demo-practice',
+                        name: 'Demo Patient',
+                        birthdate: '1990-01-01',
+                        phone: '0123456789'
+                    },
+                    {
+                        number: 'PAT-67890',
+                        pin: '5678',
+                        practiceId: 'demo-practice',
+                        name: 'Test Patient',
+                        birthdate: '1985-05-15',
+                        phone: '0987654321'
+                    }
+                ];
+                localStorage.setItem('pzrPatients', JSON.stringify(demoPatients));
+            }
+        }
+        // Call immediately
+        initDemoData();
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
