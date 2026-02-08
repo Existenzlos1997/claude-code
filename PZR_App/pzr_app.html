@@ -1415,6 +1415,73 @@
             document.getElementById('installBanner').style.display = 'block';
         });
         
+        // CRITICAL FIX: Define downloadForPlatform BEFORE downloadApp so onclick works
+        function downloadForPlatform(platform) {
+            // Close modal
+            document.querySelector('[style*="position:fixed"]')?.remove();
+            
+            if (platform === 'pwa') {
+                // Try PWA install
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    window.deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            alert('✅ App wurde erfolgreich installiert!');
+                        }
+                        window.deferredPrompt = null;
+                    });
+                } else {
+                    // Show instructions
+                    const userAgent = navigator.userAgent.toLowerCase();
+                    const isIOS = /iphone|ipad|ipod/.test(userAgent);
+                    const isAndroid = /android/.test(userAgent);
+                    
+                    let message = '📱 App Installation:\n\n';
+                    if (isIOS) {
+                        message += '🍎 iOS:\n1. Tippen Sie auf das Teilen-Symbol (⎕□↑)\n2. Wählen Sie "Zum Home-Bildschirm"\n3. Tippen Sie auf "Hinzufügen"';
+                    } else if (isAndroid) {
+                        message += '🤖 Android:\n1. Öffnen Sie das Menü (⋮)\n2. Tippen Sie auf "App installieren"';
+                    } else {
+                        message += '💻 Desktop:\n1. Klicken Sie auf das Install-Symbol in der Adressleiste\n2. Oder nutzen Sie Browser-Menü → "Installieren"';
+                    }
+                    alert(message);
+                }
+            } else if (platform === 'windows') {
+                // Generate Windows installer HTML
+                const currentUrl = window.location.href;
+                const htmlContent = '<!DOCTYPE html>\n' +
+                    '<html><head><title>PZR App - Windows Installer</title><meta charset="utf-8">\n' +
+                    '<scr' + 'ipt>window.location.href="' + currentUrl + '";</scr' + 'ipt></head>\n' +
+                    '<body><h1>PZR App wird geladen...</h1></body></html>';
+                const blob = new Blob([htmlContent], {type: 'text/html'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'PZR-App-Setup.html';
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('✅ Windows-Installer heruntergeladen!\n\nÖffnen Sie die Datei um die App zu starten.');
+            } else if (platform === 'android') {
+                // Generate Android APK - actually trigger PWA install which works like APK
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    window.deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            alert('✅ Android App wurde installiert!');
+                        } else {
+                            alert('ℹ️ Installation abgebrochen.\n\nSie können die App jederzeit über "Zum Startbildschirm hinzufügen" installieren.');
+                        }
+                        window.deferredPrompt = null;
+                    });
+                } else {
+                    alert('📱 Android Installation:\n\n1. Öffnen Sie das Menü (⋮)\n2. Tippen Sie auf "App installieren"\n3. Bestätigen Sie die Installation\n\n✅ Die App verhält sich wie eine native Android App!');
+                }
+            } else if (platform === 'ios') {
+                // iOS PWA installation
+                alert('🍎 iOS Installation:\n\n1. Tippen Sie auf das Teilen-Symbol (⎕□↑)\n2. Wählen Sie "Zum Home-Bildschirm"\n3. Tippen Sie auf "Hinzufügen"\n\n✅ Die App verhält sich wie eine native iOS App!');
+            }
+        }
+        
         // Download/Install App function with platform selection modal
         function downloadApp() {
             // Create modal
@@ -1457,72 +1524,6 @@
             
             modal.appendChild(modalContent);
             document.body.appendChild(modal);
-        }
-        
-        function downloadForPlatform(platform) {
-            // Close modal
-            document.querySelector('[style*="position:fixed"]')?.remove();
-            
-            if (platform === 'pwa') {
-                // Try PWA install
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            alert('✅ App wurde erfolgreich installiert!');
-                        }
-                        deferredPrompt = null;
-                    });
-                } else {
-                    // Show instructions
-                    const userAgent = navigator.userAgent.toLowerCase();
-                    const isIOS = /iphone|ipad|ipod/.test(userAgent);
-                    const isAndroid = /android/.test(userAgent);
-                    
-                    let message = '📱 App Installation:\n\n';
-                    if (isIOS) {
-                        message += '🍎 iOS:\nTeilen → Zum Home-Bildschirm';
-                    } else if (isAndroid) {
-                        message += '🤖 Android:\nMenü → App installieren';
-                    } else {
-                        message += '💻 Desktop:\nInstall-Symbol in Adressleiste';
-                    }
-                    alert(message);
-                }
-            } else if (platform === 'windows') {
-                // Generate Windows installer HTML
-                const currentUrl = window.location.href;
-                const htmlContent = '<!DOCTYPE html>\n' +
-                    '<html><head><title>PZR App - Windows Installer</title><meta charset="utf-8">\n' +
-                    '<scr' + 'ipt>window.location.href="' + currentUrl + '";</scr' + 'ipt></head>\n' +
-                    '<body><h1>PZR App wird geladen...</h1></body></html>';
-                const blob = new Blob([htmlContent], {type: 'text/html'});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'PZR-App-Setup.html';
-                a.click();
-                URL.revokeObjectURL(url);
-                alert('✅ Windows-Installer heruntergeladen!\n\nÖffnen Sie die Datei um die App zu starten.');
-            } else if (platform === 'android') {
-                // Generate Android APK - actually trigger PWA install which works like APK
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            alert('✅ Android App wurde installiert!');
-                        } else {
-                            alert('ℹ️ Installation abgebrochen.\n\nSie können die App jederzeit über "Zum Startbildschirm hinzufügen" installieren.');
-                        }
-                        deferredPrompt = null;
-                    });
-                } else {
-                    alert('📱 Android Installation:\n\n1. Öffnen Sie das Menü (⋮)\n2. Tippen Sie auf "App installieren"\n3. Bestätigen Sie die Installation\n\n✅ Die App verhält sich wie eine native Android App!');
-                }
-            } else if (platform === 'ios') {
-                // iOS PWA installation
-                alert('🍎 iOS Installation:\n\n1. Tippen Sie auf das Teilen-Symbol (⎕□↑)\n2. Wählen Sie "Zum Home-Bildschirm"\n3. Tippen Sie auf "Hinzufügen"\n\n✅ Die App verhält sich wie eine native iOS App!');
-            }
         }
 
         function installPWA() {
@@ -1886,7 +1887,9 @@
                 return;
             }
 
-            const patient = patients.find(p => p.patientNumber === patientNumber && p.pin === pin);
+            // CRITICAL FIX: Load patients from localStorage
+            const patients = JSON.parse(localStorage.getItem('pzrPatients') || '[]');
+            const patient = patients.find(p => p.number === patientNumber && p.pin === pin);
             
             if (patient) {
                 // Check if anamnese needs update (older than 1 year)
