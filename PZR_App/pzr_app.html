@@ -765,6 +765,15 @@
         <div id="loginScreen" class="login-screen">
             <h1>🦷 PZR Assistent Pro</h1>
             <p>Professionelle Zahnreinigung mit Behandler-Empfehlungen</p>
+            
+            <!-- Download Button -->
+            <div style="margin: 20px 0; text-align: center;">
+                <button onclick="downloadApp()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                    📥 App herunterladen
+                </button>
+                <p style="font-size: 12px; color: #666; margin-top: 8px;">Installieren Sie die App auf Ihrem Gerät</p>
+            </div>
+            
             <p style="margin-top: 30px; font-size: 16px; font-weight: 600; color: #667eea;">Bitte wählen Sie Ihre Rolle:</p>
             
             <div class="role-selector">
@@ -1349,6 +1358,54 @@
             window.deferredPrompt = e;  // Also save globally
             document.getElementById('installBanner').style.display = 'block';
         });
+        
+        // Download/Install App function with platform detection
+        function downloadApp() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isIOS = /iphone|ipad|ipod/.test(userAgent);
+            const isAndroid = /android/.test(userAgent);
+            const isMac = /macintosh|mac os x/.test(userAgent);
+            const isWindows = /windows/.test(userAgent);
+            
+            // Try PWA install first
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        alert('✅ App wurde erfolgreich installiert!');
+                    }
+                    deferredPrompt = null;
+                });
+                return;
+            }
+            
+            // Platform-specific instructions
+            let message = '📱 App Installation:\n\n';
+            
+            if (isIOS) {
+                message += '🍎 iOS Safari:\n' +
+                           '1. Tippen Sie auf das Teilen-Symbol (□↑)\n' +
+                           '2. Scrollen Sie nach unten\n' +
+                           '3. Wählen Sie "Zum Home-Bildschirm"\n' +
+                           '4. Tippen Sie auf "Hinzufügen"';
+            } else if (isAndroid) {
+                message += '🤖 Android Chrome:\n' +
+                           '1. Tippen Sie auf das Menü (⋮)\n' +
+                           '2. Wählen Sie "App installieren" oder "Zum Startbildschirm hinzufügen"\n' +
+                           '3. Bestätigen Sie';
+            } else if (isWindows || isMac) {
+                message += '💻 Desktop Browser:\n' +
+                           '1. Suchen Sie das Install-Symbol in der Adressleiste\n' +
+                           '2. Klicken Sie darauf und wählen Sie "Installieren"\n\n' +
+                           'Oder drücken Sie Strg+D (⌘+D auf Mac) und wählen Sie "Als App installieren"';
+            } else {
+                message += '🌐 Browser:\n' +
+                           'Öffnen Sie das Browser-Menü und suchen Sie nach\n' +
+                           '"App installieren" oder "Zum Startbildschirm hinzufügen"';
+            }
+            
+            alert(message);
+        }
 
         function installPWA() {
             if (deferredPrompt) {
