@@ -2773,18 +2773,69 @@
                 `Möchten Sie die App jetzt installieren?`;
             
             if (confirm(installMsg)) {
-                if (window.deferredPrompt) {
-                    window.deferredPrompt.prompt();
-                    window.deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            console.log('PWA installation accepted');
-                        }
-                        window.deferredPrompt = null;
-                    });
-                } else {
-                    alert('Installation wird von Ihrem Browser nicht unterstützt.\n\nFür iOS Safari: Tippen Sie auf "Teilen" → "Zum Home-Bildschirm"\n\nFür andere Browser: Prüfen Sie die Browser-Einstellungen.');
-                }
+                tryInstallPWA();
             }
+        }
+        
+        function tryInstallPWA() {
+            // Try standard PWA install
+            if (window.deferredPrompt) {
+                window.deferredPrompt.prompt();
+                window.deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        alert('✅ App wurde erfolgreich installiert!');
+                    } else {
+                        showManualInstallInstructions();
+                    }
+                    window.deferredPrompt = null;
+                }).catch(err => {
+                    console.error('Install error:', err);
+                    showManualInstallInstructions();
+                });
+            } else {
+                // No deferredPrompt available - show manual instructions
+                showManualInstallInstructions();
+            }
+        }
+        
+        function showManualInstallInstructions() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const isChrome = /Chrome/.test(navigator.userAgent);
+            const isEdge = /Edg/.test(navigator.userAgent);
+            
+            let instructions = '📱 APP INSTALLIEREN:\n\n';
+            
+            if (isIOS) {
+                instructions += '🍎 iOS Safari:\n' +
+                    '1. Tippen Sie auf das Teilen-Symbol (□↑)\n' +
+                    '2. Scrollen Sie nach unten\n' +
+                    '3. Wählen Sie "Zum Home-Bildschirm"\n' +
+                    '4. Tippen Sie auf "Hinzufügen"\n\n' +
+                    '✅ Die App erscheint dann auf Ihrem Home-Bildschirm!';
+            } else if (isAndroid && isChrome) {
+                instructions += '🤖 Android Chrome:\n' +
+                    '1. Tippen Sie auf das Menü (⋮) oben rechts\n' +
+                    '2. Wählen Sie "App installieren" oder "Zum Startbildschirm hinzufügen"\n' +
+                    '3. Bestätigen Sie mit "Installieren"\n\n' +
+                    '✅ Die App wird als eigenständige App installiert!';
+            } else if (isChrome || isEdge) {
+                instructions += '💻 Desktop (Chrome/Edge):\n' +
+                    '1. Klicken Sie auf das Symbol in der Adressleiste\n' +
+                    '   (Computer-Symbol oder "+"-Symbol)\n' +
+                    '2. Oder: Menü (⋮) → "App installieren"\n' +
+                    '3. Bestätigen Sie mit "Installieren"\n\n' +
+                    '✅ Die App öffnet sich in einem eigenen Fenster!';
+            } else {
+                instructions += '🌐 Für Ihren Browser:\n' +
+                    '1. Speichern Sie diese Seite als Lesezeichen\n' +
+                    '2. Oder laden Sie Chrome/Edge herunter für volle Funktionalität\n\n' +
+                    'Aktueller Link:\n' + window.location.href;
+            }
+            
+            instructions += '\n\n💡 TIPP: Nach der Installation startet die App wie eine normale Desktop-/Mobile-App!';
+            
+            alert(instructions);
         }
 
         // Employee Management Functions
