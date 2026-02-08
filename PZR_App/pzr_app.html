@@ -1933,6 +1933,32 @@
         }
 
         // Login as employee
+        function loginEmployee() {
+            const employeeId = document.getElementById('employeeId').value.trim();
+            const password = document.getElementById('employeePassword').value.trim();
+
+            if (!employeeId || !password) {
+                alert('Bitte Mitarbeiter-ID und Passwort eingeben.');
+                return;
+            }
+
+            // Load employees from localStorage
+            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
+            const employee = employees.find(e => 
+                e.id === employeeId && 
+                e.password === password &&
+                e.active === true
+            );
+            
+            if (employee) {
+                currentUser = employee;
+                currentRole = 'employee';
+                showMainApp();
+            } else {
+                alert('Ungültige Mitarbeiter-ID oder Passwort.\n\nDemo-Account: MA-001 / admin');
+            }
+        }
+
         // Show main app after login
         function showMainApp() {
             document.getElementById('loginScreen').classList.add('hidden');
