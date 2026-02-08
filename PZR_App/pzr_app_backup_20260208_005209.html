@@ -2568,19 +2568,7 @@
 
             // Generate unique practice ID
             const practiceId = 'PRACTICE-' + Date.now();
-            
-            // Auto-generate admin login ID from admin name
-            function generateAdminLoginId(name) {
-                return name.toUpperCase()
-                    .replace(/Ä/g, 'AE').replace(/Ö/g, 'OE').replace(/Ü/g, 'UE').replace(/ß/g, 'SS')
-                    .replace(/[^A-Z0-9\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/-+/g, '-')
-                    .replace(/^-|-$/g, '')
-                    .substring(0, 20);
-            }
-            
-            const employeeId = generateAdminLoginId(adminName) || ('MA-' + Date.now());
+            const employeeId = 'MA-' + Date.now();
 
             // Create practice
             const practice = {
