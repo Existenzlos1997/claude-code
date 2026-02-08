@@ -1982,6 +1982,9 @@
         
         // Cancel appointment with traffic light warning
         function cancelAppointment(appointmentId) {
+            // Load appointments from localStorage
+            const appointments = JSON.parse(localStorage.getItem('pzrAppointments') || '[]');
+            
             const apt = appointments.find(a => a.id === appointmentId);
             if (!apt) return;
             
@@ -1991,7 +1994,7 @@
             if (confirm(confirmMsg)) {
                 apt.status = 'cancelled-pending';
                 apt.cancelledAt = new Date().toISOString();
-                apt.cancelledBy = currentUser.id;
+                apt.cancelledBy = currentUser.number || currentUser.id;
                 localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
                 
                 // Trigger storage event for other tabs
