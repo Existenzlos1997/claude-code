@@ -1920,12 +1920,71 @@
             const confirmMsg = `${trafficLight.emoji} ${trafficLight.text}\n\nTermin: ${apt.title}\nDatum: ${formatDate(apt.date)} um ${apt.time} Uhr\n\nMöchten Sie diesen Termin wirklich absagen?`;
             
             if (confirm(confirmMsg)) {
-                apt.status = 'cancelled';
+                apt.status = 'cancelled-pending';
                 apt.cancelledAt = new Date().toISOString();
                 apt.cancelledBy = currentUser.id;
                 localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
+                
+                // Trigger storage event for other tabs
+                window.dispatchEvent(new Event('storage'));
+                
                 loadPatientAppointments();
-                alert('Termin wurde erfolgreich abgesagt.');
+                
+                // Ask for new appointment preferences
+                requestNewAppointment(apt);
+            }
+        }
+        
+        function requestNewAppointment(cancelledApt) {
+            const preferences = prompt(
+                `Termin wurde zur Absage markiert (wird rot durchgestrichen bis Praxis bestätigt).\n\n` +
+                `Möchten Sie einen neuen Termin vereinbaren?\n\n` +
+                `Bitte geben Sie Ihre bevorzugten Zeiten an:\n` +
+                `(z.B. "Montag/Mittwoch 10-12 Uhr" oder "Vormittags flexibel")\n\n` +
+                `Oder lassen Sie das Feld leer, wenn Sie telefonisch einen Termin vereinbaren möchten.`
+            );
+            
+            if (preferences === null) return; // User cancelled
+            
+            if (preferences.trim() === '') {
+                alert('Bitte melden Sie sich telefonisch in der Praxis zur Terminfindung.\n\nTelefon: siehe Praxis-Kontaktdaten');
+                return;
+            }
+            
+            // Create appointment request
+            const requests = JSON.parse(localStorage.getItem('pzrAppointmentRequests') || '[]');
+            const newRequest = {
+                id: 'REQ-' + Date.now(),
+                patientId: currentUser.id,
+                patientName: currentUser.name || currentUser.id,
+                cancelledAppointmentId: cancelledApt.id,
+                cancelledDate: cancelledApt.date,
+                cancelledTime: cancelledApt.time,
+                preferences: preferences,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+            
+            requests.push(newRequest);
+            localStorage.setItem('pzrAppointmentRequests', JSON.stringify(requests));
+            
+            alert('✅ Absage wurde an die Praxis gemeldet.\n✅ Ihre Terminwünsche wurden übermittelt.\n\nDie Praxis wird Ihnen einen Terminvorschlag zusenden.');
+        }
+        
+        function acknowledgeCancellation(appointmentId) {
+            const apt = appointments.find(a => a.id === appointmentId);
+            if (!apt) return;
+            
+            if (confirm(`Absage zur Kenntnis genommen?\n\nTermin wird dann aus der Liste entfernt.`)) {
+                // Remove from appointments
+                const index = appointments.findIndex(a => a.id === appointmentId);
+                if (index > -1) {
+                    appointments.splice(index, 1);
+                    localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
+                    window.dispatchEvent(new Event('storage'));
+                    alert('Termin wurde entfernt.');
+                    location.reload();
+                }
             }
         }
         
@@ -1962,10 +2021,13 @@
                     const isUpcoming = appointmentDate > now;
                     const isPast = appointmentDate < now;
                     const isToday = appointmentDate.toDateString() === now.toDateString();
-                    const isCancelled = apt.status === 'cancelled';
+                    const isCancelled = apt.status === 'cancelled' || apt.status === 'cancelled-pending';
+                    const isPending = apt.status === 'cancelled-pending';
                     
                     let badge = '';
-                    if (isCancelled) {
+                    if (isPending) {
+                        badge = '<span class="badge" style="background-color: #ef4444;">🔴 Absage ausstehend (rot durchgestrichen bis Praxis bestätigt)</span>';
+                    } else if (isCancelled) {
                         badge = '<span class="badge" style="background-color: #ef4444;">❌ Abgesagt</span>';
                     } else if (isToday) {
                         badge = '<span class="badge">Heute</span>';
@@ -1986,11 +2048,12 @@
                     }
 
                     return `
-                        <div class="appointment-item" style="${isCancelled ? 'opacity: 0.6; border-left: 4px solid #ef4444;' : ''}">
-                            <h4>${apt.title}${badge}</h4>
-                            <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
-                            ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
-                            ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
+                        <div class="appointment-item" style="${isCancelled ? 'opacity: 0.6; border-left: 4px solid #ef4444;' : ''}${isPending ? 'text-decoration: line-through; color: #ef4444;' : ''}">
+                            <h4 style="${isPending ? 'text-decoration: line-through; color: #ef4444;' : ''}">${apt.title}${badge}</h4>
+                            <p style="${isPending ? 'text-decoration: line-through;' : ''}">📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                            ${apt.location ? `<p style="${isPending ? 'text-decoration: line-through;' : ''}">📍 ${apt.location}</p>` : ''}
+                            ${apt.notes ? `<p style="${isPending ? 'text-decoration: line-through;' : ''}">📝 ${apt.notes}</p>` : ''}
+                            ${isPending ? '<p style="color: #ef4444; font-weight: bold;">⏳ Wartet auf Bestätigung der Praxis</p>' : ''}
                             ${trafficLight}
                             ${cancelButton}
                         </div>
