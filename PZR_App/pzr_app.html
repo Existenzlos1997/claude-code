@@ -444,11 +444,13 @@
     }
 
     function generateAdminLoginId(name) {
-      return normalizeId(name)
-        .replace(/Ä/g, 'AE')
-        .replace(/Ö/g, 'OE')
-        .replace(/Ü/g, 'UE')
-        .replace(/ß/g, 'SS')
+      return String(name || '')
+        .trim()
+        .replace(/ä/gi, 'AE')
+        .replace(/ö/gi, 'OE')
+        .replace(/ü/gi, 'UE')
+        .replace(/ß/gi, 'SS')
+        .toUpperCase()
         .replace(/\s+/g, '-')
         .replace(/[^A-Z0-9-]/g, '')
         .slice(0, 20) || 'ADMIN';
@@ -1227,7 +1229,7 @@
       document.getElementById('recommendation-search').addEventListener('click', handleRecommendationSearch);
       document.getElementById('recommendation-save').addEventListener('click', handleRecommendationSave);
       document.getElementById('staff-add-form').addEventListener('submit', handleStaffAdd);
-      document.getElementById('employee-tab-staff').addEventListener('change', handleStaffSave);
+      document.getElementById('staff-list').addEventListener('change', handleStaffSave);
       document.getElementById('employee-tab-staff').addEventListener('click', (event) => {
         if (event.target?.id === 'practice-admin-save') handleStaffSave();
       });
