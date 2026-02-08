@@ -2136,6 +2136,7 @@
         // Load employee dashboard
         function loadEmployeeDashboard() {
             loadPatientList();
+            loadPatients(); // Load patients for appointment dropdown
         }
 
         // Load patient list for employees
@@ -2541,6 +2542,28 @@
             saveData();
             loadAnamneseData();
             alert('Anamnese erfolgreich gespeichert!');
+        }
+
+        // Load patients for appointment dropdown
+        function loadPatients() {
+            const patients = JSON.parse(localStorage.getItem('pzrPatients') || '[]');
+            const currentEmployee = JSON.parse(sessionStorage.getItem('currentUser'));
+            
+            if (!currentEmployee) return;
+            
+            // Filter patients by practice
+            const practicePatients = patients.filter(p => p.practiceId === currentEmployee.practiceId);
+            
+            const select = document.getElementById('appointmentPatient');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Bitte wählen...</option>';
+            practicePatients.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.number;
+                option.textContent = `${p.number} - ${p.name}`;
+                select.appendChild(option);
+            });
         }
 
         // Create appointment (employee)
