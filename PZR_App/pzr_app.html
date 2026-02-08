@@ -2908,7 +2908,10 @@
                         ${emp.email ? `<p>📧 ${emp.email}</p>` : ''}
                         <p>📅 Angelegt: ${formatDate(emp.created)}</p>
                     </div>
-                    ${currentUser.id !== emp.id ? `<button class="btn" style="background: #f44336; margin-top: 10px;" onclick="deactivateEmployee('${emp.id}')">Deaktivieren</button>` : ''}
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn" style="background: #2196F3;" onclick="editEmployeeId('${emp.id}')">ID bearbeiten</button>
+                        ${currentUser.id !== emp.id ? `<button class="btn" style="background: #f44336;" onclick="deactivateEmployee('${emp.id}')">Deaktivieren</button>` : ''}
+                    </div>
                 </div>
             `).join('');
         }
@@ -2922,6 +2925,62 @@
                 'reception': 'Rezeption'
             };
             return labels[role] || role;
+        }
+
+        function editEmployeeId(employeeId) {
+            if (!currentUser || currentUser.role !== 'admin') {
+                alert('Nur Administratoren können Mitarbeiter-IDs ändern.');
+                return;
+            }
+
+            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
+            const employee = employees.find(e => e.id === employeeId);
+            
+            if (!employee) {
+                alert('Mitarbeiter nicht gefunden.');
+                return;
+            }
+
+            const newId = prompt(
+                `Aktuelle Mitarbeiter-ID: ${employee.employeeId}\n\n` +
+                `Bitte neue Mitarbeiter-ID eingeben:\n` +
+                `(3-20 Zeichen, nur Buchstaben, Zahlen und Bindestriche)\n\n` +
+                `Beispiele:\n` +
+                `- DR-MUELLER\n` +
+                `- ANNA-S\n` +
+                `- ZA-01`,
+                employee.employeeId
+            );
+
+            if (!newId) return; // User cancelled
+
+            const trimmedId = newId.trim().toUpperCase();
+
+            // Validation
+            if (trimmedId.length < 3 || trimmedId.length > 20) {
+                alert('ID muss zwischen 3 und 20 Zeichen lang sein.');
+                return;
+            }
+
+            if (!/^[A-Z0-9-]+$/.test(trimmedId)) {
+                alert('ID darf nur Großbuchstaben, Zahlen und Bindestriche enthalten.');
+                return;
+            }
+
+            // Check uniqueness
+            const existingEmployee = employees.find(e => e.employeeId === trimmedId && e.id !== employeeId);
+            if (existingEmployee) {
+                alert('Diese Mitarbeiter-ID wird bereits verwendet. Bitte wählen Sie eine andere.');
+                return;
+            }
+
+            // Update employee ID
+            employee.employeeId = trimmedId;
+            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
+            
+            alert(`✅ Mitarbeiter-ID erfolgreich geändert!\n\nNeue ID: ${trimmedId}\n\nDer Mitarbeiter kann sich jetzt mit dieser ID anmelden.`);
+            
+            loadEmployeeList();
         }
 
         function deactivateEmployee(employeeId) {
