@@ -3034,23 +3034,27 @@
                 return;
             }
 
+            // Get employees from localStorage
+            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
             const practices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
             
-            // Find employee across all practices
-            let foundEmployee = null;
-            let foundPractice = null;
-            
-            for (const practice of practices) {
-                const employee = practice.employees?.find(e => e.id === employeeId && e.password === password);
-                if (employee) {
-                    foundEmployee = employee;
-                    foundPractice = practice;
-                    break;
-                }
-            }
+            // Find employee by ID and password
+            const foundEmployee = employees.find(e => 
+                e.id === employeeId && 
+                e.password === password && 
+                e.active !== false
+            );
 
             if (!foundEmployee) {
                 alert('Ungültige Anmeldedaten.');
+                return;
+            }
+            
+            // Find the practice this employee belongs to
+            const foundPractice = practices.find(p => p.id === foundEmployee.practiceId);
+            
+            if (!foundPractice) {
+                alert('Praxis nicht gefunden.');
                 return;
             }
             
