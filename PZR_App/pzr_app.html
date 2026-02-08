@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PZR App</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2a44;
+      --muted: #5f6b85;
+      --primary: #2b6df6;
+      --primary-dark: #1f55c0;
+      --success: #26a269;
+      --warning: #f6b042;
+      --danger: #e24c4b;
+      --highlight: #fef3c7;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    main {
+      padding: 16px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+      margin-bottom: 16px;
+    }
+    .card h3 {
+      margin-top: 0;
+    }
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+    .grid-2 {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #d7deee;
+      background: #fff;
+      font-size: 1rem;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    button {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button.secondary {
+      background: #e9edf7;
+      color: var(--primary-dark);
+    }
+    button.danger {
+      background: var(--danger);
+    }
+    button.warning {
+      background: var(--warning);
+      color: #1f2a44;
+    }
+    button.success {
+      background: var(--success);
+    }
+    .pill {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    .pill.green { background: rgba(38, 162, 105, 0.15); color: var(--success); }
+    .pill.orange { background: rgba(246, 176, 66, 0.2); color: #9a5d00; }
+    .pill.red { background: rgba(226, 76, 75, 0.15); color: var(--danger); }
+    .highlight {
+      background: var(--highlight);
+      border-left: 4px solid var(--warning);
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .danger-text {
+      color: var(--danger);
+      font-weight: 700;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .nav button {
+      flex: 1;
+      min-width: 120px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .row > * {
+      flex: 1;
+      min-width: 160px;
+    }
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+    .muted {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .install-banner {
+      background: #eaf2ff;
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>PZR Empfehlungen & Erinnerungen</header>
+  <main>
+    <section id="login-view">
+      <div class="card">
+        <h2>Login</h2>
+        <div class="grid grid-2">
+          <form id="patient-login-form" class="card">
+            <h3>Patient</h3>
+            <label for="patient-login-number">Patienten-Nr</label>
+            <input id="patient-login-number" required />
+            <label for="patient-login-password">Passwort (optional)</label>
+            <input id="patient-login-password" type="password" />
+            <button type="submit">Einloggen</button>
+          </form>
+          <form id="employee-login-form" class="card">
+            <h3>Behandler / Mitarbeiter</h3>
+            <label for="employee-login-id">Login-ID</label>
+            <input id="employee-login-id" required />
+            <label for="employee-login-password">Passwort (optional)</label>
+            <input id="employee-login-password" type="password" />
+            <button type="submit">Einloggen</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Praxis registrieren</h2>
+        <form id="practice-register-form" class="grid grid-2">
+          <div>
+            <label for="practice-name">Praxisname</label>
+            <input id="practice-name" required />
+          </div>
+          <div>
+            <label for="admin-name">Administrator Name</label>
+            <input id="admin-name" required />
+          </div>
+          <div>
+            <label for="admin-login-id">Admin-Login-ID</label>
+            <input id="admin-login-id" required />
+          </div>
+          <div>
+            <label for="admin-password">Passwort (optional)</label>
+            <input id="admin-password" type="password" />
+          </div>
+          <button type="submit">Registrieren</button>
+        </form>
+        <p class="muted">Demo-Zugang: Admin Login-ID <strong>DEMO-ADMIN</strong>, Mitarbeiter <strong>MA-001</strong>, Patient <strong>PAT-001</strong>.</p>
+      </div>
+
+      <div class="card">
+        <h2>Download & Installation</h2>
+        <div class="install-banner">
+          <strong>App installieren</strong>
+          <button id="install-button" class="success">Jetzt installieren</button>
+          <span class="muted" id="install-hint">Installationshinweis wird angezeigt, sobald verfügbar.</span>
+        </div>
+        <div class="card">
+          <h3>Plattform auswählen</h3>
+          <div class="row">
+            <button type="button" class="secondary" data-platform="windows">Windows</button>
+            <button type="button" class="secondary" data-platform="macos">macOS</button>
+            <button type="button" class="secondary" data-platform="linux">Linux</button>
+            <button type="button" class="secondary" data-platform="android">Android</button>
+            <button type="button" class="secondary" data-platform="ios">iOS</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="patient-view" class="hidden">
+      <div class="card">
+        <div class="row">
+          <div>
+            <h2 id="patient-name"></h2>
+            <div class="muted">Patientenbereich</div>
+          </div>
+          <button id="patient-logout" class="secondary">Logout</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button type="button" data-patient-tab="overview">Übersicht</button>
+        <button type="button" data-patient-tab="appointments">Termine</button>
+        <button type="button" data-patient-tab="anamnese">Anamnese</button>
+        <button type="button" data-patient-tab="profile">Profil</button>
+      </div>
+
+      <div id="patient-tab-overview" class="card">
+        <h3>Meine Empfehlungen</h3>
+        <div id="patient-recommendations" class="highlight"></div>
+        <h3>Erinnerungen</h3>
+        <div id="patient-reminders" class="highlight"></div>
+      </div>
+
+      <div id="patient-tab-appointments" class="card hidden">
+        <h3>Meine Termine</h3>
+        <div id="patient-appointments" class="list"></div>
+        <h4>Erinnerungs-Einstellungen</h4>
+        <div class="row">
+          <label><input type="checkbox" id="reminder-4weeks" /> 4 Wochen vorher</label>
+          <label><input type="checkbox" id="reminder-1week" /> 1 Woche vorher</label>
+          <label><input type="checkbox" id="reminder-1day" /> 1 Tag vorher</label>
+        </div>
+        <label for="reminder-intensity">Intensität</label>
+        <select id="reminder-intensity">
+          <option value="hoch">Hoch</option>
+          <option value="mittel">Mittel</option>
+          <option value="niedrig">Niedrig</option>
+        </select>
+        <button id="save-reminders">Einstellungen speichern</button>
+      </div>
+
+      <div id="patient-tab-anamnese" class="card hidden">
+        <h3>Anamnese aktualisieren</h3>
+        <form id="patient-anamnese-form" class="grid">
+          <label>Krankheiten (z.B. Diabetes)</label>
+          <input id="anamnese-diseases" placeholder="Diabetes, Parodontitis" />
+          <label>Medikamente</label>
+          <input id="anamnese-medications" />
+          <label>Allergien</label>
+          <input id="anamnese-allergies" />
+          <label>Raucher</label>
+          <select id="anamnese-smoker">
+            <option value="false">Nein</option>
+            <option value="true">Ja</option>
+          </select>
+          <label>Parodontitis bekannt?</label>
+          <select id="anamnese-periodontitis">
+            <option value="false">Nein</option>
+            <option value="true">Ja</option>
+          </select>
+          <label>Karies-Anzahl (Schätzung)</label>
+          <input id="anamnese-caries" type="number" min="0" />
+          <button type="submit">Anamnese speichern</button>
+        </form>
+      </div>
+
+      <div id="patient-tab-profile" class="card hidden">
+        <h3>Profil</h3>
+        <form id="patient-profile-form" class="grid">
+          <label for="patient-profile-name">Name</label>
+          <input id="patient-profile-name" />
+          <label for="patient-profile-email">E-Mail</label>
+          <input id="patient-profile-email" type="email" />
+          <label for="patient-profile-phone">Telefon</label>
+          <input id="patient-profile-phone" />
+          <button type="submit">Profil speichern</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="employee-view" class="hidden">
+      <div class="card">
+        <div class="row">
+          <div>
+            <h2 id="employee-name"></h2>
+            <div class="muted">Behandlerbereich</div>
+          </div>
+          <button id="employee-logout" class="secondary">Logout</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button type="button" data-employee-tab="appointments">Termine</button>
+        <button type="button" data-employee-tab="patients">Patienten</button>
+        <button type="button" data-employee-tab="recommendations">Empfehlungen</button>
+        <button type="button" data-employee-tab="cancellations">Stornos</button>
+        <button type="button" data-employee-tab="staff" id="staff-tab-button" class="hidden">Mitarbeiter</button>
+      </div>
+
+      <div id="employee-tab-appointments" class="card">
+        <h3>Termin erstellen</h3>
+        <form id="appointment-form" class="grid">
+          <label for="appointment-patient-number">Patienten-Nr</label>
+          <input id="appointment-patient-number" required />
+          <button type="button" id="appointment-search" class="secondary">Patient suchen</button>
+          <div id="appointment-patient-preview" class="muted"></div>
+          <label for="appointment-date">Datum</label>
+          <input id="appointment-date" type="date" required />
+          <label for="appointment-time">Uhrzeit</label>
+          <input id="appointment-time" type="time" required />
+          <label for="appointment-note">Notiz</label>
+          <textarea id="appointment-note"></textarea>
+          <button type="submit">Termin speichern</button>
+        </form>
+      </div>
+
+      <div id="employee-tab-patients" class="card hidden">
+        <h3>Patienten verwalten</h3>
+        <label for="patient-search-input">Patienten-Nr</label>
+        <input id="patient-search-input" />
+        <button type="button" id="patient-search-button" class="secondary">Suchen</button>
+        <div id="patient-edit-area" class="hidden">
+          <h4 id="patient-edit-name"></h4>
+          <label>Bemerkungen / Hinweise</label>
+          <textarea id="patient-notes"></textarea>
+          <label>Putztechnik / Anpassungen</label>
+          <textarea id="patient-technique"></textarea>
+          <label>Produkte / Verwendung</label>
+          <textarea id="patient-products"></textarea>
+          <button type="button" id="save-patient-notes">Speichern</button>
+          <div id="patient-anamnese-summary"></div>
+        </div>
+      </div>
+
+      <div id="employee-tab-recommendations" class="card hidden">
+        <h3>Empfehlungen bearbeiten</h3>
+        <label for="recommendation-patient">Patienten-Nr</label>
+        <input id="recommendation-patient" />
+        <button type="button" id="recommendation-search" class="secondary">Laden</button>
+        <div id="recommendation-edit-area" class="hidden">
+          <div id="recommendation-summary" class="highlight"></div>
+          <label>Zusätzliche Empfehlungen</label>
+          <textarea id="recommendation-extra"></textarea>
+          <button type="button" id="recommendation-save">Speichern</button>
+        </div>
+      </div>
+
+      <div id="employee-tab-cancellations" class="card hidden">
+        <h3>Stornierungen bestätigen</h3>
+        <div id="cancellation-list" class="list"></div>
+      </div>
+
+      <div id="employee-tab-staff" class="card hidden">
+        <h3>Praxis & Mitarbeiter</h3>
+        <div id="practice-admin-area"></div>
+        <h4>Mitarbeiter</h4>
+        <div id="staff-list" class="list"></div>
+        <form id="staff-add-form" class="grid">
+          <label for="staff-name">Name</label>
+          <input id="staff-name" required />
+          <label for="staff-login">Login-ID</label>
+          <input id="staff-login" required />
+          <button type="submit">Mitarbeiter hinzufügen</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEYS = {
+      practices: 'pzrPractices',
+      employees: 'pzrEmployees',
+      patients: 'pzrPatients',
+      appointments: 'pzrAppointments',
+      recommendations: 'pzrRecommendations',
+      settings: 'pzrSettings'
+    };
+
+    const state = {
+      currentUser: null,
+      deferredPrompt: null,
+      activePatientTab: 'overview',
+      activeEmployeeTab: 'appointments',
+      patientLookup: null,
+      recommendationPatient: null,
+      anamneseRequired: false
+    };
+
+    const loginView = document.getElementById('login-view');
+    const patientView = document.getElementById('patient-view');
+    const employeeView = document.getElementById('employee-view');
+
+    function loadData(key, fallback) {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      try {
+        return JSON.parse(raw);
+      } catch (error) {
+        return fallback;
+      }
+    }
+
+    function saveData(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function normalizeId(value) {
+      return String(value || '').trim().toUpperCase();
+    }
+
+    function generateAdminLoginId(name) {
+      return normalizeId(name)
+        .replace(/Ä/g, 'AE')
+        .replace(/Ö/g, 'OE')
+        .replace(/Ü/g, 'UE')
+        .replace(/ß/g, 'SS')
+        .replace(/\s+/g, '-')
+        .replace(/[^A-Z0-9-]/g, '')
+        .slice(0, 20) || 'ADMIN';
+    }
+
+    function initDemoData() {
+      const practices = loadData(STORAGE_KEYS.practices, []);
+      if (practices.length) return;
+
+      const practiceId = crypto.randomUUID();
+      const demoPractice = {
+        id: practiceId,
+        name: 'Demo Praxis',
+        adminLoginId: 'DEMO-ADMIN',
+        adminName: 'Demo Admin',
+        createdAt: new Date().toISOString()
+      };
+
+      const employees = [
+        {
+          id: crypto.randomUUID(),
+          practiceId,
+          name: 'Demo Admin',
+          loginId: 'DEMO-ADMIN',
+          password: 'demo',
+          role: 'admin',
+          isOriginalAdmin: true,
+          active: true
+        },
+        {
+          id: crypto.randomUUID(),
+          practiceId,
+          name: 'MA-001',
+          loginId: 'MA-001',
+          password: 'demo',
+          role: 'employee',
+          isOriginalAdmin: false,
+          active: true
+        }
+      ];
+
+      const patients = [
+        {
+          id: crypto.randomUUID(),
+          practiceId,
+          number: 'PAT-001',
+          name: 'Mara Beispiel',
+          email: 'mara@example.com',
+          phone: '0151 000000',
+          password: 'demo',
+          notes: 'Tägliche Zahnseide empfohlen.',
+          technique: 'Modifizierte Bass-Technik',
+          products: 'Elektrische Zahnbürste + Interdentalbürsten',
+          lastAnamneseUpdate: new Date().toISOString(),
+          anamnese: {
+            diseases: ['Diabetes'],
+            medications: 'Metformin',
+            allergies: 'Penicillin',
+            smoker: false,
+            periodontitis: true,
+            cariesCount: 2
+          },
+          reminders: { weeks4: true, week1: true, day1: false, intensity: 'hoch' }
+        },
+        {
+          id: crypto.randomUUID(),
+          practiceId,
+          number: 'PAT-002',
+          name: 'Jonas Demo',
+          email: 'jonas@example.com',
+          phone: '0151 111111',
+          password: 'demo',
+          notes: 'Recall alle 6 Monate.',
+          technique: 'Kreisende Bürstenbewegungen',
+          products: 'Sanfte Zahnpasta',
+          lastAnamneseUpdate: new Date().toISOString(),
+          anamnese: {
+            diseases: [],
+            medications: '',
+            allergies: '',
+            smoker: true,
+            periodontitis: false,
+            cariesCount: 0
+          },
+          reminders: { weeks4: false, week1: true, day1: true, intensity: 'mittel' }
+        }
+      ];
+
+      const appointments = [
+        {
+          id: crypto.randomUUID(),
+          practiceId,
+          patientId: patients[0].id,
+          employeeId: employees[1].id,
+          date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 20).toISOString(),
+          time: '10:00',
+          note: 'PZR halbjährlich',
+          status: 'scheduled'
+        }
+      ];
+
+      saveData(STORAGE_KEYS.practices, [demoPractice]);
+      saveData(STORAGE_KEYS.employees, employees);
+      saveData(STORAGE_KEYS.patients, patients);
+      saveData(STORAGE_KEYS.appointments, appointments);
+      saveData(STORAGE_KEYS.settings, { isBackendPC: false });
+
+      const recommendations = {};
+      patients.forEach((patient) => {
+        recommendations[patient.id] = generateRecommendations(patient);
+      });
+      saveData(STORAGE_KEYS.recommendations, recommendations);
+    }
+
+    function calculateRiskLevel(patient) {
+      let score = 0;
+      if (patient.anamnese?.diseases?.includes('Diabetes')) score += 2;
+      if (patient.anamnese?.periodontitis) score += 3;
+      if (patient.anamnese?.cariesCount > 2) score += 2;
+      if (patient.anamnese?.smoker) score += 2;
+      if (score >= 6) return 'HOCH';
+      if (score >= 3) return 'MITTEL';
+      return 'NIEDRIG';
+    }
+
+    function generateRecommendations(patient) {
+      const riskLevel = calculateRiskLevel(patient);
+      const nextPZRMonths = riskLevel === 'HOCH' ? 3 : riskLevel === 'MITTEL' ? 6 : 12;
+      return {
+        riskLevel,
+        nextPZRMonths,
+        technique: patient.technique || 'Modifizierte Bass-Technik',
+        products: patient.products || 'Zahnseide + elektrische Bürste',
+        behavioral: [
+          'Zucker reduzieren',
+          'Nach Mahlzeiten spülen',
+          'Regelmäßige Interdentalreinigung'
+        ],
+        extra: ''
+      };
+    }
+
+    function getTrafficLight(dateString) {
+      const appointmentDate = new Date(dateString);
+      const daysUntil = Math.ceil((appointmentDate - new Date()) / (1000 * 60 * 60 * 24));
+      if (daysUntil >= 14) {
+        return { color: 'green', icon: '��', message: 'Kostenlos stornierbar' };
+      }
+      if (daysUntil >= 2) {
+        return { color: 'orange', icon: '🟠', message: 'Mögliche Gebühr - bitte rechtzeitig' };
+      }
+      return { color: 'red', icon: '🔴', message: 'Ausfallgebühr möglich!' };
+    }
+
+    function needsAnamneseUpdate(patient) {
+      if (!patient.lastAnamneseUpdate) return true;
+      const last = new Date(patient.lastAnamneseUpdate);
+      const diffDays = (Date.now() - last) / (1000 * 60 * 60 * 24);
+      return diffDays > 365;
+    }
+
+    function setView(view) {
+      loginView.classList.toggle('hidden', view !== 'login');
+      patientView.classList.toggle('hidden', view !== 'patient');
+      employeeView.classList.toggle('hidden', view !== 'employee');
+    }
+
+    function showMessage(message) {
+      alert(message);
+    }
+
+    function getCurrentPractice() {
+      if (!state.currentUser) return null;
+      const practices = loadData(STORAGE_KEYS.practices, []);
+      return practices.find((practice) => practice.id === state.currentUser.practiceId) || null;
+    }
+
+    function getEmployees() {
+      return loadData(STORAGE_KEYS.employees, []);
+    }
+
+    function getPatients() {
+      return loadData(STORAGE_KEYS.patients, []);
+    }
+
+    function getAppointments() {
+      return loadData(STORAGE_KEYS.appointments, []);
+    }
+
+    function getRecommendations() {
+      return loadData(STORAGE_KEYS.recommendations, {});
+    }
+
+    function findEmployeeByLogin(loginId) {
+      return getEmployees().find((employee) => normalizeId(employee.loginId) === normalizeId(loginId));
+    }
+
+    function findPatientByNumber(number) {
+      return getPatients().find((patient) => normalizeId(patient.number) === normalizeId(number));
+    }
+
+    function updateRecommendationsForPatient(patient) {
+      const recommendations = getRecommendations();
+      const existing = recommendations[patient.id] || generateRecommendations(patient);
+      recommendations[patient.id] = { ...existing, ...generateRecommendations(patient), extra: existing.extra || '' };
+      saveData(STORAGE_KEYS.recommendations, recommendations);
+    }
+
+    function downloadHtmlSnapshot(filename) {
+      const html = document.documentElement.outerHTML;
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function isIos() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+
+    function isPwaInstalled() {
+      return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    }
+
+    function setupInstallPrompt() {
+      const installButton = document.getElementById('install-button');
+      const installHint = document.getElementById('install-hint');
+
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        state.deferredPrompt = event;
+        installHint.textContent = 'Installation verfügbar.';
+      });
+
+      installButton.addEventListener('click', async () => {
+        if (state.deferredPrompt) {
+          state.deferredPrompt.prompt();
+          await state.deferredPrompt.userChoice;
+          state.deferredPrompt = null;
+          installHint.textContent = 'Installation ausgelöst.';
+          return;
+        }
+        if (isIos()) {
+          showMessage('iOS: Teilen → „Zum Home-Bildschirm“ hinzufügen, um die App zu installieren.');
+          return;
+        }
+        showMessage('Installation wird vom Gerät gesteuert. Alternativ kann die HTML-Datei heruntergeladen werden.');
+      });
+    }
+
+    function handlePlatformDownload(platform) {
+      if (platform === 'ios') {
+        showMessage('iOS: „Zum Home-Bildschirm“ nutzen. Zusätzlich wird die App-Datei heruntergeladen.');
+        downloadHtmlSnapshot('pzr_app.html');
+        return;
+      }
+      if (platform === 'android') {
+        if (state.deferredPrompt) {
+          state.deferredPrompt.prompt();
+          state.deferredPrompt = null;
+        }
+        downloadHtmlSnapshot('pzr_app.html');
+        showMessage('Android: Installation gestartet oder HTML-Datei heruntergeladen.');
+        return;
+      }
+      downloadHtmlSnapshot('pzr_app.html');
+      showMessage(`Download für ${platform.toUpperCase()} gestartet.`);
+    }
+
+    function setupDownloads() {
+      document.querySelectorAll('[data-platform]').forEach((button) => {
+        button.addEventListener('click', () => handlePlatformDownload(button.dataset.platform));
+      });
+    }
+
+    function renderPatientDashboard(patient) {
+      document.getElementById('patient-name').textContent = patient.name;
+      const recommendations = getRecommendations()[patient.id] || generateRecommendations(patient);
+      const recommendationEl = document.getElementById('patient-recommendations');
+      recommendationEl.innerHTML = `
+        <strong>Risiko:</strong> ${recommendations.riskLevel} | <strong>Nächste PZR:</strong> ${recommendations.nextPZRMonths} Monate<br />
+        <strong>Technik:</strong> ${recommendations.technique}<br />
+        <strong>Produkte:</strong> ${recommendations.products}<br />
+        <strong>Hinweise:</strong> ${recommendations.behavioral.join(', ')} ${recommendations.extra ? '<br /><strong>Zusatz:</strong> ' + recommendations.extra : ''}
+      `;
+
+      const reminderEl = document.getElementById('patient-reminders');
+      reminderEl.innerHTML = `
+        <strong>Wichtige Hinweise:</strong><br />
+        ${patient.notes || 'Bitte beachten Sie die Empfehlungen Ihres Behandlers.'}
+      `;
+
+      renderPatientAppointments(patient);
+      renderPatientProfile(patient);
+      renderPatientAnamnese(patient);
+      renderReminderSettings(patient);
+    }
+
+    function renderPatientAppointments(patient) {
+      const appointments = getAppointments().filter((appointment) => appointment.patientId === patient.id);
+      const container = document.getElementById('patient-appointments');
+      container.innerHTML = '';
+      if (!appointments.length) {
+        container.innerHTML = '<div class="muted">Keine Termine vorhanden.</div>';
+        return;
+      }
+
+      appointments.forEach((appointment) => {
+        const traffic = getTrafficLight(appointment.date);
+        const item = document.createElement('div');
+        item.className = 'card';
+        item.innerHTML = `
+          <div><strong>${new Date(appointment.date).toLocaleDateString()}</strong> um ${appointment.time}</div>
+          <div class="muted">${appointment.note || ''}</div>
+          <div class="pill ${traffic.color}">${traffic.icon} ${traffic.message}</div>
+          <div>Status: ${appointment.status}</div>
+        `;
+        if (appointment.status === 'scheduled') {
+          const cancelButton = document.createElement('button');
+          cancelButton.textContent = 'Termin absagen';
+          cancelButton.className = 'warning';
+          cancelButton.addEventListener('click', () => cancelAppointment(appointment.id));
+          item.appendChild(cancelButton);
+        }
+        container.appendChild(item);
+      });
+    }
+
+    function renderPatientProfile(patient) {
+      document.getElementById('patient-profile-name').value = patient.name || '';
+      document.getElementById('patient-profile-email').value = patient.email || '';
+      document.getElementById('patient-profile-phone').value = patient.phone || '';
+    }
+
+    function renderPatientAnamnese(patient) {
+      document.getElementById('anamnese-diseases').value = patient.anamnese?.diseases?.join(', ') || '';
+      document.getElementById('anamnese-medications').value = patient.anamnese?.medications || '';
+      document.getElementById('anamnese-allergies').value = patient.anamnese?.allergies || '';
+      document.getElementById('anamnese-smoker').value = String(patient.anamnese?.smoker || false);
+      document.getElementById('anamnese-periodontitis').value = String(patient.anamnese?.periodontitis || false);
+      document.getElementById('anamnese-caries').value = patient.anamnese?.cariesCount ?? 0;
+    }
+
+    function renderReminderSettings(patient) {
+      const reminders = patient.reminders || { weeks4: true, week1: true, day1: false, intensity: 'hoch' };
+      document.getElementById('reminder-4weeks').checked = reminders.weeks4;
+      document.getElementById('reminder-1week').checked = reminders.week1;
+      document.getElementById('reminder-1day').checked = reminders.day1;
+      document.getElementById('reminder-intensity').value = reminders.intensity || 'hoch';
+    }
+
+    function renderEmployeeDashboard(employee) {
+      document.getElementById('employee-name').textContent = employee.name;
+      document.getElementById('staff-tab-button').classList.toggle('hidden', !employee.isOriginalAdmin);
+      renderCancellations();
+      renderStaff();
+    }
+
+    function renderPatientEdit(patient) {
+      const editArea = document.getElementById('patient-edit-area');
+      const summary = document.getElementById('patient-anamnese-summary');
+      document.getElementById('patient-edit-name').textContent = patient.name;
+      document.getElementById('patient-notes').value = patient.notes || '';
+      document.getElementById('patient-technique').value = patient.technique || '';
+      document.getElementById('patient-products').value = patient.products || '';
+      summary.innerHTML = `
+        <h4>Anamnese</h4>
+        <div class="${patient.anamnese?.diseases?.includes('Diabetes') ? 'danger-text' : ''}">Diabetes: ${patient.anamnese?.diseases?.includes('Diabetes') ? 'Ja' : 'Nein'}</div>
+        <div class="${patient.anamnese?.periodontitis ? 'danger-text' : ''}">Parodontitis: ${patient.anamnese?.periodontitis ? 'Ja' : 'Nein'}</div>
+        <div class="${patient.anamnese?.smoker ? 'danger-text' : ''}">Raucher: ${patient.anamnese?.smoker ? 'Ja' : 'Nein'}</div>
+        <div>Medikamente: ${patient.anamnese?.medications || 'Keine Angaben'}</div>
+      `;
+      editArea.classList.remove('hidden');
+    }
+
+    function renderRecommendationEdit(patient) {
+      const recommendations = getRecommendations();
+      const recommendation = recommendations[patient.id] || generateRecommendations(patient);
+      const area = document.getElementById('recommendation-edit-area');
+      document.getElementById('recommendation-summary').innerHTML = `
+        <strong>Risiko:</strong> ${recommendation.riskLevel}<br />
+        <strong>Nächste PZR:</strong> ${recommendation.nextPZRMonths} Monate<br />
+        <strong>Technik:</strong> ${recommendation.technique}<br />
+        <strong>Produkte:</strong> ${recommendation.products}
+      `;
+      document.getElementById('recommendation-extra').value = recommendation.extra || '';
+      area.classList.remove('hidden');
+    }
+
+    function renderCancellations() {
+      const list = document.getElementById('cancellation-list');
+      const appointments = getAppointments().filter((appointment) => appointment.status === 'cancelled-pending');
+      list.innerHTML = '';
+      if (!appointments.length) {
+        list.innerHTML = '<div class="muted">Keine offenen Stornos.</div>';
+        return;
+      }
+      const patients = getPatients();
+      appointments.forEach((appointment) => {
+        const patient = patients.find((p) => p.id === appointment.patientId);
+        const item = document.createElement('div');
+        item.className = 'card';
+        item.innerHTML = `
+          <div><strong>${patient?.name || 'Patient'}</strong> (${patient?.number || ''})</div>
+          <div>${new Date(appointment.date).toLocaleDateString()} um ${appointment.time}</div>
+          <div>Folgetermin Wunsch: ${appointment.followUpPreference || 'Nicht angegeben'}</div>
+        `;
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'Storno bestätigen';
+        confirmButton.className = 'danger';
+        confirmButton.addEventListener('click', () => confirmCancellation(appointment.id));
+        item.appendChild(confirmButton);
+        list.appendChild(item);
+      });
+    }
+
+    function renderStaff() {
+      const employee = state.currentUser;
+      if (!employee?.isOriginalAdmin) return;
+      const staffList = document.getElementById('staff-list');
+      const employees = getEmployees().filter((emp) => emp.practiceId === employee.practiceId);
+      staffList.innerHTML = '';
+      employees.forEach((staff) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <strong>${staff.name}</strong>
+          <label>Login-ID</label>
+          <input value="${staff.loginId}" data-employee-id="${staff.id}" class="staff-login-input" />
+        `;
+        staffList.appendChild(card);
+      });
+
+      const practice = getCurrentPractice();
+      if (practice) {
+        document.getElementById('practice-admin-area').innerHTML = `
+          <label>Admin-Login-ID</label>
+          <input id="practice-admin-login" value="${practice.adminLoginId}" />
+          <button type="button" id="practice-admin-save">Speichern</button>
+        `;
+      }
+    }
+
+    function cancelAppointment(appointmentId) {
+      const appointments = getAppointments();
+      const appointment = appointments.find((item) => item.id === appointmentId);
+      if (!appointment) return;
+      const traffic = getTrafficLight(appointment.date);
+      const confirmed = confirm(`${traffic.icon} ${traffic.message}\nMöchten Sie den Termin absagen?`);
+      if (!confirmed) return;
+      const followUp = prompt('Bitte Folgetermin-Wunsch / Zeitpräferenzen angeben:');
+      appointment.status = 'cancelled-pending';
+      appointment.followUpPreference = followUp || '';
+      saveData(STORAGE_KEYS.appointments, appointments);
+      renderPatientAppointments(findPatientById(appointment.patientId));
+      renderCancellations();
+    }
+
+    function confirmCancellation(appointmentId) {
+      const appointments = getAppointments().filter((item) => item.id !== appointmentId);
+      saveData(STORAGE_KEYS.appointments, appointments);
+      renderCancellations();
+    }
+
+    function findPatientById(id) {
+      return getPatients().find((patient) => patient.id === id);
+    }
+
+    function handlePatientLogin(event) {
+      event.preventDefault();
+      const number = document.getElementById('patient-login-number').value;
+      const password = document.getElementById('patient-login-password').value;
+      const patient = findPatientByNumber(number);
+      if (!patient) return showMessage('Patient nicht gefunden.');
+      if (patient.password && patient.password !== password) {
+        return showMessage('Ungültige Anmeldedaten.');
+      }
+      state.currentUser = { role: 'patient', id: patient.id, practiceId: patient.practiceId };
+      setView('patient');
+      renderPatientDashboard(patient);
+      state.anamneseRequired = needsAnamneseUpdate(patient);
+      if (state.anamneseRequired) {
+        showMessage('Bitte aktualisieren Sie Ihre Anamnese, um Zugriff zu erhalten.');
+        switchPatientTab('anamnese');
+      }
+    }
+
+    function handleEmployeeLogin(event) {
+      event.preventDefault();
+      const loginId = document.getElementById('employee-login-id').value;
+      const password = document.getElementById('employee-login-password').value;
+      const employee = findEmployeeByLogin(loginId);
+      if (!employee || !employee.active) return showMessage('Ungültige Anmeldedaten.');
+      if (employee.password && employee.password !== password) {
+        return showMessage('Ungültige Anmeldedaten.');
+      }
+      state.currentUser = {
+        role: employee.role,
+        id: employee.id,
+        practiceId: employee.practiceId,
+        isOriginalAdmin: employee.isOriginalAdmin,
+        name: employee.name
+      };
+      setView('employee');
+      renderEmployeeDashboard(employee);
+      maybeInitBackend(employee);
+    }
+
+    function maybeInitBackend(employee) {
+      const settings = loadData(STORAGE_KEYS.settings, { isBackendPC: false });
+      if (employee.role === 'admin' && employee.isOriginalAdmin && isPwaInstalled() && !settings.isBackendPC) {
+        settings.isBackendPC = true;
+        saveData(STORAGE_KEYS.settings, settings);
+        showMessage('✅ Dieses Gerät ist jetzt Backend-Server für die Praxis.');
+      }
+    }
+
+    function handleRegister(event) {
+      event.preventDefault();
+      const practiceName = document.getElementById('practice-name').value.trim();
+      const adminName = document.getElementById('admin-name').value.trim();
+      const adminLoginId = normalizeId(document.getElementById('admin-login-id').value);
+      const adminPassword = document.getElementById('admin-password').value;
+      if (!practiceName || !adminName || !adminLoginId) {
+        return showMessage('Bitte alle Pflichtfelder ausfüllen.');
+      }
+
+      const practices = loadData(STORAGE_KEYS.practices, []);
+      if (practices.some((practice) => normalizeId(practice.adminLoginId) === adminLoginId)) {
+        return showMessage('Diese Admin-Login-ID ist bereits vergeben.');
+      }
+
+      const practiceId = crypto.randomUUID();
+      const practice = {
+        id: practiceId,
+        name: practiceName,
+        adminLoginId,
+        adminName,
+        createdAt: new Date().toISOString()
+      };
+      practices.push(practice);
+
+      const employees = getEmployees();
+      employees.push({
+        id: crypto.randomUUID(),
+        practiceId,
+        name: adminName,
+        loginId: adminLoginId,
+        password: adminPassword,
+        role: 'admin',
+        isOriginalAdmin: true,
+        active: true
+      });
+      saveData(STORAGE_KEYS.practices, practices);
+      saveData(STORAGE_KEYS.employees, employees);
+      showMessage('Praxis registriert. Bitte mit Ihrer Admin-Login-ID einloggen.');
+    }
+
+    function switchPatientTab(tab) {
+      if (state.anamneseRequired && tab !== 'anamnese') {
+        showMessage('Bitte zuerst die Anamnese aktualisieren.');
+        return;
+      }
+      state.activePatientTab = tab;
+      document.querySelectorAll('[id^="patient-tab-"]').forEach((section) => {
+        section.classList.toggle('hidden', !section.id.endsWith(tab));
+      });
+    }
+
+    function switchEmployeeTab(tab) {
+      state.activeEmployeeTab = tab;
+      document.querySelectorAll('[id^="employee-tab-"]').forEach((section) => {
+        section.classList.toggle('hidden', !section.id.endsWith(tab));
+      });
+    }
+
+    function setupTabs() {
+      document.querySelectorAll('[data-patient-tab]').forEach((button) => {
+        button.addEventListener('click', () => switchPatientTab(button.dataset.patientTab));
+      });
+      document.querySelectorAll('[data-employee-tab]').forEach((button) => {
+        button.addEventListener('click', () => switchEmployeeTab(button.dataset.employeeTab));
+      });
+    }
+
+    function handleAnamneseSave(event) {
+      event.preventDefault();
+      const patient = findPatientById(state.currentUser.id);
+      const diseases = document.getElementById('anamnese-diseases').value.split(',').map((item) => item.trim()).filter(Boolean);
+      patient.anamnese = {
+        diseases,
+        medications: document.getElementById('anamnese-medications').value,
+        allergies: document.getElementById('anamnese-allergies').value,
+        smoker: document.getElementById('anamnese-smoker').value === 'true',
+        periodontitis: document.getElementById('anamnese-periodontitis').value === 'true',
+        cariesCount: Number(document.getElementById('anamnese-caries').value || 0)
+      };
+      patient.lastAnamneseUpdate = new Date().toISOString();
+      const patients = getPatients().map((item) => (item.id === patient.id ? patient : item));
+      saveData(STORAGE_KEYS.patients, patients);
+      updateRecommendationsForPatient(patient);
+      renderPatientDashboard(patient);
+      state.anamneseRequired = false;
+      showMessage('Anamnese aktualisiert. Vielen Dank!');
+    }
+
+    function handleProfileSave(event) {
+      event.preventDefault();
+      const patient = findPatientById(state.currentUser.id);
+      patient.name = document.getElementById('patient-profile-name').value;
+      patient.email = document.getElementById('patient-profile-email').value;
+      patient.phone = document.getElementById('patient-profile-phone').value;
+      const patients = getPatients().map((item) => (item.id === patient.id ? patient : item));
+      saveData(STORAGE_KEYS.patients, patients);
+      renderPatientDashboard(patient);
+      showMessage('Profil gespeichert.');
+    }
+
+    function handleReminderSave() {
+      const patient = findPatientById(state.currentUser.id);
+      patient.reminders = {
+        weeks4: document.getElementById('reminder-4weeks').checked,
+        week1: document.getElementById('reminder-1week').checked,
+        day1: document.getElementById('reminder-1day').checked,
+        intensity: document.getElementById('reminder-intensity').value
+      };
+      const patients = getPatients().map((item) => (item.id === patient.id ? patient : item));
+      saveData(STORAGE_KEYS.patients, patients);
+      renderPatientDashboard(patient);
+      showMessage('Erinnerungen aktualisiert.');
+    }
+
+    function handleAppointmentSearch() {
+      const number = document.getElementById('appointment-patient-number').value;
+      const patient = findPatientByNumber(number);
+      const preview = document.getElementById('appointment-patient-preview');
+      if (!patient) {
+        preview.textContent = 'Patient nicht gefunden.';
+        return;
+      }
+      preview.textContent = `Gefunden: ${patient.name} (${patient.number})`;
+      state.patientLookup = patient;
+    }
+
+    function handleAppointmentSave(event) {
+      event.preventDefault();
+      if (!state.patientLookup) {
+        return showMessage('Bitte zuerst einen Patienten suchen.');
+      }
+      const appointments = getAppointments();
+      appointments.push({
+        id: crypto.randomUUID(),
+        practiceId: state.currentUser.practiceId,
+        patientId: state.patientLookup.id,
+        employeeId: state.currentUser.id,
+        date: new Date(document.getElementById('appointment-date').value).toISOString(),
+        time: document.getElementById('appointment-time').value,
+        note: document.getElementById('appointment-note').value,
+        status: 'scheduled'
+      });
+      saveData(STORAGE_KEYS.appointments, appointments);
+      showMessage('Termin gespeichert.');
+      state.patientLookup = null;
+      document.getElementById('appointment-form').reset();
+      document.getElementById('appointment-patient-preview').textContent = '';
+    }
+
+    function handlePatientSearch() {
+      const number = document.getElementById('patient-search-input').value;
+      const patient = findPatientByNumber(number);
+      if (!patient) return showMessage('Patient nicht gefunden.');
+      state.patientLookup = patient;
+      renderPatientEdit(patient);
+    }
+
+    function handlePatientNotesSave() {
+      const patient = state.patientLookup;
+      if (!patient) return;
+      patient.notes = document.getElementById('patient-notes').value;
+      patient.technique = document.getElementById('patient-technique').value;
+      patient.products = document.getElementById('patient-products').value;
+      const patients = getPatients().map((item) => (item.id === patient.id ? patient : item));
+      saveData(STORAGE_KEYS.patients, patients);
+      updateRecommendationsForPatient(patient);
+      showMessage('Patienten-Infos gespeichert.');
+    }
+
+    function handleRecommendationSearch() {
+      const number = document.getElementById('recommendation-patient').value;
+      const patient = findPatientByNumber(number);
+      if (!patient) return showMessage('Patient nicht gefunden.');
+      state.recommendationPatient = patient;
+      renderRecommendationEdit(patient);
+    }
+
+    function handleRecommendationSave() {
+      const patient = state.recommendationPatient;
+      if (!patient) return;
+      const recommendations = getRecommendations();
+      const current = recommendations[patient.id] || generateRecommendations(patient);
+      recommendations[patient.id] = {
+        ...current,
+        extra: document.getElementById('recommendation-extra').value
+      };
+      saveData(STORAGE_KEYS.recommendations, recommendations);
+      showMessage('Empfehlungen gespeichert.');
+    }
+
+    function handleStaffSave() {
+      if (!state.currentUser?.isOriginalAdmin) return;
+      const employees = getEmployees();
+      document.querySelectorAll('.staff-login-input').forEach((input) => {
+        const employee = employees.find((item) => item.id === input.dataset.employeeId);
+        if (employee) employee.loginId = normalizeId(input.value);
+      });
+      saveData(STORAGE_KEYS.employees, employees);
+
+      const adminInput = document.getElementById('practice-admin-login');
+      if (adminInput) {
+        const practices = loadData(STORAGE_KEYS.practices, []);
+        const practice = practices.find((item) => item.id === state.currentUser.practiceId);
+        if (practice) practice.adminLoginId = normalizeId(adminInput.value);
+        saveData(STORAGE_KEYS.practices, practices);
+      }
+      showMessage('Mitarbeiterdaten gespeichert.');
+    }
+
+    function handleStaffAdd(event) {
+      event.preventDefault();
+      const name = document.getElementById('staff-name').value;
+      const loginId = normalizeId(document.getElementById('staff-login').value);
+      if (!name || !loginId) return;
+      const employees = getEmployees();
+      employees.push({
+        id: crypto.randomUUID(),
+        practiceId: state.currentUser.practiceId,
+        name,
+        loginId,
+        role: 'employee',
+        isOriginalAdmin: false,
+        active: true
+      });
+      saveData(STORAGE_KEYS.employees, employees);
+      document.getElementById('staff-add-form').reset();
+      renderStaff();
+      showMessage('Mitarbeiter hinzugefügt.');
+    }
+
+    function setupEvents() {
+      document.getElementById('patient-login-form').addEventListener('submit', handlePatientLogin);
+      document.getElementById('employee-login-form').addEventListener('submit', handleEmployeeLogin);
+      document.getElementById('practice-register-form').addEventListener('submit', handleRegister);
+      document.getElementById('admin-name').addEventListener('input', (event) => {
+        document.getElementById('admin-login-id').value = generateAdminLoginId(event.target.value);
+      });
+      document.getElementById('patient-logout').addEventListener('click', () => {
+        state.currentUser = null;
+        state.anamneseRequired = false;
+        setView('login');
+      });
+      document.getElementById('employee-logout').addEventListener('click', () => {
+        state.currentUser = null;
+        state.anamneseRequired = false;
+        setView('login');
+      });
+      document.getElementById('patient-anamnese-form').addEventListener('submit', handleAnamneseSave);
+      document.getElementById('patient-profile-form').addEventListener('submit', handleProfileSave);
+      document.getElementById('save-reminders').addEventListener('click', handleReminderSave);
+      document.getElementById('appointment-search').addEventListener('click', handleAppointmentSearch);
+      document.getElementById('appointment-form').addEventListener('submit', handleAppointmentSave);
+      document.getElementById('patient-search-button').addEventListener('click', handlePatientSearch);
+      document.getElementById('save-patient-notes').addEventListener('click', handlePatientNotesSave);
+      document.getElementById('recommendation-search').addEventListener('click', handleRecommendationSearch);
+      document.getElementById('recommendation-save').addEventListener('click', handleRecommendationSave);
+      document.getElementById('staff-add-form').addEventListener('submit', handleStaffAdd);
+      document.getElementById('employee-tab-staff').addEventListener('change', handleStaffSave);
+      document.getElementById('employee-tab-staff').addEventListener('click', (event) => {
+        if (event.target?.id === 'practice-admin-save') handleStaffSave();
+      });
+    }
+
+    initDemoData();
+    setupInstallPrompt();
+    setupDownloads();
+    setupTabs();
+    setupEvents();
+    setView('login');
+  </script>
+</body>
+</html>
