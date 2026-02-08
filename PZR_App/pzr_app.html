@@ -792,12 +792,6 @@
 
             <div id="employeeLogin" class="hidden">
                 <div class="form-group">
-                    <label for="practiceSelect">Praxis wählen</label>
-                    <select id="practiceSelect" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
-                        <option value="">Bitte wählen...</option>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="employeeId">Mitarbeiter-ID</label>
                     <input type="text" id="employeeId" placeholder="z.B. MA-001">
                 </div>
@@ -2756,8 +2750,7 @@
             document.getElementById('regAdminPassword').value = '';
             document.getElementById('regAdminPasswordConfirm').value = '';
 
-            // Reload practice selector and go back to login
-            populatePracticeSelector();
+            // Go back to login
             showLogin();
         }
         
@@ -3000,14 +2993,8 @@
 
         // Update login employee function
         function loginEmployee() {
-            const practiceId = document.getElementById('practiceSelect').value;
             const employeeId = document.getElementById('employeeId').value.trim();
             const password = document.getElementById('employeePassword').value.trim();
-
-            if (!practiceId) {
-                alert('Bitte wählen Sie eine Praxis aus.');
-                return;
-            }
 
             if (!employeeId || !password) {
                 alert('Bitte Mitarbeiter-ID und Passwort eingeben.');
@@ -3015,29 +3002,29 @@
             }
 
             const practices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
-            const practice = practices.find(p => p.id === practiceId);
+            
+            // Find employee across all practices
+            let foundEmployee = null;
+            let foundPractice = null;
+            
+            for (const practice of practices) {
+                const employee = practice.employees?.find(e => e.id === employeeId && e.password === password);
+                if (employee) {
+                    foundEmployee = employee;
+                    foundPractice = practice;
+                    break;
+                }
+            }
 
-            if (!practice) {
-                alert('Praxis nicht gefunden.');
+            if (!foundEmployee) {
+                alert('Ungültige Anmeldedaten.');
                 return;
             }
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const employee = employees.find(e => 
-                e.practiceId === practiceId && 
-                e.employeeId === employeeId && 
-                e.password === password &&
-                e.active !== false
-            );
             
-            if (employee) {
-                currentUser = employee;
-                currentRole = 'employee';
-                currentPractice = practice;
-                showMainApp();
-            } else {
-                alert('Ungültige Anmeldedaten.');
-            }
+            currentUser = foundEmployee;
+            currentRole = 'employee';
+            currentPractice = foundPractice;
+            showMainApp();
         }
 
         // Initialize app
