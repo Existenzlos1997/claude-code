@@ -1491,10 +1491,11 @@
                 }
             } else if (platform === 'windows') {
                 // Generate Windows installer HTML
-                const htmlContent = `<!DOCTYPE html>
-<html><head><title>PZR App - Windows Installer</title><meta charset="utf-8">
-<script>window.location.href='${window.location.href}';</script></head>
-<body><h1>PZR App wird geladen...</h1></body></html>`;
+                const currentUrl = window.location.href;
+                const htmlContent = '<!DOCTYPE html>\n' +
+                    '<html><head><title>PZR App - Windows Installer</title><meta charset="utf-8">\n' +
+                    '<scr' + 'ipt>window.location.href="' + currentUrl + '";</scr' + 'ipt></head>\n' +
+                    '<body><h1>PZR App wird geladen...</h1></body></html>';
                 const blob = new Blob([htmlContent], {type: 'text/html'});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
