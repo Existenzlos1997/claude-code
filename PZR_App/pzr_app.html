@@ -1880,6 +1880,54 @@
         }
 
         // Load patient appointments
+        // Traffic Light System for appointment cancellation
+        function getTrafficLight(appointmentDate) {
+            const now = new Date();
+            const appointment = new Date(appointmentDate);
+            const daysUntil = Math.floor((appointment - now) / (1000 * 60 * 60 * 24));
+            
+            if (daysUntil >= 14) {
+                return {
+                    color: 'green',
+                    emoji: '🟢',
+                    text: 'Rechtzeitige Absage - Keine Kosten',
+                    cssClass: 'traffic-green'
+                };
+            } else if (daysUntil >= 2) {
+                return {
+                    color: 'orange',
+                    emoji: '🟠',
+                    text: 'Knappe Absage - Evtl. kleine Gebühr',
+                    cssClass: 'traffic-orange'
+                };
+            } else {
+                return {
+                    color: 'red',
+                    emoji: '🔴',
+                    text: 'WARNUNG: Ausfallrechnung bis 100% möglich!',
+                    cssClass: 'traffic-red'
+                };
+            }
+        }
+        
+        // Cancel appointment with traffic light warning
+        function cancelAppointment(appointmentId) {
+            const apt = appointments.find(a => a.id === appointmentId);
+            if (!apt) return;
+            
+            const trafficLight = getTrafficLight(apt.date + ' ' + apt.time);
+            const confirmMsg = `${trafficLight.emoji} ${trafficLight.text}\n\nTermin: ${apt.title}\nDatum: ${formatDate(apt.date)} um ${apt.time} Uhr\n\nMöchten Sie diesen Termin wirklich absagen?`;
+            
+            if (confirm(confirmMsg)) {
+                apt.status = 'cancelled';
+                apt.cancelledAt = new Date().toISOString();
+                apt.cancelledBy = currentUser.id;
+                localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
+                loadPatientAppointments();
+                alert('Termin wurde erfolgreich abgesagt.');
+            }
+        }
+        
         function loadPatientAppointments() {
             const patientAppointments = appointments.filter(a => a.patientId === currentUser.id);
             const now = new Date();
@@ -1913,9 +1961,12 @@
                     const isUpcoming = appointmentDate > now;
                     const isPast = appointmentDate < now;
                     const isToday = appointmentDate.toDateString() === now.toDateString();
+                    const isCancelled = apt.status === 'cancelled';
                     
                     let badge = '';
-                    if (isToday) {
+                    if (isCancelled) {
+                        badge = '<span class="badge" style="background-color: #ef4444;">❌ Abgesagt</span>';
+                    } else if (isToday) {
                         badge = '<span class="badge">Heute</span>';
                     } else if (isUpcoming) {
                         const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
@@ -1923,13 +1974,24 @@
                     } else {
                         badge = '<span class="badge past">Vergangen</span>';
                     }
+                    
+                    // Traffic light for upcoming appointments
+                    let trafficLight = '';
+                    let cancelButton = '';
+                    if (isUpcoming && !isCancelled) {
+                        const light = getTrafficLight(apt.date + ' ' + apt.time);
+                        trafficLight = `<p style="margin-top: 10px;">${light.emoji} ${light.text}</p>`;
+                        cancelButton = `<button class="btn" style="margin-top: 10px; background-color: #ef4444;" onclick="cancelAppointment('${apt.id}')">Termin absagen</button>`;
+                    }
 
                     return `
-                        <div class="appointment-item">
+                        <div class="appointment-item" style="${isCancelled ? 'opacity: 0.6; border-left: 4px solid #ef4444;' : ''}">
                             <h4>${apt.title}${badge}</h4>
                             <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
                             ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
                             ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
+                            ${trafficLight}
+                            ${cancelButton}
                         </div>
                     `;
                 }).join('');
