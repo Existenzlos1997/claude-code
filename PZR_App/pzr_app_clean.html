@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PZR App - Professionelle Zahnreinigung Verwaltung">
+    <meta name="theme-color" content="#2196F3">
+    <title>PZR App - Zahnreinigung Verwaltung</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUFpSIEFwcCIsInNob3J0X25hbWUiOiJQWlIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzIxOTZGMyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnJTIweG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyUyMHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3RleHQlMjB5PScuOWVtJyUyMGZvbnQtc2l6ZT0nOTAnJTNF8J+mtyUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    
+    <style>
+        /* === RESET & BASICS === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* === CONTAINER === */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        /* === HEADER === */
+        .header {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        /* === CONTENT === */
+        .content {
+            padding: 40px;
+        }
+        
+        /* === SECTIONS === */
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        /* === FORMS === */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .form-group input[readonly] {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+        
+        /* === BUTTONS === */
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+        
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #45a049;
+        }
+        
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #da190b;
+        }
+        
+        .btn-secondary {
+            background: #757575;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #616161;
+        }
+        
+        /* === TABS === */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .tab:hover {
+            background: #f5f5f5;
+        }
+        
+        .tab.active {
+            color: #2196F3;
+            border-bottom-color: #2196F3;
+        }
+        
+        /* === CARDS === */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        /* === TABLE === */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        table tr:hover {
+            background: #f9f9f9;
+        }
+        
+        /* === ALERTS === */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .alert-success {
+            background: #e8f5e9;
+            color: #388e3c;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .alert-warning {
+            background: #fff3e0;
+            color: #f57c00;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .alert-danger {
+            background: #ffebee;
+            color: #d32f2f;
+            border-left: 4px solid #f44336;
+        }
+        
+        /* === UTILITY === */
+        .text-center {
+            text-align: center;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .mt-20 {
+            margin-top: 20px;
+        }
+        
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .tabs {
+                overflow-x: auto;
+            }
+            
+            .tab {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦷 PZR App</h1>
+            <p>Professionelle Zahnreinigung - Verwaltungssystem</p>
+        </div>
+        
+        <div class="content">
+            <!-- LOGIN SECTION -->
+            <div id="loginSection" class="section active">
+                <div class="card">
+                    <h2 class="text-center mb-20">Willkommen zur PZR App</h2>
+                    <p class="text-center mb-20">Bitte wählen Sie Ihren Login-Typ:</p>
+                    
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchLoginTab('employee')">Mitarbeiter</div>
+                        <div class="tab" onclick="switchLoginTab('patient')">Patient</div>
+                        <div class="tab" onclick="switchLoginTab('register')">Praxis Registrieren</div>
+                    </div>
+                    
+                    <!-- Employee Login -->
+                    <div id="employeeLogin" class="login-form">
+                        <div class="form-group">
+                            <label>Mitarbeiter-ID:</label>
+                            <input type="text" id="employeeId" placeholder="z.B. MA-001">
+                        </div>
+                        <div class="form-group">
+                            <label>Passwort:</label>
+                            <input type="password" id="employeePassword">
+                        </div>
+                        <button class="btn btn-primary" onclick="loginEmployee()">Anmelden</button>
+                    </div>
+                    
+                    <!-- Patient Login -->
+                    <div id="patientLogin" class="login-form hidden">
+                        <div class="form-group">
+                            <label>Patienten-Nummer:</label>
+                            <input type="text" id="patientNumber" placeholder="z.B. PAT-12345">
+                        </div>
+                        <div class="form-group">
+                            <label>PIN:</label>
+                            <input type="password" id="patientPin" maxlength="4">
+                        </div>
+                        <button class="btn btn-primary" onclick="loginPatient()">Anmelden</button>
+                    </div>
+                    
+                    <!-- Practice Registration -->
+                    <div id="registerForm" class="login-form hidden">
+                        <h3>Neue Praxis registrieren</h3>
+                        <div class="form-group">
+                            <label>Administrator Name:</label>
+                            <input type="text" id="administratorName" placeholder="Dr. Max Mustermann">
+                        </div>
+                        <div class="form-group">
+                            <label>Login-ID (automatisch generiert):</label>
+                            <input type="text" id="adminLoginId" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Passwort:</label>
+                            <input type="password" id="adminPassword">
+                        </div>
+                        <div class="form-group">
+                            <label>Praxis-Name:</label>
+                            <input type="text" id="practiceName" placeholder="Zahnarztpraxis Mustermann">
+                        </div>
+                        <div class="form-group">
+                            <label>Adresse:</label>
+                            <input type="text" id="practiceAddress" placeholder="Musterstraße 123, 12345 Musterstadt">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefon:</label>
+                            <input type="tel" id="practicePhone" placeholder="0123456789">
+                        </div>
+                        <button class="btn btn-success" onclick="registerPractice()">Praxis Registrieren</button>
+                    </div>
+                    
+                    <div class="mt-20 text-center">
+                        <button class="btn btn-secondary" onclick="downloadApp()">📥 App herunterladen</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- EMPLOYEE DASHBOARD -->
+            <div id="employeeDashboard" class="section">
+                <h2>Mitarbeiter Dashboard</h2>
+                <p>Willkommen, <span id="employeeName"></span>!</p>
+                <button class="btn btn-danger" onclick="logout()">Abmelden</button>
+                
+                <div class="tabs mt-20">
+                    <div class="tab active" onclick="switchTab('appointments')">Termine</div>
+                    <div class="tab" onclick="switchTab('patients')">Patienten</div>
+                    <div class="tab" onclick="switchTab('employees')" id="employeeManagementTab">Mitarbeiter</div>
+                </div>
+                
+                <div id="appointmentsTab" class="tab-content">
+                    <h3>Termine</h3>
+                    <div id="appointmentsList"></div>
+                </div>
+                
+                <div id="patientsTab" class="tab-content hidden">
+                    <h3>Patienten</h3>
+                    <div id="patientsList"></div>
+                </div>
+                
+                <div id="employeesTab" class="tab-content hidden">
+                    <h3>Mitarbeiter</h3>
+                    <div id="employeesList"></div>
+                </div>
+            </div>
+            
+            <!-- PATIENT DASHBOARD -->
+            <div id="patientDashboard" class="section">
+                <h2>Patienten Dashboard</h2>
+                <p>Willkommen, <span id="patientName"></span>!</p>
+                <button class="btn btn-danger" onclick="logout()">Abmelden</button>
+                
+                <div class="tabs mt-20">
+                    <div class="tab active" onclick="switchTab('myAppointments')">Meine Termine</div>
+                    <div class="tab" onclick="switchTab('myRecommendations')">Meine Empfehlungen</div>
+                    <div class="tab" onclick="switchTab('myAnamnese')">Anamnese</div>
+                </div>
+                
+                <div id="myAppointmentsTab" class="tab-content">
+                    <h3>Meine Termine</h3>
+                    <div id="patientAppointmentsList"></div>
+                </div>
+                
+                <div id="myRecommendationsTab" class="tab-content hidden">
+                    <h3>Meine PZR-Empfehlungen</h3>
+                    <div id="recommendationsList"></div>
+                </div>
+                
+                <div id="myAnamneseTab" class="tab-content hidden">
+                    <h3>Anamnese</h3>
+                    <div id="anamneseForm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === PHASE 1: BASIC SETUP ===
+        
+        // Global variables
+        let currentUser = null;
+        let deferredPrompt = null;
+        
+        // === localStorage Helper Functions ===
+        function getFromStorage(key) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            } catch (e) {
+                console.error('Error reading from localStorage:', e);
+                return null;
+            }
+        }
+        
+        function saveToStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+                return true;
+            } catch (e) {
+                console.error('Error saving to localStorage:', e);
+                return false;
+            }
+        }
+        
+        // === Initialize Demo Data ===
+        function initDemoData() {
+            // Only init if not already present
+            if (getFromStorage('pzrDemoInitialized')) {
+                return;
+            }
+            
+            // Demo Practice
+            const demoPractice = {
+                id: 'demo-practice',
+                name: 'Demo Praxis',
+                address: 'Musterstraße 123, 12345 Musterstadt',
+                phone: '0123456789',
+                adminId: 'MA-001',
+                createdAt: new Date().toISOString()
+            };
+            
+            const practices = [demoPractice];
+            saveToStorage('pzrPractices', practices);
+            
+            // Demo Employee
+            const demoEmployee = {
+                id: 'MA-001',
+                password: 'admin',
+                practiceId: 'demo-practice',
+                name: 'Demo Behandler',
+                role: 'admin',
+                active: true,
+                createdAt: new Date().toISOString()
+            };
+            
+            const employees = [demoEmployee];
+            saveToStorage('pzrEmployees', employees);
+            
+            // Demo Patients
+            const demoPatients = [
+                {
+                    number: 'PAT-12345',
+                    pin: '1234',
+                    practiceId: 'demo-practice',
+                    name: 'Demo Patient',
+                    birthdate: '1990-01-01',
+                    phone: '0123456789',
+                    email: 'demo@patient.de',
+                    anamnese: {
+                        lastUpdated: new Date().toISOString(),
+                        allergies: '',
+                        medications: '',
+                        diseases: '',
+                        surgeries: '',
+                        familyHistory: ''
+                    },
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    number: 'PAT-67890',
+                    pin: '5678',
+                    practiceId: 'demo-practice',
+                    name: 'Demo Patient 2',
+                    birthdate: '1985-05-15',
+                    phone: '0987654321',
+                    email: 'demo2@patient.de',
+                    anamnese: {
+                        lastUpdated: new Date().toISOString(),
+                        allergies: 'Penicillin',
+                        medications: '',
+                        diseases: '',
+                        surgeries: '',
+                        familyHistory: ''
+                    },
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            
+            saveToStorage('pzrPatients', demoPatients);
+            saveToStorage('pzrDemoInitialized', true);
+            
+            console.log('Demo data initialized successfully');
+        }
+        
+        // === UI Helper Functions ===
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+        
+        function switchLoginTab(tab) {
+            // Update tab styling
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide forms
+            document.getElementById('employeeLogin').classList.add('hidden');
+            document.getElementById('patientLogin').classList.add('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            
+            if (tab === 'employee') {
+                document.getElementById('employeeLogin').classList.remove('hidden');
+            } else if (tab === 'patient') {
+                document.getElementById('patientLogin').classList.remove('hidden');
+            } else if (tab === 'register') {
+                document.getElementById('registerForm').classList.remove('hidden');
+            }
+        }
+        
+        function switchTab(tabName) {
+            // Implementation will come in next phases
+            console.log('Switching to tab:', tabName);
+        }
+        
+        // === Login Functions (Stubs for now) ===
+        function loginEmployee() {
+            alert('Login-Funktion wird in Phase 2 implementiert');
+        }
+        
+        function loginPatient() {
+            alert('Login-Funktion wird in Phase 2 implementiert');
+        }
+        
+        function registerPractice() {
+            alert('Registrierung wird in Phase 2 implementiert');
+        }
+        
+        function logout() {
+            currentUser = null;
+            sessionStorage.removeItem('currentUser');
+            showSection('loginSection');
+        }
+        
+        function downloadApp() {
+            alert('Download-Funktion wird in Phase 7 implementiert');
+        }
+        
+        // === Initialize on Load ===
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('PZR App starting...');
+            initDemoData();
+            console.log('Phase 1: Basic structure loaded');
+        });
+        
+        // === Service Worker Registration (for PWA) ===
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Will be implemented in Phase 7
+                console.log('Service Worker support detected');
+            });
+        }
+    </script>
+</body>
+</html>
