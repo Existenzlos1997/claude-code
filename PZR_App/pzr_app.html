@@ -1352,6 +1352,7 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            window.deferredPrompt = e;  // Also save globally
             document.getElementById('installBanner').style.display = 'block';
         });
 
@@ -2678,6 +2679,9 @@
             localStorage.setItem('pzrEmployees', JSON.stringify(employees));
 
             alert(`Praxis erfolgreich registriert!\n\nIhre Zugangsdaten:\nMitarbeiter-ID: ${employeeId}\nPasswort: ${password}\n\nBitte notieren Sie diese Daten!`);
+            
+            // Show PWA install prompt with admin-PC warning
+            showInstallPromptAfterRegistration();
 
             // Clear form
             document.getElementById('regPracticeName').value = '';
@@ -2692,6 +2696,32 @@
             // Reload practice selector and go back to login
             populatePracticeSelector();
             showLogin();
+        }
+        
+        // Show install prompt after registration with admin-PC warning
+        function showInstallPromptAfterRegistration() {
+            const installMsg = `⚠️ WICHTIG: Dieser PC wird Hauptspeicher!\n\n` +
+                `Wenn Sie die App jetzt installieren und sich als Administrator anmelden, wird DIESER PC zum zentralen Datenspeicher für Ihre Praxis.\n\n` +
+                `📌 EMPFEHLUNG:\n` +
+                `✓ Nutzen Sie Ihren besten/stärksten PC\n` +
+                `✓ Dieser PC sollte am längsten laufen\n` +
+                `✓ Alle Praxisdaten werden hier gespeichert\n` +
+                `✓ Andere Geräte verbinden sich mit diesem PC\n\n` +
+                `Möchten Sie die App jetzt installieren?`;
+            
+            if (confirm(installMsg)) {
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    window.deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('PWA installation accepted');
+                        }
+                        window.deferredPrompt = null;
+                    });
+                } else {
+                    alert('Installation wird von Ihrem Browser nicht unterstützt.\n\nFür iOS Safari: Tippen Sie auf "Teilen" → "Zum Home-Bildschirm"\n\nFür andere Browser: Prüfen Sie die Browser-Einstellungen.');
+                }
+            }
         }
 
         // Employee Management Functions
