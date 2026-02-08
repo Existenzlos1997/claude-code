@@ -1415,52 +1415,87 @@
             document.getElementById('installBanner').style.display = 'block';
         });
         
-        // Download/Install App function with platform detection
+        // Download/Install App function with platform selection modal
         function downloadApp() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isIOS = /iphone|ipad|ipod/.test(userAgent);
-            const isAndroid = /android/.test(userAgent);
-            const isMac = /macintosh|mac os x/.test(userAgent);
-            const isWindows = /windows/.test(userAgent);
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
             
-            // Try PWA install first
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        alert('✅ App wurde erfolgreich installiert!');
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = 'background:white;padding:30px;border-radius:15px;max-width:500px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+            
+            modalContent.innerHTML = `
+                <h2 style="margin:0 0 20px 0;color:#2c3e50;text-align:center;">📥 PZR App Herunterladen</h2>
+                <p style="color:#666;margin-bottom:25px;text-align:center;">Wählen Sie Ihre Plattform:</p>
+                
+                <div style="display:grid;gap:15px;">
+                    <button onclick="downloadForPlatform('windows')" style="padding:15px;border:2px solid #0078d4;background:#0078d4;color:white;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;">
+                        <span style="font-size:24px;">💻</span>
+                        <span>Windows (.exe)</span>
+                    </button>
+                    
+                    <button onclick="downloadForPlatform('android')" style="padding:15px;border:2px solid #3ddc84;background:#3ddc84;color:white;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;">
+                        <span style="font-size:24px;">🤖</span>
+                        <span>Android (.apk)</span>
+                    </button>
+                    
+                    <button onclick="downloadForPlatform('ios')" style="padding:15px;border:2px solid #007aff;background:#007aff;color:white;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;">
+                        <span style="font-size:24px;">🍎</span>
+                        <span>iOS (App Store)</span>
+                    </button>
+                    
+                    <button onclick="downloadForPlatform('pwa')" style="padding:15px;border:2px solid #4CAF50;background:#4CAF50;color:white;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;">
+                        <span style="font-size:24px;">🌐</span>
+                        <span>Als Web-App (PWA) installieren</span>
+                    </button>
+                </div>
+                
+                <button onclick="this.closest('[style*=fixed]').remove()" style="margin-top:20px;width:100%;padding:10px;border:1px solid #ccc;background:white;border-radius:8px;cursor:pointer;color:#666;">
+                    Abbrechen
+                </button>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+        
+        function downloadForPlatform(platform) {
+            // Close modal
+            document.querySelector('[style*="position:fixed"]')?.remove();
+            
+            if (platform === 'pwa') {
+                // Try PWA install
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            alert('✅ App wurde erfolgreich installiert!');
+                        }
+                        deferredPrompt = null;
+                    });
+                } else {
+                    // Show instructions
+                    const userAgent = navigator.userAgent.toLowerCase();
+                    const isIOS = /iphone|ipad|ipod/.test(userAgent);
+                    const isAndroid = /android/.test(userAgent);
+                    
+                    let message = '📱 App Installation:\n\n';
+                    if (isIOS) {
+                        message += '🍎 iOS:\nTeilen → Zum Home-Bildschirm';
+                    } else if (isAndroid) {
+                        message += '🤖 Android:\nMenü → App installieren';
+                    } else {
+                        message += '💻 Desktop:\nInstall-Symbol in Adressleiste';
                     }
-                    deferredPrompt = null;
-                });
-                return;
+                    alert(message);
+                }
+            } else if (platform === 'windows') {
+                alert('💻 Windows Download:\n\nDie .exe Datei wird in Kürze verfügbar sein.\nNutzen Sie vorerst die PWA-Installation (Web-App).');
+            } else if (platform === 'android') {
+                alert('🤖 Android Download:\n\nDie .apk Datei wird in Kürze verfügbar sein.\nNutzen Sie vorerst die PWA-Installation (Web-App).');
+            } else if (platform === 'ios') {
+                alert('🍎 iOS Download:\n\nDie App wird in Kürze im App Store verfügbar sein.\nNutzen Sie vorerst die PWA-Installation (Web-App).');
             }
-            
-            // Platform-specific instructions
-            let message = '📱 App Installation:\n\n';
-            
-            if (isIOS) {
-                message += '🍎 iOS Safari:\n' +
-                           '1. Tippen Sie auf das Teilen-Symbol (□↑)\n' +
-                           '2. Scrollen Sie nach unten\n' +
-                           '3. Wählen Sie "Zum Home-Bildschirm"\n' +
-                           '4. Tippen Sie auf "Hinzufügen"';
-            } else if (isAndroid) {
-                message += '🤖 Android Chrome:\n' +
-                           '1. Tippen Sie auf das Menü (⋮)\n' +
-                           '2. Wählen Sie "App installieren" oder "Zum Startbildschirm hinzufügen"\n' +
-                           '3. Bestätigen Sie';
-            } else if (isWindows || isMac) {
-                message += '💻 Desktop Browser:\n' +
-                           '1. Suchen Sie das Install-Symbol in der Adressleiste\n' +
-                           '2. Klicken Sie darauf und wählen Sie "Installieren"\n\n' +
-                           'Oder drücken Sie Strg+D (⌘+D auf Mac) und wählen Sie "Als App installieren"';
-            } else {
-                message += '🌐 Browser:\n' +
-                           'Öffnen Sie das Browser-Menü und suchen Sie nach\n' +
-                           '"App installieren" oder "Zum Startbildschirm hinzufügen"';
-            }
-            
-            alert(message);
         }
 
         function installPWA() {
