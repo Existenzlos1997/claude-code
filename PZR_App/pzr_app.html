@@ -1391,7 +1391,15 @@
                         practiceId: 'demo-practice',
                         name: 'Demo Patient',
                         birthdate: '1990-01-01',
-                        phone: '0123456789'
+                        phone: '0123456789',
+                        anamnese: {
+                            lastUpdated: new Date().toISOString(),
+                            allergies: '',
+                            medications: '',
+                            diseases: '',
+                            surgeries: '',
+                            familyHistory: ''
+                        }
                     },
                     {
                         number: 'PAT-67890',
@@ -1399,7 +1407,15 @@
                         practiceId: 'demo-practice',
                         name: 'Test Patient',
                         birthdate: '1985-05-15',
-                        phone: '0987654321'
+                        phone: '0987654321',
+                        anamnese: {
+                            lastUpdated: new Date().toISOString(),
+                            allergies: 'Penicillin',
+                            medications: '',
+                            diseases: '',
+                            surgeries: '',
+                            familyHistory: ''
+                        }
                     }
                 ];
                 localStorage.setItem('pzrPatients', JSON.stringify(demoPatients));
@@ -1903,8 +1919,8 @@
                     }
                 }
                 
-                // Check if anamnese was never filled
-                if (!patient.anamnese.lastUpdated) {
+                // Check if anamnese was never filled (safe check)
+                if (!patient.anamnese || !patient.anamnese.lastUpdated) {
                     alert('Bitte füllen Sie Ihre medizinische Anamnese aus.\n\nNach dem Login finden Sie das Formular im Tab "Anamnese".');
                 }
                 
