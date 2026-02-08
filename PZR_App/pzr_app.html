@@ -1354,6 +1354,20 @@
         
         // Initialize Demo Data for testing
         function initDemoData() {
+            // Demo Practice FIRST (so employees can reference it)
+            const existingPractices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
+            if (existingPractices.length === 0) {
+                const demoPractice = {
+                    id: 'demo-practice',
+                    name: 'Demo Praxis',
+                    address: 'Musterstraße 123, 12345 Musterstadt',
+                    phone: '0123456789',
+                    adminId: 'MA-001',
+                    registeredAt: new Date().toISOString()
+                };
+                localStorage.setItem('pzrPractices', JSON.stringify([demoPractice]));
+            }
+            
             // Demo Employee
             if (!localStorage.getItem('pzrEmployees')) {
                 const demoEmployees = [{
