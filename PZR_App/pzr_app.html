@@ -1927,6 +1927,9 @@
                 currentUser = patient;
                 currentRole = 'patient';
                 showMainApp();
+                
+                // Empfehlungen beim Login prüfen
+                setTimeout(() => checkForNewRecommendations(), 500);
             } else {
                 alert('Ungültige Patientennummer oder PIN.');
             }
@@ -2268,12 +2271,15 @@
             }
 
             container.innerHTML = patients.map(patient => `
-                <div class="patient-card" onclick="editPatient('${patient.id}')">
-                    <h4>👤 ${patient.name}</h4>
-                    <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
-                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                    <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
-                    <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
+                <div class="patient-card" style="position:relative;">
+                    <div onclick="editPatient('${patient.id}')">
+                        <h4>👤 ${patient.name}</h4>
+                        <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
+                        <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                        <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
+                        <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
+                    </div>
+                    <button onclick="event.stopPropagation(); openRecommendationDialog('${patient.patientNumber}');" style="margin-top:10px;padding:10px 20px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;width:100%;">📨 Empfehlung senden</button>
                 </div>
             `).join('');
         }
@@ -2293,12 +2299,15 @@
             }
 
             container.innerHTML = filtered.map(patient => `
-                <div class="patient-card" onclick="editPatient('${patient.id}')">
-                    <h4>👤 ${patient.name}</h4>
-                    <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
-                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                    <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
-                    <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
+                <div class="patient-card" style="position:relative;">
+                    <div onclick="editPatient('${patient.id}')">
+                        <h4>👤 ${patient.name}</h4>
+                        <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
+                        <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                        <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
+                        <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
+                    </div>
+                    <button onclick="event.stopPropagation(); openRecommendationDialog('${patient.patientNumber}');" style="margin-top:10px;padding:10px 20px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;width:100%;">📨 Empfehlung senden</button>
                 </div>
             `).join('');
         }
@@ -3246,6 +3255,245 @@
             currentRole = 'employee';
             currentPractice = foundPractice;
             showMainApp();
+        }
+
+        // ===== EMPFEHLUNGS-NACHRICHTENSYSTEM =====
+        
+        // Empfehlungs-Dialog öffnen
+        function openRecommendationDialog(patientNumber) {
+            const modal = document.createElement('div');
+            modal.id = 'recommendationModal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
+            
+            modal.innerHTML = '<div style="background:white;padding:30px;border-radius:15px;max-width:500px;width:90%;">' +
+                '<h3 style="margin-bottom:20px;color:#667eea;">📨 Empfehlung an Patient senden</h3>' +
+                '<textarea id="recommendationText" placeholder="Empfehlung eingeben..." style="width:100%;min-height:120px;padding:15px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;margin-bottom:15px;"></textarea>' +
+                '<button onclick="startVoiceInput()" style="padding:12px 20px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;margin-bottom:15px;">🎤 Spracheingabe</button>' +
+                '<div style="margin-bottom:20px;padding:15px;background:#f5f5f5;border-radius:10px;">' +
+                '<h4 style="margin-bottom:10px;color:#333;">🔔 Erinnerung einstellen</h4>' +
+                '<label style="display:block;margin-bottom:10px;">' +
+                '<input type="checkbox" id="enableReminder" style="margin-right:8px;"> Erinnerung aktivieren' +
+                '</label>' +
+                '<select id="reminderFrequency" style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:8px;">' +
+                '<option value="daily">Täglich</option>' +
+                '<option value="weekly">Wöchentlich</option>' +
+                '<option value="monthly">Monatlich</option>' +
+                '</select>' +
+                '</div>' +
+                '<div style="display:flex;gap:10px;">' +
+                '<button onclick="sendRecommendationToPatient(\'' + patientNumber + '\')" style="flex:1;padding:15px;background:#4CAF50;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">✅ Senden</button>' +
+                '<button onclick="closeRecommendationDialog()" style="flex:1;padding:15px;background:#f44336;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">❌ Abbrechen</button>' +
+                '</div>' +
+                '</div>';
+            
+            document.body.appendChild(modal);
+        }
+        
+        // Spracheingabe starten
+        function startVoiceInput() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'de-DE';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onstart = function() {
+                    alert('🎤 Sprechen Sie jetzt...');
+                };
+                
+                recognition.onresult = function(event) {
+                    const text = event.results[0][0].transcript;
+                    document.getElementById('recommendationText').value = text;
+                };
+                
+                recognition.onerror = function(event) {
+                    alert('❌ Fehler bei Spracheingabe: ' + event.error);
+                };
+                
+                recognition.start();
+            } else {
+                alert('❌ Spracheingabe wird von diesem Browser nicht unterstützt.');
+            }
+        }
+        
+        // Empfehlung senden
+        function sendRecommendationToPatient(patientNumber) {
+            const message = document.getElementById('recommendationText').value.trim();
+            
+            if (!message) {
+                alert('❌ Bitte geben Sie eine Empfehlung ein.');
+                return;
+            }
+            
+            const reminderEnabled = document.getElementById('enableReminder').checked;
+            const frequency = document.getElementById('reminderFrequency').value;
+            
+            const recommendation = {
+                id: Date.now(),
+                patientNumber: patientNumber,
+                employeeId: currentUser.id,
+                employeeName: currentUser.name,
+                message: message,
+                createdAt: new Date().toISOString(),
+                read: false,
+                reminder: {
+                    enabled: reminderEnabled,
+                    frequency: frequency,
+                    nextReminder: reminderEnabled ? calculateNextReminder(frequency) : null,
+                    lastShown: null
+                }
+            };
+            
+            // Speichern
+            const recommendations = JSON.parse(localStorage.getItem('patientRecommendations') || '[]');
+            recommendations.push(recommendation);
+            localStorage.setItem('patientRecommendations', JSON.stringify(recommendations));
+            
+            closeRecommendationDialog();
+            alert('✅ Empfehlung erfolgreich gesendet!');
+        }
+        
+        // Dialog schließen
+        function closeRecommendationDialog() {
+            const modal = document.getElementById('recommendationModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        // Nächste Erinnerung berechnen
+        function calculateNextReminder(frequency, fromDate = new Date()) {
+            const next = new Date(fromDate);
+            
+            switch(frequency) {
+                case 'daily':
+                    next.setDate(next.getDate() + 1);
+                    break;
+                case 'weekly':
+                    next.setDate(next.getDate() + 7);
+                    break;
+                case 'monthly':
+                    next.setMonth(next.getMonth() + 1);
+                    break;
+            }
+            
+            return next.toISOString();
+        }
+        
+        // Empfehlungen beim Patient-Login prüfen
+        function checkForNewRecommendations() {
+            if (!currentUser || !currentUser.number) return;
+            
+            const recommendations = JSON.parse(localStorage.getItem('patientRecommendations') || '[]');
+            const unread = recommendations.filter(r => 
+                r.patientNumber === currentUser.number && !r.read
+            );
+            
+            if (unread.length > 0) {
+                showRecommendationPopup(unread);
+            }
+            
+            // Erinnerungen prüfen
+            checkReminders(recommendations);
+        }
+        
+        // Popup mit Empfehlungen anzeigen
+        function showRecommendationPopup(recommendations) {
+            const modal = document.createElement('div');
+            modal.id = 'recommendationPopup';
+            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
+            
+            let html = '<div style="background:white;padding:30px;border-radius:15px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;">';
+            html += '<h3 style="margin-bottom:20px;color:#667eea;">📨 Neue Empfehlungen von Ihrer Praxis</h3>';
+            
+            recommendations.forEach(rec => {
+                html += '<div style="background:#f9f9f9;padding:20px;margin:15px 0;border-radius:10px;border-left:4px solid #2196F3;">';
+                html += '<div style="display:flex;justify-content:space-between;margin-bottom:10px;">';
+                html += '<strong style="color:#333;">' + rec.employeeName + '</strong>';
+                html += '<span style="color:#666;font-size:0.9em;">' + new Date(rec.createdAt).toLocaleDateString('de-DE') + '</span>';
+                html += '</div>';
+                html += '<div style="color:#333;line-height:1.6;">' + rec.message + '</div>';
+                if (rec.reminder && rec.reminder.enabled) {
+                    const freqText = rec.reminder.frequency === 'daily' ? 'Täglich' : 
+                                   rec.reminder.frequency === 'weekly' ? 'Wöchentlich' : 'Monatlich';
+                    html += '<div style="margin-top:10px;padding:8px;background:#E3F2FD;border-radius:5px;font-size:0.9em;">🔔 Erinnerung: ' + freqText + '</div>';
+                }
+                html += '<button onclick="markRecommendationAsRead(' + rec.id + ')" style="margin-top:10px;padding:10px 20px;background:#4CAF50;color:white;border:none;border-radius:5px;cursor:pointer;">✓ Als gelesen markieren</button>';
+                html += '</div>';
+            });
+            
+            html += '<button onclick="closeRecommendationPopup()" style="width:100%;padding:15px;margin-top:20px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Schließen</button>';
+            html += '</div>';
+            
+            modal.innerHTML = html;
+            document.body.appendChild(modal);
+        }
+        
+        // Popup schließen
+        function closeRecommendationPopup() {
+            const popup = document.getElementById('recommendationPopup');
+            if (popup) {
+                popup.remove();
+            }
+        }
+        
+        // Empfehlung als gelesen markieren
+        function markRecommendationAsRead(recId) {
+            const recommendations = JSON.parse(localStorage.getItem('patientRecommendations') || '[]');
+            const rec = recommendations.find(r => r.id === recId);
+            if (rec) {
+                rec.read = true;
+                localStorage.setItem('patientRecommendations', JSON.stringify(recommendations));
+            }
+            closeRecommendationPopup();
+        }
+        
+        // Erinnerungen prüfen
+        function checkReminders(recommendations) {
+            if (!currentUser || !currentUser.number) return;
+            
+            const now = new Date();
+            const myRecommendations = recommendations.filter(r => 
+                r.patientNumber === currentUser.number && !r.read
+            );
+            
+            myRecommendations.forEach(rec => {
+                if (!rec.reminder || !rec.reminder.enabled) return;
+                
+                const nextReminder = new Date(rec.reminder.nextReminder);
+                
+                if (now >= nextReminder) {
+                    // Erinnerung anzeigen
+                    showReminderNotification(rec);
+                    
+                    // Nächste Erinnerung berechnen
+                    rec.reminder.lastShown = now.toISOString();
+                    rec.reminder.nextReminder = calculateNextReminder(rec.reminder.frequency, now);
+                    
+                    // Speichern
+                    localStorage.setItem('patientRecommendations', JSON.stringify(recommendations));
+                }
+            });
+        }
+        
+        // Erinnerungs-Benachrichtigung anzeigen
+        function showReminderNotification(recommendation) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:20px;right:20px;background:white;padding:20px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:10001;max-width:350px;border-left:4px solid #FF9800;';
+            
+            modal.innerHTML = '<h4 style="color:#FF9800;margin-bottom:10px;">🔔 Erinnerung</h4>' +
+                '<p style="color:#333;margin-bottom:10px;">' + recommendation.message + '</p>' +
+                '<small style="color:#666;">Von: ' + recommendation.employeeName + '</small>' +
+                '<button onclick="this.parentElement.remove()" style="width:100%;margin-top:15px;padding:10px;background:#667eea;color:white;border:none;border-radius:5px;cursor:pointer;">OK</button>';
+            
+            document.body.appendChild(modal);
+            
+            // Auto-close nach 10 Sekunden
+            setTimeout(() => {
+                if (modal && modal.parentElement) {
+                    modal.remove();
+                }
+            }, 10000);
         }
 
         // Initialize app
