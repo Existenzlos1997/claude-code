@@ -1779,18 +1779,46 @@
             `).join('');
         }
 
-        // Search patients (VERBESSERT: Telefon + Email + Highlighting)
+        // Search patients (VERBESSERT: Relevanz-Sortierung + Highlighting)
         function searchPatients() {
-            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
-            const filtered = patients.filter(p => 
-                p.name.toLowerCase().includes(searchTerm) ||
-                p.patientNumber.toLowerCase().includes(searchTerm) ||
-                (p.email && p.email.toLowerCase().includes(searchTerm)) ||
-                (p.phone && p.phone.toLowerCase().includes(searchTerm))
-            );
+            const searchTerm = document.getElementById('patientSearch').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                loadPatientList();
+                return;
+            }
+            
+            // Score berechnen für Relevanz
+            const calculateScore = (patient, term) => {
+                let score = 0;
+                const nameLower = patient.name.toLowerCase();
+                const numberLower = patient.patientNumber.toLowerCase();
+                const emailLower = (patient.email || '').toLowerCase();
+                const phoneLower = (patient.phone || '').toLowerCase();
+                
+                // Exakte Übereinstimmung = höchster Score
+                if (nameLower === term) score += 100;
+                if (numberLower === term) score += 100;
+                if (emailLower === term) score += 100;
+                if (phoneLower === term) score += 100;
+                
+                // Teilübereinstimmung
+                if (nameLower.includes(term)) score += 80;
+                if (numberLower.includes(term)) score += 60;
+                if (emailLower.includes(term)) score += 40;
+                if (phoneLower.includes(term)) score += 20;
+                
+                return score;
+            };
+            
+            // Filter und Score berechnen
+            const filteredWithScore = patients
+                .map(p => ({ patient: p, score: calculateScore(p, searchTerm) }))
+                .filter(item => item.score > 0)
+                .sort((a, b) => b.score - a.score); // Beste Treffer zuerst!
 
             const container = document.getElementById('patientListContainer');
-            if (filtered.length === 0) {
+            if (filteredWithScore.length === 0) {
                 container.innerHTML = '<p class="empty-state">Keine Patienten gefunden.</p>';
                 return;
             }
@@ -1802,15 +1830,18 @@
                 return text.replace(regex, '<mark style="background: #ffeb3b; padding: 2px 4px; border-radius: 3px;">$1</mark>');
             };
 
-            container.innerHTML = filtered.map(patient => `
-                <div class="patient-card" onclick="editPatient('${patient.id}')">
-                    <h4>👤 ${highlight(patient.name, searchTerm)}</h4>
-                    <p><strong>Nummer:</strong> ${highlight(patient.patientNumber, searchTerm)}</p>
-                    <p><strong>E-Mail:</strong> ${patient.email ? highlight(patient.email, searchTerm) : '-'}</p>
-                    <p><strong>Telefon:</strong> ${patient.phone ? highlight(patient.phone, searchTerm) : '-'}</p>
-                    <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
-                </div>
-            `).join('');
+            container.innerHTML = filteredWithScore.map(item => {
+                const patient = item.patient;
+                return `
+                    <div class="patient-card" onclick="editPatient('${patient.id}')">
+                        <h4>👤 ${highlight(patient.name, searchTerm)}</h4>
+                        <p><strong>Nummer:</strong> ${highlight(patient.patientNumber, searchTerm)}</p>
+                        <p><strong>E-Mail:</strong> ${patient.email ? highlight(patient.email, searchTerm) : '-'}</p>
+                        <p><strong>Telefon:</strong> ${patient.phone ? highlight(patient.phone, searchTerm) : '-'}</p>
+                        <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
+                    </div>
+                `;
+            }).join('');
         }
 
         // AMPEL-SYSTEM: Berechnet Farbe basierend auf Tagen bis Termin
@@ -2333,16 +2364,8 @@
                     badge = '<span class="badge past">Vergangen</span>';
                 }
 
-                // AMPEL-SYSTEM für Absage-Regelung
-                let trafficLight = '';
-                if (isUpcoming && !isToday) {
-                    const tl = getTrafficLight(apt.date + ' ' + apt.time);
-                    trafficLight = `
-                        <p class="${tl.cssClass}" style="padding: 8px; border-radius: 8px; margin-top: 8px; font-weight: 600;">
-                            ${tl.emoji} ${tl.text} (${tl.daysUntil} Tag${tl.daysUntil > 1 ? 'e' : ''})
-                        </p>
-                    `;
-                }
+                // KEINE AMPEL FÜR BEHANDLER! 
+                // Behandler verwalten Termine, Patient sieht die Ampel
 
                 // Check for critical medical history
                 let warning = '';
@@ -2367,7 +2390,6 @@
                         <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
                         ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
                         ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
-                        ${trafficLight}
                         ${warning}
                     </div>
                 `;
