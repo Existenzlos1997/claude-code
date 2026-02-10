@@ -481,6 +481,25 @@
             background: #9e9e9e;
         }
 
+        /* AMPEL-SYSTEM CSS */
+        .traffic-light-green {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
+        .traffic-light-orange {
+            background: #fff3e0;
+            color: #e65100;
+            border-left: 4px solid #ff9800;
+        }
+
+        .traffic-light-red {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
         .notification-permission {
             background: #fff3cd;
             border: 2px solid #ffc107;
@@ -1668,12 +1687,21 @@
                     const appointmentDate = new Date(apt.date + ' ' + apt.time);
                     const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
                     
+                    // AMPEL-SYSTEM für Patienten
+                    const tl = getTrafficLight(apt.date + ' ' + apt.time);
+                    const trafficLight = `
+                        <p class="${tl.cssClass}" style="padding: 8px; border-radius: 8px; margin-top: 8px; font-weight: 600;">
+                            ${tl.emoji} ${tl.text}
+                        </p>
+                    `;
+                    
                     return `
                         <div class="appointment-item">
                             <h4>${apt.title}</h4>
                             <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
                             <p>⏰ In ${daysUntil} Tag${daysUntil > 1 ? 'en' : ''}</p>
                             ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
+                            ${trafficLight}
                         </div>
                     `;
                 }).join('');
@@ -1700,12 +1728,24 @@
                         badge = '<span class="badge past">Vergangen</span>';
                     }
 
+                    // AMPEL-SYSTEM auch in Gesamtliste
+                    let trafficLight = '';
+                    if (isUpcoming && !isToday) {
+                        const tl = getTrafficLight(apt.date + ' ' + apt.time);
+                        trafficLight = `
+                            <p class="${tl.cssClass}" style="padding: 8px; border-radius: 8px; margin-top: 8px; font-weight: 600;">
+                                ${tl.emoji} ${tl.text}
+                            </p>
+                        `;
+                    }
+
                     return `
                         <div class="appointment-item">
                             <h4>${apt.title}${badge}</h4>
                             <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
                             ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
                             ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
+                            ${trafficLight}
                         </div>
                     `;
                 }).join('');
@@ -1739,12 +1779,14 @@
             `).join('');
         }
 
-        // Search patients
+        // Search patients (VERBESSERT: Telefon + Email + Highlighting)
         function searchPatients() {
             const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
             const filtered = patients.filter(p => 
                 p.name.toLowerCase().includes(searchTerm) ||
-                p.patientNumber.toLowerCase().includes(searchTerm)
+                p.patientNumber.toLowerCase().includes(searchTerm) ||
+                (p.email && p.email.toLowerCase().includes(searchTerm)) ||
+                (p.phone && p.phone.toLowerCase().includes(searchTerm))
             );
 
             const container = document.getElementById('patientListContainer');
@@ -1753,15 +1795,58 @@
                 return;
             }
 
+            // Highlighting helper
+            const highlight = (text, term) => {
+                if (!term || !text) return text;
+                const regex = new RegExp(`(${term})`, 'gi');
+                return text.replace(regex, '<mark style="background: #ffeb3b; padding: 2px 4px; border-radius: 3px;">$1</mark>');
+            };
+
             container.innerHTML = filtered.map(patient => `
                 <div class="patient-card" onclick="editPatient('${patient.id}')">
-                    <h4>👤 ${patient.name}</h4>
-                    <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
-                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                    <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
+                    <h4>👤 ${highlight(patient.name, searchTerm)}</h4>
+                    <p><strong>Nummer:</strong> ${highlight(patient.patientNumber, searchTerm)}</p>
+                    <p><strong>E-Mail:</strong> ${patient.email ? highlight(patient.email, searchTerm) : '-'}</p>
+                    <p><strong>Telefon:</strong> ${patient.phone ? highlight(patient.phone, searchTerm) : '-'}</p>
                     <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
                 </div>
             `).join('');
+        }
+
+        // AMPEL-SYSTEM: Berechnet Farbe basierend auf Tagen bis Termin
+        // 🟢 14+ Tage = Grün (kostenlos absagbar)
+        // 🟠 2-13 Tage = Orange (Warnung, evtl. Gebühr)
+        // 🔴 0-1 Tag = Rot (Ausfallgebühr!)
+        function getTrafficLight(appointmentDate) {
+            const now = new Date();
+            const aptDate = new Date(appointmentDate);
+            const daysUntil = Math.ceil((aptDate - now) / (1000 * 60 * 60 * 24));
+            
+            if (daysUntil >= 14) {
+                return {
+                    color: 'green',
+                    emoji: '🟢',
+                    text: 'Kostenlos absagbar',
+                    cssClass: 'traffic-light-green',
+                    daysUntil: daysUntil
+                };
+            } else if (daysUntil >= 2) {
+                return {
+                    color: 'orange',
+                    emoji: '🟠',
+                    text: 'Warnung: Kurzfristige Absage',
+                    cssClass: 'traffic-light-orange',
+                    daysUntil: daysUntil
+                };
+            } else {
+                return {
+                    color: 'red',
+                    emoji: '🔴',
+                    text: 'ACHTUNG: Ausfallgebühr möglich!',
+                    cssClass: 'traffic-light-red',
+                    daysUntil: daysUntil
+                };
+            }
         }
 
         // Create new patient
@@ -2248,6 +2333,17 @@
                     badge = '<span class="badge past">Vergangen</span>';
                 }
 
+                // AMPEL-SYSTEM für Absage-Regelung
+                let trafficLight = '';
+                if (isUpcoming && !isToday) {
+                    const tl = getTrafficLight(apt.date + ' ' + apt.time);
+                    trafficLight = `
+                        <p class="${tl.cssClass}" style="padding: 8px; border-radius: 8px; margin-top: 8px; font-weight: 600;">
+                            ${tl.emoji} ${tl.text} (${tl.daysUntil} Tag${tl.daysUntil > 1 ? 'e' : ''})
+                        </p>
+                    `;
+                }
+
                 // Check for critical medical history
                 let warning = '';
                 if (patient && patient.anamnese) {
@@ -2271,6 +2367,7 @@
                         <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
                         ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
                         ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
+                        ${trafficLight}
                         ${warning}
                     </div>
                 `;
