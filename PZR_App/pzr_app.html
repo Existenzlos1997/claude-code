@@ -3,22 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PZR Assistent Pro - Professionelle Zahnreinigung Management App">
-    <meta name="theme-color" content="#667eea">
-    
-    <!-- iOS Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PZR Assistent">
-    
-    <!-- Android Meta Tags -->
-    <meta name="mobile-web-app-capable" content="yes">
-    
     <title>PZR Assistent Pro - Professionelle Zahnreinigung</title>
-    
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlBaUiBBc3Npc3RlbnQgUHJvIiwKICAic2hvcnRfbmFtZSI6ICJQWlIgQXBwIiwKICAiZGVzY3JpcHRpb24iOiAiUHJvZmVzc2lvbmVsbGUgWmFobnJlaW5pZ3VuZyBNYW5hZ2VtZW50IiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjNjY3ZWVhIiwKICAidGhlbWVfY29sb3IiOiAiIzY2N2VlYSIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyB2aWV3Qm94PScwIDAgMTkyIDE5Mic+JTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzNjY3ZWVhJy8+JTNDdGV4dCB4PScxNScgeT0nMTM1JyBmb250LXNpemU9JzEyMCcgZm9udC1mYW1pbHk9J0FyaWFsJyBmaWxsPSd3aGl0ZSc+JUYwJTlGJUE2JUI3JTNDL3RleHQ+JTNDL3N2Zz4iLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9LAogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgdmlld0JveD0nMCAwIDUxMiA1MTInPiUzQ3JlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIGZpbGw9JyUyMzY2N2VlYScvPiUzQ3RleHQgeD0nNjAnIHk9JzM4MCcgZm9udC1zaXplPSczMjAnIGZvbnQtZmFtaWx5PSdBcmlhbCcgZmlsbD0nd2hpdGUnPiVGMCU5RiVBNiVCNyUzQy90ZXh0PiUzQy9zdmc+IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==">
-    
     <style>
         * {
             margin: 0;
@@ -753,27 +738,10 @@
 </head>
 <body>
     <div class="container">
-        <!-- PWA Install Banner -->
-        <div id="installBanner" style="display: none; background: #43a047; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <p style="margin-bottom: 10px; font-weight: 600;">📱 App installieren</p>
-            <p style="font-size: 13px; margin-bottom: 10px;">Installieren Sie PZR Assistent als App auf Ihrem Gerät für schnellen Zugriff!</p>
-            <button onclick="installPWA()" style="background: white; color: #43a047; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600; cursor: pointer; margin-right: 10px;">Jetzt installieren</button>
-            <button onclick="dismissInstallBanner()" style="background: transparent; color: white; border: 1px solid white; padding: 10px 20px; border-radius: 5px; font-weight: 600; cursor: pointer;">Später</button>
-        </div>
-
         <!-- Login Screen -->
         <div id="loginScreen" class="login-screen">
             <h1>🦷 PZR Assistent Pro</h1>
             <p>Professionelle Zahnreinigung mit Behandler-Empfehlungen</p>
-            
-            <!-- Download Button -->
-            <div style="margin: 20px 0; text-align: center;">
-                <button onclick="downloadApp()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
-                    📥 App herunterladen
-                </button>
-                <p style="font-size: 12px; color: #666; margin-top: 8px;">Installieren Sie die App auf Ihrem Gerät</p>
-            </div>
-            
             <p style="margin-top: 30px; font-size: 16px; font-weight: 600; color: #667eea;">Bitte wählen Sie Ihre Rolle:</p>
             
             <div class="role-selector">
@@ -809,65 +777,13 @@
                     <input type="password" id="employeePassword" placeholder="Passwort">
                 </div>
                 <button class="btn" onclick="loginEmployee()">Anmelden</button>
-                <button class="btn" onclick="showPracticeRegistration()" style="margin-top: 10px; background: #43a047;">Praxis registrieren</button>
             </div>
 
             <p style="margin-top: 20px; font-size: 12px; color: #999;">
                 Demo-Zugänge:<br>
                 Patient: PAT-12345 / PIN: 1234<br>
-                Behandler: MA-001 / Passwort: admin
+                Mitarbeiter: MA-001 / Passwort: admin
             </p>
-        </div>
-
-        <!-- Practice Registration Screen -->
-        <div id="registrationScreen" class="login-screen" style="display: none; max-width: 500px;">
-            <h1>🏥 Praxis Registrierung</h1>
-            <p>Neue Praxis anlegen</p>
-            
-            <div class="form-group">
-                <label for="regPracticeName">Praxis-Name *</label>
-                <input type="text" id="regPracticeName" placeholder="z.B. Zahnarztpraxis Dr. Schmidt">
-            </div>
-            
-            <div class="form-group">
-                <label for="regAddress">Adresse *</label>
-                <input type="text" id="regAddress" placeholder="Straße und Hausnummer">
-            </div>
-            
-            <div class="form-group">
-                <label for="regCity">Stadt *</label>
-                <input type="text" id="regCity" placeholder="PLZ und Ort">
-            </div>
-            
-            <div class="form-group">
-                <label for="regPhone">Telefon *</label>
-                <input type="text" id="regPhone" placeholder="+49...">
-            </div>
-            
-            <div class="form-group">
-                <label for="regEmail">E-Mail *</label>
-                <input type="email" id="regEmail" placeholder="praxis@example.com">
-            </div>
-            
-            <h3 style="margin-top: 30px; margin-bottom: 15px; color: #667eea;">Administrator-Account</h3>
-            
-            <div class="form-group">
-                <label for="regAdminName">Name des Administrators *</label>
-                <input type="text" id="regAdminName" placeholder="z.B. Dr. Schmidt">
-            </div>
-            
-            <div class="form-group">
-                <label for="regAdminPassword">Passwort *</label>
-                <input type="password" id="regAdminPassword" placeholder="Mindestens 6 Zeichen">
-            </div>
-            
-            <div class="form-group">
-                <label for="regAdminPasswordConfirm">Passwort bestätigen *</label>
-                <input type="password" id="regAdminPasswordConfirm" placeholder="Passwort wiederholen">
-            </div>
-            
-            <button class="btn" onclick="registerPractice()">Praxis registrieren</button>
-            <button class="btn" onclick="showLogin()" style="margin-top: 10px; background: #999;">Zurück zur Anmeldung</button>
         </div>
 
         <!-- Main App (hidden initially) -->
@@ -1098,7 +1014,6 @@
                     <button class="tab active" onclick="switchTab('patientManagement', event)">Patienten</button>
                     <button class="tab" onclick="switchTab('employeeAppointments', event)">Termine</button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
-                    <button class="tab" id="employeeManagementTab" onclick="switchTab('employeeManagement', event)" style="display: none;">Mitarbeiter</button>
                 </div>
 
                 <div class="content">
@@ -1229,49 +1144,6 @@
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
                     </div>
-
-                    <!-- Employee Management Tab (Admin only) -->
-                    <div id="employeeManagement" class="tab-content">
-                        <h2>Mitarbeiterverwaltung</h2>
-                        <p style="margin-bottom: 20px; color: #666;">Nur für Praxis-Administratoren</p>
-                        
-                        <div class="appointment-form">
-                            <h3>Neuer Mitarbeiter</h3>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeName">Name *</label>
-                                <input type="text" id="newEmployeeName" placeholder="z.B. Dr. Müller">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeRole">Rolle *</label>
-                                <select id="newEmployeeRole">
-                                    <option value="practitioner">Behandler</option>
-                                    <option value="hygienist">Dentalhygieniker/in</option>
-                                    <option value="assistant">Zahnarzthelfer/in</option>
-                                    <option value="reception">Rezeption</option>
-                                    <option value="admin">Administrator</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeePassword">Passwort *</label>
-                                <input type="password" id="newEmployeePassword" placeholder="Mindestens 6 Zeichen">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeEmail">E-Mail</label>
-                                <input type="email" id="newEmployeeEmail" placeholder="optional">
-                            </div>
-                            
-                            <button class="btn" onclick="addEmployee()">Mitarbeiter hinzufügen</button>
-                        </div>
-                        
-                        <h3 style="margin-top: 30px;">Aktuelle Mitarbeiter</h3>
-                        <div id="employeeListContainer" class="patient-list">
-                            <!-- Will be populated by JavaScript -->
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1349,260 +1221,9 @@
     </div>
 
     <script>
-        // PWA Installation
-        let deferredPrompt;
-        
-        // Initialize Demo Data for testing
-        function initDemoData() {
-            // Demo Practice FIRST (so employees can reference it)
-            const existingPractices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
-            if (existingPractices.length === 0) {
-                const demoPractice = {
-                    id: 'demo-practice',
-                    name: 'Demo Praxis',
-                    address: 'Musterstraße 123, 12345 Musterstadt',
-                    phone: '0123456789',
-                    adminId: 'MA-001',
-                    registeredAt: new Date().toISOString()
-                };
-                localStorage.setItem('pzrPractices', JSON.stringify([demoPractice]));
-            }
-            
-            // Demo Employee
-            if (!localStorage.getItem('pzrEmployees')) {
-                const demoEmployees = [{
-                    id: 'MA-001',
-                    password: 'admin',
-                    practiceId: 'demo-practice',
-                    name: 'Demo Behandler',
-                    role: 'Behandler',
-                    active: true
-                }];
-                localStorage.setItem('pzrEmployees', JSON.stringify(demoEmployees));
-            }
-            
-            // Demo Patients
-            const existingPatients = JSON.parse(localStorage.getItem('pzrPatients') || '[]');
-            if (existingPatients.length === 0) {
-                const demoPatients = [
-                    {
-                        number: 'PAT-12345',
-                        pin: '1234',
-                        practiceId: 'demo-practice',
-                        name: 'Demo Patient',
-                        birthdate: '1990-01-01',
-                        phone: '0123456789',
-                        anamnese: {
-                            lastUpdated: new Date().toISOString(),
-                            allergies: '',
-                            medications: '',
-                            diseases: '',
-                            surgeries: '',
-                            familyHistory: ''
-                        }
-                    },
-                    {
-                        number: 'PAT-67890',
-                        pin: '5678',
-                        practiceId: 'demo-practice',
-                        name: 'Test Patient',
-                        birthdate: '1985-05-15',
-                        phone: '0987654321',
-                        anamnese: {
-                            lastUpdated: new Date().toISOString(),
-                            allergies: 'Penicillin',
-                            medications: '',
-                            diseases: '',
-                            surgeries: '',
-                            familyHistory: ''
-                        }
-                    }
-                ];
-                localStorage.setItem('pzrPatients', JSON.stringify(demoPatients));
-            }
-        }
-        // Call immediately
-        initDemoData();
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            window.deferredPrompt = e;  // Also save globally
-            document.getElementById('installBanner').style.display = 'block';
-        });
-        
-        // CRITICAL FIX: Define downloadForPlatform BEFORE downloadApp so onclick works
-        function downloadForPlatform(platform) {
-            // Close modal
-            document.querySelector('[style*="position:fixed"]')?.remove();
-            
-            if (platform === 'pwa') {
-                // Try PWA install
-                if (window.deferredPrompt) {
-                    window.deferredPrompt.prompt();
-                    window.deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            alert('✅ App wurde erfolgreich installiert!');
-                        }
-                        window.deferredPrompt = null;
-                    });
-                } else {
-                    // Show instructions
-                    const userAgent = navigator.userAgent.toLowerCase();
-                    const isIOS = /iphone|ipad|ipod/.test(userAgent);
-                    const isAndroid = /android/.test(userAgent);
-                    
-                    let message = '📱 App Installation:\n\n';
-                    if (isIOS) {
-                        message += '🍎 iOS:\n1. Tippen Sie auf das Teilen-Symbol (⎕□↑)\n2. Wählen Sie "Zum Home-Bildschirm"\n3. Tippen Sie auf "Hinzufügen"';
-                    } else if (isAndroid) {
-                        message += '🤖 Android:\n1. Öffnen Sie das Menü (⋮)\n2. Tippen Sie auf "App installieren"';
-                    } else {
-                        message += '💻 Desktop:\n1. Klicken Sie auf das Install-Symbol in der Adressleiste\n2. Oder nutzen Sie Browser-Menü → "Installieren"';
-                    }
-                    alert(message);
-                }
-            } else if (platform === 'windows') {
-                // Generate Windows installer HTML
-                const currentUrl = window.location.href;
-                const htmlContent = '<!DOCTYPE html>\n' +
-                    '<html><head><title>PZR App - Windows Installer</title><meta charset="utf-8">\n' +
-                    '<scr' + 'ipt>window.location.href="' + currentUrl + '";</scr' + 'ipt></head>\n' +
-                    '<body><h1>PZR App wird geladen...</h1></body></html>';
-                const blob = new Blob([htmlContent], {type: 'text/html'});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'PZR-App-Setup.html';
-                a.click();
-                URL.revokeObjectURL(url);
-                alert('✅ Windows-Installer heruntergeladen!\n\nÖffnen Sie die Datei um die App zu starten.');
-            } else if (platform === 'android') {
-                // Generate Android APK - actually trigger PWA install which works like APK
-                if (window.deferredPrompt) {
-                    window.deferredPrompt.prompt();
-                    window.deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            alert('✅ Android App wurde installiert!');
-                        } else {
-                            alert('ℹ️ Installation abgebrochen.\n\nSie können die App jederzeit über "Zum Startbildschirm hinzufügen" installieren.');
-                        }
-                        window.deferredPrompt = null;
-                    });
-                } else {
-                    alert('📱 Android Installation:\n\n1. Öffnen Sie das Menü (⋮)\n2. Tippen Sie auf "App installieren"\n3. Bestätigen Sie die Installation\n\n✅ Die App verhält sich wie eine native Android App!');
-                }
-            } else if (platform === 'ios') {
-                // iOS PWA installation
-                alert('🍎 iOS Installation:\n\n1. Tippen Sie auf das Teilen-Symbol (⎕□↑)\n2. Wählen Sie "Zum Home-Bildschirm"\n3. Tippen Sie auf "Hinzufügen"\n\n✅ Die App verhält sich wie eine native iOS App!');
-            }
-        }
-        
-        // Download/Install App function with platform selection modal
-        function downloadApp() {
-            // Create modal
-            const modal = document.createElement('div');
-            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = 'background:white;padding:30px;border-radius:15px;max-width:500px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
-            
-            modalContent.innerHTML = `
-                <h2 style="margin:0 0 20px 0;color:#2c3e50;text-align:center;">📥 PZR App Herunterladen</h2>
-                <p style="color:#666;margin-bottom:25px;text-align:center;">Wählen Sie Ihre Plattform:</p>
-                
-                <div style="display:grid;gap:15px;">
-                    <button onclick="downloadForPlatform('windows')" style="padding:15px;border:2px solid #0078d4;background:#0078d4;color:white;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;">
-                        <span style="font-size:24px;">💻</span>
-                        <span>Windows (.exe)</span>
-                    </button>
-                    
-                    <button onclick="downloadForPlatform('android')" style="padding:15px;border:2px solid #3ddc84;background:#3ddc84;color:white;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;">
-                        <span style="font-size:24px;">🤖</span>
-                        <span>Android (.apk)</span>
-                    </button>
-                    
-                    <button onclick="downloadForPlatform('ios')" style="padding:15px;border:2px solid #007aff;background:#007aff;color:white;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;">
-                        <span style="font-size:24px;">🍎</span>
-                        <span>iOS (App Store)</span>
-                    </button>
-                    
-                    <button onclick="downloadForPlatform('pwa')" style="padding:15px;border:2px solid #4CAF50;background:#4CAF50;color:white;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;">
-                        <span style="font-size:24px;">🌐</span>
-                        <span>Als Web-App (PWA) installieren</span>
-                    </button>
-                </div>
-                
-                <button onclick="this.closest('[style*=fixed]').remove()" style="margin-top:20px;width:100%;padding:10px;border:1px solid #ccc;background:white;border-radius:8px;cursor:pointer;color:#666;">
-                    Abbrechen
-                </button>
-            `;
-            
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-        }
-
-        function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('App wurde installiert');
-                    }
-                    deferredPrompt = null;
-                    document.getElementById('installBanner').style.display = 'none';
-                });
-            }
-        }
-
-        function dismissInstallBanner() {
-            document.getElementById('installBanner').style.display = 'none';
-            localStorage.setItem('pwaInstallDismissed', 'true');
-        }
-
-        window.addEventListener('appinstalled', () => {
-            console.log('PWA wurde erfolgreich installiert');
-            document.getElementById('installBanner').style.display = 'none';
-        });
-
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                // Inline Service Worker
-                const swCode = `
-                    const CACHE_NAME = 'pzr-app-v1';
-                    
-                    self.addEventListener('install', (event) => {
-                        self.skipWaiting();
-                    });
-                    
-                    self.addEventListener('activate', (event) => {
-                        event.waitUntil(clients.claim());
-                    });
-                    
-                    self.addEventListener('fetch', (event) => {
-                        event.respondWith(
-                            caches.match(event.request).then((response) => {
-                                return response || fetch(event.request);
-                            })
-                        );
-                    });
-                `;
-                
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                
-                navigator.serviceWorker.register(swUrl)
-                    .then(reg => console.log('Service Worker registriert'))
-                    .catch(err => console.log('Service Worker Fehler:', err));
-            });
-        }
-
         // Application State
         let currentUser = null;
         let currentRole = null;
-        let currentPractice = null;
-        let practices = [];
         let patients = [];
         let appointments = [];
         let reminders = [];
@@ -1760,29 +1381,11 @@
 
         // Initialize demo data
         function initDemoData() {
-            // Initialize practices
-            const savedPractices = localStorage.getItem('pzrPractices');
-            if (!savedPractices) {
-                practices = [{
-                    id: 'PRACTICE-001',
-                    name: 'Demo Zahnarztpraxis',
-                    address: 'Musterstraße 123',
-                    city: '12345 Musterstadt',
-                    phone: '+49 123 456789',
-                    email: 'info@demo-praxis.de',
-                    created: new Date().toISOString()
-                }];
-                localStorage.setItem('pzrPractices', JSON.stringify(practices));
-            } else {
-                practices = JSON.parse(savedPractices);
-            }
-
             const savedPatients = localStorage.getItem('pzrPatients');
             if (!savedPatients) {
                 // Create demo patient with medical history
                 patients = [{
                     id: 'PAT-12345',
-                    practiceId: 'PRACTICE-001',
                     patientNumber: 'PAT-12345',
                     name: 'Max Mustermann',
                     pin: '1234',
@@ -1793,7 +1396,6 @@
                     toolsUsage: 'Interdentalbürsten Größe 3 für Backenzähne, Größe 2 für Frontzähne. Elektrische Zahnbürste mit Drucksensor verwenden. Mundspülung 2x täglich.',
                     notes: 'Nächster Termin in 6 Monaten. Bei Zahnfleischbluten bitte früher kommen.',
                     created: new Date().toISOString(),
-                    lastModified: new Date().toISOString(),
                     // Medical History
                     anamnese: {
                         allergies: '',
@@ -1812,10 +1414,8 @@
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             } else {
                 patients = JSON.parse(savedPatients);
-                // Ensure all patients have practiceId and lastModified
+                // Ensure all patients have anamnese object
                 patients.forEach(p => {
-                    if (!p.practiceId) p.practiceId = 'PRACTICE-001';
-                    if (!p.lastModified) p.lastModified = p.created || new Date().toISOString();
                     if (!p.anamnese) {
                         p.anamnese = {
                             allergies: '',
@@ -1835,22 +1435,14 @@
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             }
 
-            // Create demo employees for the practice
-            const savedEmployees = localStorage.getItem('pzrEmployees');
-            if (!savedEmployees) {
-                const employees = [{
-                    id: 'MA-001',
-                    practiceId: 'PRACTICE-001',
-                    employeeId: 'MA-001',
-                    password: 'admin',
-                    name: 'Dr. Schmidt',
-                    role: 'admin',
-                    email: 'schmidt@demo-praxis.de',
-                    created: new Date().toISOString(),
-                    active: true
-                }];
-                localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-            }
+            // Create demo employee
+            const employees = [{
+                id: 'MA-001',
+                employeeId: 'MA-001',
+                password: 'admin',
+                name: 'Dr. Schmidt'
+            }];
+            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
         }
 
         // Load data from localStorage
@@ -1903,9 +1495,7 @@
                 return;
             }
 
-            // CRITICAL FIX: Load patients from localStorage
-            const patients = JSON.parse(localStorage.getItem('pzrPatients') || '[]');
-            const patient = patients.find(p => p.number === patientNumber && p.pin === pin);
+            const patient = patients.find(p => p.patientNumber === patientNumber && p.pin === pin);
             
             if (patient) {
                 // Check if anamnese needs update (older than 1 year)
@@ -1919,17 +1509,14 @@
                     }
                 }
                 
-                // Check if anamnese was never filled (safe check)
-                if (!patient.anamnese || !patient.anamnese.lastUpdated) {
+                // Check if anamnese was never filled
+                if (!patient.anamnese.lastUpdated) {
                     alert('Bitte füllen Sie Ihre medizinische Anamnese aus.\n\nNach dem Login finden Sie das Formular im Tab "Anamnese".');
                 }
                 
                 currentUser = patient;
                 currentRole = 'patient';
                 showMainApp();
-                
-                // Empfehlungen beim Login prüfen
-                setTimeout(() => checkForNewRecommendations(), 500);
             } else {
                 alert('Ungültige Patientennummer oder PIN.');
             }
@@ -1945,20 +1532,15 @@
                 return;
             }
 
-            // Load employees from localStorage
             const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const employee = employees.find(e => 
-                e.id === employeeId && 
-                e.password === password &&
-                e.active === true
-            );
+            const employee = employees.find(e => e.employeeId === employeeId && e.password === password);
             
             if (employee) {
                 currentUser = employee;
                 currentRole = 'employee';
                 showMainApp();
             } else {
-                alert('Ungültige Mitarbeiter-ID oder Passwort.\n\nDemo-Account: MA-001 / admin');
+                alert('Ungültige Anmeldedaten.');
             }
         }
 
@@ -2074,116 +1656,6 @@
         }
 
         // Load patient appointments
-        // Traffic Light System for appointment cancellation
-        function getTrafficLight(appointmentDate) {
-            const now = new Date();
-            const appointment = new Date(appointmentDate);
-            const daysUntil = Math.floor((appointment - now) / (1000 * 60 * 60 * 24));
-            
-            if (daysUntil >= 14) {
-                return {
-                    color: 'green',
-                    emoji: '🟢',
-                    text: 'Rechtzeitige Absage - Keine Kosten',
-                    cssClass: 'traffic-green'
-                };
-            } else if (daysUntil >= 2) {
-                return {
-                    color: 'orange',
-                    emoji: '🟠',
-                    text: 'Knappe Absage - Evtl. kleine Gebühr',
-                    cssClass: 'traffic-orange'
-                };
-            } else {
-                return {
-                    color: 'red',
-                    emoji: '🔴',
-                    text: 'WARNUNG: Ausfallrechnung bis 100% möglich!',
-                    cssClass: 'traffic-red'
-                };
-            }
-        }
-        
-        // Cancel appointment with traffic light warning
-        function cancelAppointment(appointmentId) {
-            // Load appointments from localStorage
-            const appointments = JSON.parse(localStorage.getItem('pzrAppointments') || '[]');
-            
-            const apt = appointments.find(a => a.id === appointmentId);
-            if (!apt) return;
-            
-            const trafficLight = getTrafficLight(apt.date + ' ' + apt.time);
-            const confirmMsg = `${trafficLight.emoji} ${trafficLight.text}\n\nTermin: ${apt.title}\nDatum: ${formatDate(apt.date)} um ${apt.time} Uhr\n\nMöchten Sie diesen Termin wirklich absagen?`;
-            
-            if (confirm(confirmMsg)) {
-                apt.status = 'cancelled-pending';
-                apt.cancelledAt = new Date().toISOString();
-                apt.cancelledBy = currentUser.number || currentUser.id;
-                localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
-                
-                // Trigger storage event for other tabs
-                window.dispatchEvent(new Event('storage'));
-                
-                loadPatientAppointments();
-                
-                // Ask for new appointment preferences
-                requestNewAppointment(apt);
-            }
-        }
-        
-        function requestNewAppointment(cancelledApt) {
-            const preferences = prompt(
-                `Termin wurde zur Absage markiert (wird rot durchgestrichen bis Praxis bestätigt).\n\n` +
-                `Möchten Sie einen neuen Termin vereinbaren?\n\n` +
-                `Bitte geben Sie Ihre bevorzugten Zeiten an:\n` +
-                `(z.B. "Montag/Mittwoch 10-12 Uhr" oder "Vormittags flexibel")\n\n` +
-                `Oder lassen Sie das Feld leer, wenn Sie telefonisch einen Termin vereinbaren möchten.`
-            );
-            
-            if (preferences === null) return; // User cancelled
-            
-            if (preferences.trim() === '') {
-                alert('Bitte melden Sie sich telefonisch in der Praxis zur Terminfindung.\n\nTelefon: siehe Praxis-Kontaktdaten');
-                return;
-            }
-            
-            // Create appointment request
-            const requests = JSON.parse(localStorage.getItem('pzrAppointmentRequests') || '[]');
-            const newRequest = {
-                id: 'REQ-' + Date.now(),
-                patientId: currentUser.id,
-                patientName: currentUser.name || currentUser.id,
-                cancelledAppointmentId: cancelledApt.id,
-                cancelledDate: cancelledApt.date,
-                cancelledTime: cancelledApt.time,
-                preferences: preferences,
-                status: 'pending',
-                createdAt: new Date().toISOString()
-            };
-            
-            requests.push(newRequest);
-            localStorage.setItem('pzrAppointmentRequests', JSON.stringify(requests));
-            
-            alert('✅ Absage wurde an die Praxis gemeldet.\n✅ Ihre Terminwünsche wurden übermittelt.\n\nDie Praxis wird Ihnen einen Terminvorschlag zusenden.');
-        }
-        
-        function acknowledgeCancellation(appointmentId) {
-            const apt = appointments.find(a => a.id === appointmentId);
-            if (!apt) return;
-            
-            if (confirm(`Absage zur Kenntnis genommen?\n\nTermin wird dann aus der Liste entfernt.`)) {
-                // Remove from appointments
-                const index = appointments.findIndex(a => a.id === appointmentId);
-                if (index > -1) {
-                    appointments.splice(index, 1);
-                    localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
-                    window.dispatchEvent(new Event('storage'));
-                    alert('Termin wurde entfernt.');
-                    location.reload();
-                }
-            }
-        }
-        
         function loadPatientAppointments() {
             const patientAppointments = appointments.filter(a => a.patientId === currentUser.id);
             const now = new Date();
@@ -2217,15 +1689,9 @@
                     const isUpcoming = appointmentDate > now;
                     const isPast = appointmentDate < now;
                     const isToday = appointmentDate.toDateString() === now.toDateString();
-                    const isCancelled = apt.status === 'cancelled' || apt.status === 'cancelled-pending';
-                    const isPending = apt.status === 'cancelled-pending';
                     
                     let badge = '';
-                    if (isPending) {
-                        badge = '<span class="badge" style="background-color: #ef4444;">🔴 Absage ausstehend (rot durchgestrichen bis Praxis bestätigt)</span>';
-                    } else if (isCancelled) {
-                        badge = '<span class="badge" style="background-color: #ef4444;">❌ Abgesagt</span>';
-                    } else if (isToday) {
+                    if (isToday) {
                         badge = '<span class="badge">Heute</span>';
                     } else if (isUpcoming) {
                         const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
@@ -2233,25 +1699,13 @@
                     } else {
                         badge = '<span class="badge past">Vergangen</span>';
                     }
-                    
-                    // Traffic light for upcoming appointments
-                    let trafficLight = '';
-                    let cancelButton = '';
-                    if (isUpcoming && !isCancelled) {
-                        const light = getTrafficLight(apt.date + ' ' + apt.time);
-                        trafficLight = `<p style="margin-top: 10px;">${light.emoji} ${light.text}</p>`;
-                        cancelButton = `<button class="btn" style="margin-top: 10px; background-color: #ef4444;" onclick="cancelAppointment('${apt.id}')">Termin absagen</button>`;
-                    }
 
                     return `
-                        <div class="appointment-item" style="${isCancelled ? 'opacity: 0.6; border-left: 4px solid #ef4444;' : ''}${isPending ? 'text-decoration: line-through; color: #ef4444;' : ''}">
-                            <h4 style="${isPending ? 'text-decoration: line-through; color: #ef4444;' : ''}">${apt.title}${badge}</h4>
-                            <p style="${isPending ? 'text-decoration: line-through;' : ''}">📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
-                            ${apt.location ? `<p style="${isPending ? 'text-decoration: line-through;' : ''}">📍 ${apt.location}</p>` : ''}
-                            ${apt.notes ? `<p style="${isPending ? 'text-decoration: line-through;' : ''}">📝 ${apt.notes}</p>` : ''}
-                            ${isPending ? '<p style="color: #ef4444; font-weight: bold;">⏳ Wartet auf Bestätigung der Praxis</p>' : ''}
-                            ${trafficLight}
-                            ${cancelButton}
+                        <div class="appointment-item">
+                            <h4>${apt.title}${badge}</h4>
+                            <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                            ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
+                            ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
                         </div>
                     `;
                 }).join('');
@@ -2261,6 +1715,10 @@
         }
 
         // Load employee dashboard
+        function loadEmployeeDashboard() {
+            loadPatientList();
+        }
+
         // Load patient list for employees
         function loadPatientList() {
             const container = document.getElementById('patientListContainer');
@@ -2271,15 +1729,12 @@
             }
 
             container.innerHTML = patients.map(patient => `
-                <div class="patient-card" style="position:relative;">
-                    <div onclick="editPatient('${patient.id}')">
-                        <h4>👤 ${patient.name}</h4>
-                        <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
-                        <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                        <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
-                        <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
-                    </div>
-                    <button onclick="event.stopPropagation(); openRecommendationDialog('${patient.patientNumber}');" style="margin-top:10px;padding:10px 20px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;width:100%;">📨 Empfehlung senden</button>
+                <div class="patient-card" onclick="editPatient('${patient.id}')">
+                    <h4>👤 ${patient.name}</h4>
+                    <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
+                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                    <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
+                    <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
                 </div>
             `).join('');
         }
@@ -2299,15 +1754,12 @@
             }
 
             container.innerHTML = filtered.map(patient => `
-                <div class="patient-card" style="position:relative;">
-                    <div onclick="editPatient('${patient.id}')">
-                        <h4>👤 ${patient.name}</h4>
-                        <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
-                        <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                        <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
-                        <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
-                    </div>
-                    <button onclick="event.stopPropagation(); openRecommendationDialog('${patient.patientNumber}');" style="margin-top:10px;padding:10px 20px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;width:100%;">📨 Empfehlung senden</button>
+                <div class="patient-card" onclick="editPatient('${patient.id}')">
+                    <h4>👤 ${patient.name}</h4>
+                    <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
+                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                    <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
+                    <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
                 </div>
             `).join('');
         }
@@ -2672,28 +2124,6 @@
             alert('Anamnese erfolgreich gespeichert!');
         }
 
-        // Load patients for appointment dropdown
-        function loadPatients() {
-            const patients = JSON.parse(localStorage.getItem('pzrPatients') || '[]');
-            const currentEmployee = JSON.parse(sessionStorage.getItem('currentUser'));
-            
-            if (!currentEmployee) return;
-            
-            // Filter patients by practice
-            const practicePatients = patients.filter(p => p.practiceId === currentEmployee.practiceId);
-            
-            const select = document.getElementById('appointmentPatient');
-            if (!select) return;
-            
-            select.innerHTML = '<option value="">Bitte wählen...</option>';
-            practicePatients.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.number;
-                option.textContent = `${p.number} - ${p.name}`;
-                select.appendChild(option);
-            });
-        }
-
         // Create appointment (employee)
         function createAppointment() {
             const patientId = document.getElementById('appointmentPatient').value;
@@ -2852,648 +2282,12 @@
             loadPatientList();
             loadEmployeeAppointmentsList();
             
-            // Show employee management tab only for admins
-            if (currentUser && currentUser.role === 'admin') {
-                document.getElementById('employeeManagementTab').style.display = 'block';
-            }
-            
             // Populate patient select for appointments
             const select = document.getElementById('appointmentPatient');
             if (select) {
                 select.innerHTML = '<option value="">Bitte wählen...</option>' + 
-                    patients.filter(p => p.practiceId === currentPractice.id).map(p => 
-                        `<option value="${p.id}">${p.name} (${p.patientNumber})</option>`
-                    ).join('');
+                    patients.map(p => `<option value="${p.id}">${p.name} (${p.patientNumber})</option>`).join('');
             }
-        }
-
-        // Practice Management Functions
-        function populatePracticeSelector() {
-            const practices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
-            const select = document.getElementById('practiceSelect');
-            if (select) {
-                select.innerHTML = '<option value="">Bitte wählen...</option>' + 
-                    practices.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-            }
-        }
-
-        function showPracticeRegistration() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('registrationScreen').style.display = 'block';
-        }
-
-        function showLogin() {
-            document.getElementById('registrationScreen').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'block';
-        }
-
-        function registerPractice() {
-            const name = document.getElementById('regPracticeName').value.trim();
-            const address = document.getElementById('regAddress').value.trim();
-            const city = document.getElementById('regCity').value.trim();
-            const phone = document.getElementById('regPhone').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const adminName = document.getElementById('regAdminName').value.trim();
-            const password = document.getElementById('regAdminPassword').value.trim();
-            const passwordConfirm = document.getElementById('regAdminPasswordConfirm').value.trim();
-
-            if (!name || !address || !city || !phone || !email || !adminName || !password) {
-                alert('Bitte füllen Sie alle Pflichtfelder aus.');
-                return;
-            }
-
-            if (password.length < 6) {
-                alert('Das Passwort muss mindestens 6 Zeichen lang sein.');
-                return;
-            }
-
-            if (password !== passwordConfirm) {
-                alert('Die Passwörter stimmen nicht überein.');
-                return;
-            }
-
-            // Generate unique practice ID
-            const practiceId = 'PRACTICE-' + Date.now();
-            
-            // Auto-generate admin login ID from admin name
-            function generateAdminLoginId(name) {
-                return name.toUpperCase()
-                    .replace(/Ä/g, 'AE').replace(/Ö/g, 'OE').replace(/Ü/g, 'UE').replace(/ß/g, 'SS')
-                    .replace(/[^A-Z0-9\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/-+/g, '-')
-                    .replace(/^-|-$/g, '')
-                    .substring(0, 20);
-            }
-            
-            const employeeId = generateAdminLoginId(adminName) || ('MA-' + Date.now());
-
-            // Create practice
-            const practice = {
-                id: practiceId,
-                name: name,
-                address: address,
-                city: city,
-                phone: phone,
-                email: email,
-                created: new Date().toISOString()
-            };
-
-            // Create admin employee
-            const admin = {
-                id: employeeId,
-                practiceId: practiceId,
-                employeeId: employeeId,
-                password: password,
-                name: adminName,
-                role: 'admin',
-                email: email,
-                created: new Date().toISOString(),
-                active: true
-            };
-
-            // Save to localStorage
-            const practices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
-            practices.push(practice);
-            localStorage.setItem('pzrPractices', JSON.stringify(practices));
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            employees.push(admin);
-            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-
-            alert(`Praxis erfolgreich registriert!\n\nIhre Zugangsdaten:\nMitarbeiter-ID: ${employeeId}\nPasswort: ${password}\n\nBitte notieren Sie diese Daten!`);
-            
-            // Show PWA install prompt with admin-PC warning
-            showInstallPromptAfterRegistration();
-
-            // Clear form
-            document.getElementById('regPracticeName').value = '';
-            document.getElementById('regAddress').value = '';
-            document.getElementById('regCity').value = '';
-            document.getElementById('regPhone').value = '';
-            document.getElementById('regEmail').value = '';
-            document.getElementById('regAdminName').value = '';
-            document.getElementById('regAdminPassword').value = '';
-            document.getElementById('regAdminPasswordConfirm').value = '';
-
-            // Go back to login
-            showLogin();
-        }
-        
-        // Show install prompt after registration with admin-PC warning
-        function showInstallPromptAfterRegistration() {
-            const installMsg = `⚠️ WICHTIG: Dieser PC wird Hauptspeicher!\n\n` +
-                `Wenn Sie die App jetzt installieren und sich als Administrator anmelden, wird DIESER PC zum zentralen Datenspeicher für Ihre Praxis.\n\n` +
-                `📌 EMPFEHLUNG:\n` +
-                `✓ Nutzen Sie Ihren besten/stärksten PC\n` +
-                `✓ Dieser PC sollte am längsten laufen\n` +
-                `✓ Alle Praxisdaten werden hier gespeichert\n` +
-                `✓ Andere Geräte verbinden sich mit diesem PC\n\n` +
-                `Möchten Sie die App jetzt installieren?`;
-            
-            if (confirm(installMsg)) {
-                tryInstallPWA();
-            }
-        }
-        
-        function tryInstallPWA() {
-            // Try standard PWA install
-            if (window.deferredPrompt) {
-                window.deferredPrompt.prompt();
-                window.deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        alert('✅ App wurde erfolgreich installiert!');
-                    } else {
-                        showManualInstallInstructions();
-                    }
-                    window.deferredPrompt = null;
-                }).catch(err => {
-                    console.error('Install error:', err);
-                    showManualInstallInstructions();
-                });
-            } else {
-                // No deferredPrompt available - show manual instructions
-                showManualInstallInstructions();
-            }
-        }
-        
-        function showManualInstallInstructions() {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const isAndroid = /Android/.test(navigator.userAgent);
-            const isChrome = /Chrome/.test(navigator.userAgent);
-            const isEdge = /Edg/.test(navigator.userAgent);
-            
-            let instructions = '📱 APP INSTALLIEREN:\n\n';
-            
-            if (isIOS) {
-                instructions += '🍎 iOS Safari:\n' +
-                    '1. Tippen Sie auf das Teilen-Symbol (□↑)\n' +
-                    '2. Scrollen Sie nach unten\n' +
-                    '3. Wählen Sie "Zum Home-Bildschirm"\n' +
-                    '4. Tippen Sie auf "Hinzufügen"\n\n' +
-                    '✅ Die App erscheint dann auf Ihrem Home-Bildschirm!';
-            } else if (isAndroid && isChrome) {
-                instructions += '🤖 Android Chrome:\n' +
-                    '1. Tippen Sie auf das Menü (⋮) oben rechts\n' +
-                    '2. Wählen Sie "App installieren" oder "Zum Startbildschirm hinzufügen"\n' +
-                    '3. Bestätigen Sie mit "Installieren"\n\n' +
-                    '✅ Die App wird als eigenständige App installiert!';
-            } else if (isChrome || isEdge) {
-                instructions += '💻 Desktop (Chrome/Edge):\n' +
-                    '1. Klicken Sie auf das Symbol in der Adressleiste\n' +
-                    '   (Computer-Symbol oder "+"-Symbol)\n' +
-                    '2. Oder: Menü (⋮) → "App installieren"\n' +
-                    '3. Bestätigen Sie mit "Installieren"\n\n' +
-                    '✅ Die App öffnet sich in einem eigenen Fenster!';
-            } else {
-                instructions += '🌐 Für Ihren Browser:\n' +
-                    '1. Speichern Sie diese Seite als Lesezeichen\n' +
-                    '2. Oder laden Sie Chrome/Edge herunter für volle Funktionalität\n\n' +
-                    'Aktueller Link:\n' + window.location.href;
-            }
-            
-            instructions += '\n\n💡 TIPP: Nach der Installation startet die App wie eine normale Desktop-/Mobile-App!';
-            
-            alert(instructions);
-        }
-
-        // Employee Management Functions
-        function addEmployee() {
-            if (!currentUser || currentUser.role !== 'admin') {
-                alert('Nur Administratoren können Mitarbeiter hinzufügen.');
-                return;
-            }
-
-            const name = document.getElementById('newEmployeeName').value.trim();
-            const role = document.getElementById('newEmployeeRole').value;
-            const password = document.getElementById('newEmployeePassword').value.trim();
-            const email = document.getElementById('newEmployeeEmail').value.trim();
-
-            if (!name || !password) {
-                alert('Bitte füllen Sie alle Pflichtfelder aus.');
-                return;
-            }
-
-            if (password.length < 6) {
-                alert('Das Passwort muss mindestens 6 Zeichen lang sein.');
-                return;
-            }
-
-            const employeeId = 'MA-' + Date.now();
-            const employee = {
-                id: employeeId,
-                practiceId: currentPractice.id,
-                employeeId: employeeId,
-                password: password,
-                name: name,
-                role: role,
-                email: email,
-                created: new Date().toISOString(),
-                active: true
-            };
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            employees.push(employee);
-            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-
-            alert(`Mitarbeiter erfolgreich angelegt!\n\nMitarbeiter-ID: ${employeeId}\nPasswort: ${password}\n\nBitte geben Sie diese Daten an den Mitarbeiter weiter.`);
-
-            // Clear form
-            document.getElementById('newEmployeeName').value = '';
-            document.getElementById('newEmployeePassword').value = '';
-            document.getElementById('newEmployeeEmail').value = '';
-
-            loadEmployeeList();
-        }
-
-        function loadEmployeeList() {
-            const container = document.getElementById('employeeListContainer');
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const practiceEmployees = employees.filter(e => e.practiceId === currentPractice.id && e.active);
-
-            if (practiceEmployees.length === 0) {
-                container.innerHTML = '<p class="empty-state">Noch keine Mitarbeiter vorhanden.</p>';
-                return;
-            }
-
-            container.innerHTML = practiceEmployees.map(emp => `
-                <div class="patient-card">
-                    <div class="patient-header">
-                        <span><strong>${emp.name}</strong></span>
-                        <span class="patient-number">${emp.employeeId}</span>
-                    </div>
-                    <div class="patient-details">
-                        <p>👤 Rolle: ${getRoleLabel(emp.role)}</p>
-                        ${emp.email ? `<p>📧 ${emp.email}</p>` : ''}
-                        <p>📅 Angelegt: ${formatDate(emp.created)}</p>
-                    </div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button class="btn" style="background: #2196F3;" onclick="editEmployeeId('${emp.id}')">ID bearbeiten</button>
-                        ${currentUser.id !== emp.id ? `<button class="btn" style="background: #f44336;" onclick="deactivateEmployee('${emp.id}')">Deaktivieren</button>` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function getRoleLabel(role) {
-            const labels = {
-                'admin': 'Administrator',
-                'practitioner': 'Behandler',
-                'hygienist': 'Dentalhygieniker/in',
-                'assistant': 'Zahnarzthelfer/in',
-                'reception': 'Rezeption'
-            };
-            return labels[role] || role;
-        }
-
-        function editEmployeeId(employeeId) {
-            if (!currentUser || currentUser.role !== 'admin') {
-                alert('Nur Administratoren können Mitarbeiter-IDs ändern.');
-                return;
-            }
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const employee = employees.find(e => e.id === employeeId);
-            
-            if (!employee) {
-                alert('Mitarbeiter nicht gefunden.');
-                return;
-            }
-
-            const newId = prompt(
-                `Aktuelle Mitarbeiter-ID: ${employee.employeeId}\n\n` +
-                `Bitte neue Mitarbeiter-ID eingeben:\n` +
-                `(3-20 Zeichen, nur Buchstaben, Zahlen und Bindestriche)\n\n` +
-                `Beispiele:\n` +
-                `- DR-MUELLER\n` +
-                `- ANNA-S\n` +
-                `- ZA-01`,
-                employee.employeeId
-            );
-
-            if (!newId) return; // User cancelled
-
-            const trimmedId = newId.trim().toUpperCase();
-
-            // Validation
-            if (trimmedId.length < 3 || trimmedId.length > 20) {
-                alert('ID muss zwischen 3 und 20 Zeichen lang sein.');
-                return;
-            }
-
-            if (!/^[A-Z0-9-]+$/.test(trimmedId)) {
-                alert('ID darf nur Großbuchstaben, Zahlen und Bindestriche enthalten.');
-                return;
-            }
-
-            // Check uniqueness
-            const existingEmployee = employees.find(e => e.employeeId === trimmedId && e.id !== employeeId);
-            if (existingEmployee) {
-                alert('Diese Mitarbeiter-ID wird bereits verwendet. Bitte wählen Sie eine andere.');
-                return;
-            }
-
-            // Update employee ID
-            employee.employeeId = trimmedId;
-            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-            
-            alert(`✅ Mitarbeiter-ID erfolgreich geändert!\n\nNeue ID: ${trimmedId}\n\nDer Mitarbeiter kann sich jetzt mit dieser ID anmelden.`);
-            
-            loadEmployeeList();
-        }
-
-        function deactivateEmployee(employeeId) {
-            if (!confirm('Möchten Sie diesen Mitarbeiter wirklich deaktivieren?')) {
-                return;
-            }
-
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const employee = employees.find(e => e.id === employeeId);
-            if (employee) {
-                employee.active = false;
-                localStorage.setItem('pzrEmployees', JSON.stringify(employees));
-                loadEmployeeList();
-                alert('Mitarbeiter wurde deaktiviert.');
-            }
-        }
-
-        // Update login employee function
-        function loginEmployee() {
-            const employeeId = document.getElementById('employeeId').value.trim();
-            const password = document.getElementById('employeePassword').value.trim();
-
-            if (!employeeId || !password) {
-                alert('Bitte Mitarbeiter-ID und Passwort eingeben.');
-                return;
-            }
-
-            // Get employees from localStorage
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const practices = JSON.parse(localStorage.getItem('pzrPractices') || '[]');
-            
-            // Find employee by ID and password
-            const foundEmployee = employees.find(e => 
-                e.id === employeeId && 
-                e.password === password && 
-                e.active !== false
-            );
-
-            if (!foundEmployee) {
-                alert('Ungültige Anmeldedaten.');
-                return;
-            }
-            
-            // Find the practice this employee belongs to
-            const foundPractice = practices.find(p => p.id === foundEmployee.practiceId);
-            
-            if (!foundPractice) {
-                alert('Praxis nicht gefunden.');
-                return;
-            }
-            
-            currentUser = foundEmployee;
-            currentRole = 'employee';
-            currentPractice = foundPractice;
-            showMainApp();
-        }
-
-        // ===== EMPFEHLUNGS-NACHRICHTENSYSTEM =====
-        
-        // Empfehlungs-Dialog öffnen
-        function openRecommendationDialog(patientNumber) {
-            const modal = document.createElement('div');
-            modal.id = 'recommendationModal';
-            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
-            
-            modal.innerHTML = '<div style="background:white;padding:30px;border-radius:15px;max-width:500px;width:90%;">' +
-                '<h3 style="margin-bottom:20px;color:#667eea;">📨 Empfehlung an Patient senden</h3>' +
-                '<textarea id="recommendationText" placeholder="Empfehlung eingeben..." style="width:100%;min-height:120px;padding:15px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;margin-bottom:15px;"></textarea>' +
-                '<button onclick="startVoiceInput()" style="padding:12px 20px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;margin-bottom:15px;">🎤 Spracheingabe</button>' +
-                '<div style="margin-bottom:20px;padding:15px;background:#f5f5f5;border-radius:10px;">' +
-                '<h4 style="margin-bottom:10px;color:#333;">🔔 Erinnerung einstellen</h4>' +
-                '<label style="display:block;margin-bottom:10px;">' +
-                '<input type="checkbox" id="enableReminder" style="margin-right:8px;"> Erinnerung aktivieren' +
-                '</label>' +
-                '<select id="reminderFrequency" style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:8px;">' +
-                '<option value="daily">Täglich</option>' +
-                '<option value="weekly">Wöchentlich</option>' +
-                '<option value="monthly">Monatlich</option>' +
-                '</select>' +
-                '</div>' +
-                '<div style="display:flex;gap:10px;">' +
-                '<button onclick="sendRecommendationToPatient(\'' + patientNumber + '\')" style="flex:1;padding:15px;background:#4CAF50;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">✅ Senden</button>' +
-                '<button onclick="closeRecommendationDialog()" style="flex:1;padding:15px;background:#f44336;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">❌ Abbrechen</button>' +
-                '</div>' +
-                '</div>';
-            
-            document.body.appendChild(modal);
-        }
-        
-        // Spracheingabe starten
-        function startVoiceInput() {
-            if ('webkitSpeechRecognition' in window) {
-                const recognition = new webkitSpeechRecognition();
-                recognition.lang = 'de-DE';
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                
-                recognition.onstart = function() {
-                    alert('🎤 Sprechen Sie jetzt...');
-                };
-                
-                recognition.onresult = function(event) {
-                    const text = event.results[0][0].transcript;
-                    document.getElementById('recommendationText').value = text;
-                };
-                
-                recognition.onerror = function(event) {
-                    alert('❌ Fehler bei Spracheingabe: ' + event.error);
-                };
-                
-                recognition.start();
-            } else {
-                alert('❌ Spracheingabe wird von diesem Browser nicht unterstützt.');
-            }
-        }
-        
-        // Empfehlung senden
-        function sendRecommendationToPatient(patientNumber) {
-            const message = document.getElementById('recommendationText').value.trim();
-            
-            if (!message) {
-                alert('❌ Bitte geben Sie eine Empfehlung ein.');
-                return;
-            }
-            
-            const reminderEnabled = document.getElementById('enableReminder').checked;
-            const frequency = document.getElementById('reminderFrequency').value;
-            
-            const recommendation = {
-                id: Date.now(),
-                patientNumber: patientNumber,
-                employeeId: currentUser.id,
-                employeeName: currentUser.name,
-                message: message,
-                createdAt: new Date().toISOString(),
-                read: false,
-                reminder: {
-                    enabled: reminderEnabled,
-                    frequency: frequency,
-                    nextReminder: reminderEnabled ? calculateNextReminder(frequency) : null,
-                    lastShown: null
-                }
-            };
-            
-            // Speichern
-            const recommendations = JSON.parse(localStorage.getItem('patientRecommendations') || '[]');
-            recommendations.push(recommendation);
-            localStorage.setItem('patientRecommendations', JSON.stringify(recommendations));
-            
-            closeRecommendationDialog();
-            alert('✅ Empfehlung erfolgreich gesendet!');
-        }
-        
-        // Dialog schließen
-        function closeRecommendationDialog() {
-            const modal = document.getElementById('recommendationModal');
-            if (modal) {
-                modal.remove();
-            }
-        }
-        
-        // Nächste Erinnerung berechnen
-        function calculateNextReminder(frequency, fromDate = new Date()) {
-            const next = new Date(fromDate);
-            
-            switch(frequency) {
-                case 'daily':
-                    next.setDate(next.getDate() + 1);
-                    break;
-                case 'weekly':
-                    next.setDate(next.getDate() + 7);
-                    break;
-                case 'monthly':
-                    next.setMonth(next.getMonth() + 1);
-                    break;
-            }
-            
-            return next.toISOString();
-        }
-        
-        // Empfehlungen beim Patient-Login prüfen
-        function checkForNewRecommendations() {
-            if (!currentUser || !currentUser.number) return;
-            
-            const recommendations = JSON.parse(localStorage.getItem('patientRecommendations') || '[]');
-            const unread = recommendations.filter(r => 
-                r.patientNumber === currentUser.number && !r.read
-            );
-            
-            if (unread.length > 0) {
-                showRecommendationPopup(unread);
-            }
-            
-            // Erinnerungen prüfen
-            checkReminders(recommendations);
-        }
-        
-        // Popup mit Empfehlungen anzeigen
-        function showRecommendationPopup(recommendations) {
-            const modal = document.createElement('div');
-            modal.id = 'recommendationPopup';
-            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
-            
-            let html = '<div style="background:white;padding:30px;border-radius:15px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;">';
-            html += '<h3 style="margin-bottom:20px;color:#667eea;">📨 Neue Empfehlungen von Ihrer Praxis</h3>';
-            
-            recommendations.forEach(rec => {
-                html += '<div style="background:#f9f9f9;padding:20px;margin:15px 0;border-radius:10px;border-left:4px solid #2196F3;">';
-                html += '<div style="display:flex;justify-content:space-between;margin-bottom:10px;">';
-                html += '<strong style="color:#333;">' + rec.employeeName + '</strong>';
-                html += '<span style="color:#666;font-size:0.9em;">' + new Date(rec.createdAt).toLocaleDateString('de-DE') + '</span>';
-                html += '</div>';
-                html += '<div style="color:#333;line-height:1.6;">' + rec.message + '</div>';
-                if (rec.reminder && rec.reminder.enabled) {
-                    const freqText = rec.reminder.frequency === 'daily' ? 'Täglich' : 
-                                   rec.reminder.frequency === 'weekly' ? 'Wöchentlich' : 'Monatlich';
-                    html += '<div style="margin-top:10px;padding:8px;background:#E3F2FD;border-radius:5px;font-size:0.9em;">🔔 Erinnerung: ' + freqText + '</div>';
-                }
-                html += '<button onclick="markRecommendationAsRead(' + rec.id + ')" style="margin-top:10px;padding:10px 20px;background:#4CAF50;color:white;border:none;border-radius:5px;cursor:pointer;">✓ Als gelesen markieren</button>';
-                html += '</div>';
-            });
-            
-            html += '<button onclick="closeRecommendationPopup()" style="width:100%;padding:15px;margin-top:20px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Schließen</button>';
-            html += '</div>';
-            
-            modal.innerHTML = html;
-            document.body.appendChild(modal);
-        }
-        
-        // Popup schließen
-        function closeRecommendationPopup() {
-            const popup = document.getElementById('recommendationPopup');
-            if (popup) {
-                popup.remove();
-            }
-        }
-        
-        // Empfehlung als gelesen markieren
-        function markRecommendationAsRead(recId) {
-            const recommendations = JSON.parse(localStorage.getItem('patientRecommendations') || '[]');
-            const rec = recommendations.find(r => r.id === recId);
-            if (rec) {
-                rec.read = true;
-                localStorage.setItem('patientRecommendations', JSON.stringify(recommendations));
-            }
-            closeRecommendationPopup();
-        }
-        
-        // Erinnerungen prüfen
-        function checkReminders(recommendations) {
-            if (!currentUser || !currentUser.number) return;
-            
-            const now = new Date();
-            const myRecommendations = recommendations.filter(r => 
-                r.patientNumber === currentUser.number && !r.read
-            );
-            
-            myRecommendations.forEach(rec => {
-                if (!rec.reminder || !rec.reminder.enabled) return;
-                
-                const nextReminder = new Date(rec.reminder.nextReminder);
-                
-                if (now >= nextReminder) {
-                    // Erinnerung anzeigen
-                    showReminderNotification(rec);
-                    
-                    // Nächste Erinnerung berechnen
-                    rec.reminder.lastShown = now.toISOString();
-                    rec.reminder.nextReminder = calculateNextReminder(rec.reminder.frequency, now);
-                    
-                    // Speichern
-                    localStorage.setItem('patientRecommendations', JSON.stringify(recommendations));
-                }
-            });
-        }
-        
-        // Erinnerungs-Benachrichtigung anzeigen
-        function showReminderNotification(recommendation) {
-            const modal = document.createElement('div');
-            modal.style.cssText = 'position:fixed;top:20px;right:20px;background:white;padding:20px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:10001;max-width:350px;border-left:4px solid #FF9800;';
-            
-            modal.innerHTML = '<h4 style="color:#FF9800;margin-bottom:10px;">🔔 Erinnerung</h4>' +
-                '<p style="color:#333;margin-bottom:10px;">' + recommendation.message + '</p>' +
-                '<small style="color:#666;">Von: ' + recommendation.employeeName + '</small>' +
-                '<button onclick="this.parentElement.remove()" style="width:100%;margin-top:15px;padding:10px;background:#667eea;color:white;border:none;border-radius:5px;cursor:pointer;">OK</button>';
-            
-            document.body.appendChild(modal);
-            
-            // Auto-close nach 10 Sekunden
-            setTimeout(() => {
-                if (modal && modal.parentElement) {
-                    modal.remove();
-                }
-            }, 10000);
         }
 
         // Initialize app
