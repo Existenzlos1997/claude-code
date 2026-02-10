@@ -1702,6 +1702,9 @@
                             <p>⏰ In ${daysUntil} Tag${daysUntil > 1 ? 'en' : ''}</p>
                             ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
                             ${trafficLight}
+                            <button onclick="cancelPatientAppointment(${apt.id})" style="background: #f44336; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+                                ❌ Termin absagen
+                            </button>
                         </div>
                     `;
                 }).join('');
@@ -1730,12 +1733,18 @@
 
                     // AMPEL-SYSTEM auch in Gesamtliste
                     let trafficLight = '';
+                    let cancelButton = '';
                     if (isUpcoming && !isToday) {
                         const tl = getTrafficLight(apt.date + ' ' + apt.time);
                         trafficLight = `
                             <p class="${tl.cssClass}" style="padding: 8px; border-radius: 8px; margin-top: 8px; font-weight: 600;">
                                 ${tl.emoji} ${tl.text}
                             </p>
+                        `;
+                        cancelButton = `
+                            <button onclick="cancelPatientAppointment(${apt.id})" style="background: #f44336; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+                                ❌ Termin absagen
+                            </button>
                         `;
                     }
 
@@ -1746,6 +1755,7 @@
                             ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
                             ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
                             ${trafficLight}
+                            ${cancelButton}
                         </div>
                     `;
                 }).join('');
@@ -1857,7 +1867,7 @@
                 return {
                     color: 'green',
                     emoji: '🟢',
-                    text: 'Kostenlos absagbar',
+                    text: 'Kostenlose Absage möglich (mehr als 14 Tage vorher)',
                     cssClass: 'traffic-light-green',
                     daysUntil: daysUntil
                 };
@@ -1865,7 +1875,7 @@
                 return {
                     color: 'orange',
                     emoji: '🟠',
-                    text: 'Warnung: Kurzfristige Absage',
+                    text: 'Kurzfristige Absage (2-13 Tage vorher) - Bitte Praxis kontaktieren, evtl. Gebühr',
                     cssClass: 'traffic-light-orange',
                     daysUntil: daysUntil
                 };
@@ -1873,11 +1883,73 @@
                 return {
                     color: 'red',
                     emoji: '🔴',
-                    text: 'ACHTUNG: Ausfallgebühr möglich!',
+                    text: 'Sehr kurzfristig (0-1 Tag vorher) - Ausfallgebühr bis 50€!',
                     cssClass: 'traffic-light-red',
                     daysUntil: daysUntil
                 };
             }
+        }
+
+        // PATIENTEN-ABSAGESYSTEM: 6-Schritte Workflow
+        function cancelPatientAppointment(appointmentId) {
+            const appointments = getFromStorage('appointments') || [];
+            const appointment = appointments.find(a => a.id === appointmentId);
+            
+            if (!appointment) {
+                alert('Termin nicht gefunden!');
+                return;
+            }
+            
+            // SCHRITT 1: Ampel-Warnung abrufen
+            const tl = getTrafficLight(appointment.date + ' ' + appointment.time);
+            
+            // SCHRITT 2: Bestätigung mit Ampel-Warnung
+            const confirmMsg = `Termin absagen?\n${appointment.date} um ${appointment.time}\n\n${tl.emoji} ${tl.text}\n\n${tl.color === 'red' ? '⚠️ Bei kurzfristiger Absage kann eine Ausfallgebühr anfallen!\n\n' : ''}Möchten Sie fortfahren?`;
+            
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+            
+            // SCHRITT 3: Status ändern
+            appointment.status = 'cancelled-pending';
+            appointment.cancellationDate = new Date().toISOString();
+            appointment.cancellationReason = 'Patient-initiated';
+            
+            // SCHRITT 4: Folgetermin-Anfrage
+            const wantNewAppointment = confirm('Termin wurde zur Absage vorgemerkt.\n\nMöchten Sie einen neuen Termin vereinbaren?');
+            
+            if (wantNewAppointment) {
+                appointment.requestNewAppointment = true;
+                const preferences = prompt('Bitte geben Sie Ihre Wunschzeit an:\n(z.B. "Vormittags", "Nachmittags 14-16 Uhr")');
+                
+                if (preferences) {
+                    appointment.newAppointmentPreferences = preferences;
+                }
+            }
+            
+            // SCHRITT 5: Speichern & Praxis-Benachrichtigung
+            saveToStorage('appointments', appointments);
+            
+            const notifications = getFromStorage('practiceNotifications') || [];
+            notifications.push({
+                id: Date.now(),
+                type: 'cancellation',
+                appointmentId: appointmentId,
+                patientName: appointment.patientName,
+                date: appointment.date,
+                time: appointment.time,
+                trafficLight: tl,
+                newAppointmentRequested: appointment.requestNewAppointment || false,
+                preferences: appointment.newAppointmentPreferences || '',
+                timestamp: new Date().toISOString(),
+                read: false
+            });
+            saveToStorage('practiceNotifications', notifications);
+            
+            // SCHRITT 6: Bestätigung an Patient
+            alert(`✅ Absage-Anfrage gesendet!\n\nIhr Termin vom ${appointment.date} um ${appointment.time} wurde zur Absage vorgemerkt.\n\nDie Praxis wird Sie kontaktieren.${appointment.requestNewAppointment ? '\n\nIhre Terminwünsche wurden übermittelt.' : ''}`);
+            
+            loadPatientAppointments();
         }
 
         // Create new patient
