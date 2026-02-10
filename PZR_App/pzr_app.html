@@ -520,6 +520,45 @@
             cursor: pointer;
         }
 
+        /* Cancelled Appointment Styling */
+        .appointment-cancelled-pending {
+            text-decoration: line-through;
+            text-decoration-color: #f44336;
+            text-decoration-thickness: 3px;
+            opacity: 0.7;
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .status-badge-cancellation {
+            background: #ff5722;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .new-appointment-pending {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .notification-card {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
         .reminder-settings {
             background: #e3f2fd;
             padding: 15px;
@@ -1686,9 +1725,44 @@
                 upcomingList.innerHTML = upcoming.map(apt => {
                     const appointmentDate = new Date(apt.date + ' ' + apt.time);
                     const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
-                    
-                    // AMPEL-SYSTEM für Patienten
                     const tl = getTrafficLight(apt.date + ' ' + apt.time);
+                    
+                    // CHECK CANCELLED-PENDING STATUS
+                    if (apt.status === 'cancelled-pending' || apt.status === 'cancelled-confirmed') {
+                        return `
+                            <div class="appointment-item appointment-cancelled-pending">
+                                <h4 style="text-decoration: line-through; text-decoration-color: #f44336;">
+                                    ${apt.title}
+                                    <span class="status-badge-cancellation">Absage läuft</span>
+                                </h4>
+                                <p style="text-decoration: line-through;">📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                                ${tl ? `<p class="${tl.cssClass}">${tl.emoji} ${tl.text}</p>` : ''}
+                                
+                                ${apt.requestNewAppointment ? `
+                                    <div class="new-appointment-pending">
+                                        <strong>🔄 Neuer Termin in Bearbeitung</strong>
+                                        <p>Ihre Wünsche: ${apt.newAppointmentPreferences || 'Keine Angaben'}</p>
+                                        <p><em>Die Praxis wird sich bei Ihnen melden.</em></p>
+                                    </div>
+                                ` : ''}
+                                
+                                ${apt.proposedNewAppointment ? `
+                                    <div class="new-appointment-pending">
+                                        <strong>📩 Terminvorschlag von der Praxis</strong>
+                                        <p><strong>Neuer Termin:</strong> ${apt.proposedNewAppointment.date} um ${apt.proposedNewAppointment.time}</p>
+                                        <button onclick="acceptProposedAppointment(${apt.id})" style="background: #4caf50; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; margin: 5px;">
+                                            ✅ Annehmen
+                                        </button>
+                                        <button onclick="rejectProposedAppointment(${apt.id})" style="background: #f44336; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; margin: 5px;">
+                                            ❌ Ablehnen
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+                    
+                    // NORMAL APPOINTMENT
                     const trafficLight = `
                         <p class="${tl.cssClass}" style="padding: 8px; border-radius: 8px; margin-top: 8px; font-weight: 600;">
                             ${tl.emoji} ${tl.text}
@@ -1731,7 +1805,44 @@
                         badge = '<span class="badge past">Vergangen</span>';
                     }
 
-                    // AMPEL-SYSTEM auch in Gesamtliste
+                    // CANCELLED-PENDING anzeigen
+                    if (apt.status === 'cancelled-pending' || apt.status === 'cancelled-confirmed') {
+                        const tl = getTrafficLight(apt.date + ' ' + apt.time);
+                        return `
+                            <div class="appointment-item appointment-cancelled-pending">
+                                <h4 style="text-decoration: line-through; text-decoration-color: #f44336;">
+                                    ${apt.title}
+                                    <span class="status-badge-cancellation">Absage läuft</span>
+                                </h4>
+                                <p style="text-decoration: line-through;">📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                                ${apt.location ? `<p style="text-decoration: line-through;">📍 ${apt.location}</p>` : ''}
+                                ${tl ? `<p class="${tl.cssClass}">${tl.emoji} ${tl.text}</p>` : ''}
+                                
+                                ${apt.requestNewAppointment && !apt.proposedNewAppointment ? `
+                                    <div class="new-appointment-pending">
+                                        <strong>🔄 Neuer Termin in Bearbeitung</strong>
+                                        <p>Ihre Wünsche: ${apt.newAppointmentPreferences || 'Keine Angaben'}</p>
+                                        <p><em>Die Praxis wird sich bei Ihnen melden.</em></p>
+                                    </div>
+                                ` : ''}
+                                
+                                ${apt.proposedNewAppointment ? `
+                                    <div class="new-appointment-pending">
+                                        <strong>📩 Terminvorschlag von der Praxis</strong>
+                                        <p><strong>Neuer Termin:</strong> ${apt.proposedNewAppointment.date} um ${apt.proposedNewAppointment.time}</p>
+                                        <button onclick="acceptProposedAppointment(${apt.id})" style="background: #4caf50; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; margin: 5px;">
+                                            ✅ Annehmen
+                                        </button>
+                                        <button onclick="rejectProposedAppointment(${apt.id})" style="background: #f44336; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; margin: 5px;">
+                                            ❌ Ablehnen
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+
+                    // NORMALE TERMINE
                     let trafficLight = '';
                     let cancelButton = '';
                     if (isUpcoming && !isToday) {
@@ -1948,6 +2059,69 @@
             
             // SCHRITT 6: Bestätigung an Patient
             alert(`✅ Absage-Anfrage gesendet!\n\nIhr Termin vom ${appointment.date} um ${appointment.time} wurde zur Absage vorgemerkt.\n\nDie Praxis wird Sie kontaktieren.${appointment.requestNewAppointment ? '\n\nIhre Terminwünsche wurden übermittelt.' : ''}`);
+            
+            loadPatientAppointments();
+        }
+
+        // Patient akzeptiert Terminvorschlag
+        function acceptProposedAppointment(oldAppointmentId) {
+            const appointments = getFromStorage('appointments') || [];
+            const oldAppointment = appointments.find(a => a.id === oldAppointmentId);
+            
+            if (!oldAppointment || !oldAppointment.proposedNewAppointment) {
+                alert('Kein Terminvorschlag gefunden!');
+                return;
+            }
+            
+            // Neuen Termin erstellen
+            const newAppointment = {
+                id: Date.now(),
+                patientId: oldAppointment.patientId,
+                patientName: oldAppointment.patientName,
+                employeeId: oldAppointment.employeeId,
+                date: oldAppointment.proposedNewAppointment.date,
+                time: oldAppointment.proposedNewAppointment.time,
+                title: oldAppointment.title || 'PZR Termin',
+                type: oldAppointment.type || 'PZR',
+                status: 'confirmed',
+                notes: 'Ersatz für abgesagten Termin #' + oldAppointmentId,
+                createdAt: new Date().toISOString()
+            };
+            
+            appointments.push(newAppointment);
+            
+            // Alten Termin auf 'cancelled-confirmed' setzen
+            oldAppointment.status = 'cancelled-confirmed';
+            oldAppointment.replacedBy = newAppointment.id;
+            delete oldAppointment.proposedNewAppointment;
+            
+            saveToStorage('appointments', appointments);
+            
+            alert(`✅ Termin bestätigt!\n\nNeuer Termin: ${newAppointment.date} um ${newAppointment.time}\n\nDer alte Termin bleibt zur Dokumentation durchgestrichen sichtbar.`);
+            
+            loadPatientAppointments();
+        }
+
+        // Patient lehnt Terminvorschlag ab
+        function rejectProposedAppointment(appointmentId) {
+            const appointments = getFromStorage('appointments') || [];
+            const appointment = appointments.find(a => a.id === appointmentId);
+            
+            if (!appointment) {
+                alert('Termin nicht gefunden!');
+                return;
+            }
+            
+            if (!confirm('Terminvorschlag ablehnen?\n\nSie werden gebeten, die Praxis anzurufen.')) {
+                return;
+            }
+            
+            delete appointment.proposedNewAppointment;
+            appointment.status = 'cancelled-call-practice';
+            
+            saveToStorage('appointments', appointments);
+            
+            alert(`📞 Bitte rufen Sie die Praxis an\n\nUm einen passenden Termin zu finden, kontaktieren Sie bitte direkt die Praxis.\n\nTelefon: 0123-456789`);
             
             loadPatientAppointments();
         }
@@ -2466,6 +2640,95 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // Employee Benachrichtigungen laden
+        function loadEmployeeNotifications() {
+            const notifications = getFromStorage('practiceNotifications') || [];
+            const unread = notifications.filter(n => !n.read);
+            
+            const container = document.getElementById('notificationsList');
+            if (!container) return;
+            
+            if (unread.length === 0) {
+                container.innerHTML = '<p class="empty-state">Keine neuen Benachrichtigungen</p>';
+                return;
+            }
+            
+            container.innerHTML = unread.map(n => `
+                <div class="notification-card">
+                    <h4>🔔 Terminabsage von ${n.patientName}</h4>
+                    <p><strong>Termin:</strong> ${n.date} um ${n.time}</p>
+                    <p>${n.trafficLight.emoji} ${n.trafficLight.text}</p>
+                    
+                    ${n.newAppointmentRequested ? `
+                        <p><strong>Terminwunsch:</strong> ${n.preferences}</p>
+                        <button onclick="proposeNewAppointment(${n.appointmentId})" 
+                                style="background: #2196F3; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; margin: 5px;">
+                            📅 Terminvorschlag erstellen
+                        </button>
+                    ` : ''}
+                    
+                    <button onclick="acknowledgeNotification(${n.id})" 
+                            style="background: #666; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; margin: 5px;">
+                        Als gelesen markieren
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Terminvorschlag erstellen
+        function proposeNewAppointment(appointmentId) {
+            const appointments = getFromStorage('appointments') || [];
+            const appointment = appointments.find(a => a.id === appointmentId);
+            
+            if (!appointment) {
+                alert('Termin nicht gefunden!');
+                return;
+            }
+            
+            // Dialog für neuen Termin
+            const newDate = prompt(`Neuer Terminvorschlag für ${appointment.patientName}\n\nBitte Datum eingeben (TT.MM.JJJJ):`);
+            if (!newDate) return;
+            
+            const newTime = prompt('Bitte Uhrzeit eingeben (HH:MM):');
+            if (!newTime) return;
+            
+            // Vorschlag speichern
+            appointment.proposedNewAppointment = {
+                date: newDate,
+                time: newTime,
+                proposedBy: currentUser.id,
+                proposedAt: new Date().toISOString()
+            };
+            
+            saveToStorage('appointments', appointments);
+            
+            // Notification als gelesen markieren
+            const notifications = getFromStorage('practiceNotifications') || [];
+            const notification = notifications.find(n => n.appointmentId === appointmentId);
+            if (notification) {
+                notification.read = true;
+                notification.responded = true;
+                saveToStorage('practiceNotifications', notifications);
+            }
+            
+            alert(`✅ Terminvorschlag gesendet!\n\n${newDate} um ${newTime}\n\nDer Patient kann nun den Termin annehmen oder ablehnen.`);
+            
+            loadEmployeeNotifications();
+        }
+
+        // Benachrichtigung als gelesen markieren
+        function acknowledgeNotification(notificationId) {
+            const notifications = getFromStorage('practiceNotifications') || [];
+            const notification = notifications.find(n => n.id === notificationId);
+            
+            if (notification) {
+                notification.read = true;
+                saveToStorage('practiceNotifications', notifications);
+            }
+            
+            loadEmployeeNotifications();
         }
 
         // Load patient list and populate appointment select
