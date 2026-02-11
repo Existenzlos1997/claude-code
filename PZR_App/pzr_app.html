@@ -2259,6 +2259,10 @@
             const allReminders = getFromStorage('patientReminders') || [];
             const myReminders = allReminders.filter(r => r.patientId === currentUser.id);
             
+            // PATIENTENSPEZIFISCH: Nur Termine für diesen Patienten laden
+            const allAppointments = getFromStorage('appointments') || [];
+            const myAppointments = allAppointments.filter(apt => apt.patientId === currentUser.id);
+            
             if (myReminders.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -2282,7 +2286,7 @@
 
             container.innerHTML = activeReminders.map(rem => {
                 const reminderDate = new Date(rem.time);
-                const appointment = appointments.find(apt => apt.id === rem.appointmentId);
+                const appointment = myAppointments.find(apt => apt.id === rem.appointmentId);
                 
                 let typeLabel = '';
                 switch(rem.type) {
