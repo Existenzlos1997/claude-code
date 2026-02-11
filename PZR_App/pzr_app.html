@@ -1682,22 +1682,45 @@
             document.getElementById('patientEditPhone').value = currentUser.phone || '';
         }
 
-        // Load recommendations
+        // Load recommendations - PATIENTENSPEZIFISCH!
         function loadRecommendations() {
             const quickRec = document.getElementById('quickRecommendations');
             const practRec = document.getElementById('practitionerRecommendations');
             
-            if (currentUser.recommendations) {
-                const recItems = currentUser.recommendations.split('.').filter(r => r.trim());
-                quickRec.innerHTML = recItems.slice(0, 2).map(rec => `
-                    <div class="recommendation-item">
-                        <strong>Wichtig:</strong> ${rec.trim()}.
+            // WICHTIG: Nur EIGENE Empfehlungen des Patienten laden!
+            const allRecommendations = getFromStorage('patientRecommendations') || [];
+            const myRecommendations = allRecommendations.filter(rec => 
+                rec.patientId === currentUser.id
+            );
+            
+            if (myRecommendations.length > 0) {
+                // Neueste Empfehlungen zuerst
+                myRecommendations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                quickRec.innerHTML = myRecommendations.slice(0, 2).map(rec => `
+                    <div class="recommendation-item" style="border-left: 4px solid ${rec.type === 'implant' ? '#FF9800' : '#4CAF50'};">
+                        <h4>${rec.type === 'implant' ? '🦷 Implantation' : '✨ PZR'}</h4>
+                        <p><small>${formatDate(rec.createdAt)}</small></p>
+                        ${rec.recommendations ? rec.recommendations.map(r => `<p>💡 ${r}</p>`).join('') : ''}
+                        ${rec.customField1 ? `<p><strong>📋</strong> ${rec.customField1}</p>` : ''}
+                        ${rec.customField2 ? `<p><strong>📋</strong> ${rec.customField2}</p>` : ''}
+                        ${rec.customField3 ? `<p><strong>📋</strong> ${rec.customField3}</p>` : ''}
                     </div>
                 `).join('');
                 
-                practRec.innerHTML = recItems.map(rec => `
-                    <div class="recommendation-item">
-                        <strong>💡</strong> ${rec.trim()}.
+                practRec.innerHTML = myRecommendations.map(rec => `
+                    <div class="recommendation-item" style="border-left: 4px solid ${rec.type === 'implant' ? '#FF9800' : '#4CAF50'};">
+                        <h4>${rec.type === 'implant' ? '🦷 Implantations-Empfehlung' : '✨ PZR-Empfehlung'}</h4>
+                        <p><small>Erstellt am: ${formatDate(rec.createdAt)}</small></p>
+                        ${rec.risk ? `<p><strong>Risiko:</strong> ${rec.risk}</p>` : ''}
+                        ${rec.nextPZR ? `<p><strong>Nächste PZR:</strong> ${rec.nextPZR}</p>` : ''}
+                        ${rec.implantType ? `<p><strong>Typ:</strong> ${rec.implantType}</p>` : ''}
+                        ${rec.healingStatus ? `<p><strong>Heilung:</strong> ${rec.healingStatus}</p>` : ''}
+                        <h5>Empfehlungen:</h5>
+                        ${rec.recommendations ? rec.recommendations.map(r => `<p>💡 ${r}</p>`).join('') : ''}
+                        ${rec.customField1 ? `<p><strong>📋</strong> ${rec.customField1}</p>` : ''}
+                        ${rec.customField2 ? `<p><strong>📋</strong> ${rec.customField2}</p>` : ''}
+                        ${rec.customField3 ? `<p><strong>📋</strong> ${rec.customField3}</p>` : ''}
                     </div>
                 `).join('');
             } else {
@@ -2731,6 +2754,104 @@
             }
             
             loadEmployeeNotifications();
+        }
+
+        // EMPFEHLUNGEN ERSTELLEN - MIT IMPLANT + CUSTOM FIELDS!
+        function createPatientRecommendation(patientId) {
+            const patients = getFromStorage('patients') || [];
+            const patient = patients.find(p => p.id === patientId);
+            
+            if (!patient) {
+                alert('Patient nicht gefunden!');
+                return;
+            }
+            
+            // Typ auswählen: PZR oder Implant
+            const type = prompt('Empfehlungstyp:\n\n1 = PZR-Empfehlung\n2 = Implantations-Empfehlung\n\nBitte wählen (1 oder 2):');
+            
+            if (!type || (type !== '1' && type !== '2')) {
+                return;
+            }
+            
+            const recommendationType = type === '1' ? 'pzr' : 'implant';
+            
+            let recommendation = {
+                id: Date.now(),
+                patientId: patient.id,
+                patientName: patient.name,
+                employeeId: currentUser.id,
+                employeeName: currentUser.name,
+                type: recommendationType,
+                createdAt: new Date().toISOString(),
+                recommendations: []
+            };
+            
+            if (recommendationType === 'pzr') {
+                // PZR-Empfehlungen
+                const risk = prompt('Risiko-Bewertung:\n\n1 = NIEDRIG\n2 = MITTEL\n3 = HOCH\n\nBitte wählen:');
+                recommendation.risk = risk === '1' ? 'NIEDRIG' : risk === '2' ? 'MITTEL' : 'HOCH';
+                
+                const nextPZR = prompt('Nächste PZR in:\n\n1 = 3 Monate\n2 = 6 Monate\n3 = 12 Monate\n\nBitte wählen:');
+                recommendation.nextPZR = nextPZR === '1' ? '3 Monate' : nextPZR === '2' ? '6 Monate' : '12 Monate';
+                
+                // Standard PZR-Empfehlungen basierend auf Risiko
+                if (recommendation.risk === 'HOCH') {
+                    recommendation.recommendations = [
+                        'Täglich 2x Zahnseide verwenden',
+                        'Elektrische Zahnbürste empfohlen',
+                        'Mundspülung mit Chlorhexidin',
+                        'Interdentalbürsten nutzen',
+                        'Zucker reduzieren'
+                    ];
+                } else if (recommendation.risk === 'MITTEL') {
+                    recommendation.recommendations = [
+                        'Täglich Zahnseide verwenden',
+                        'Elektrische Zahnbürste empfohlen',
+                        'Mundspülung täglich',
+                        'Zuckerkonsum beachten'
+                    ];
+                } else {
+                    recommendation.recommendations = [
+                        'Weiter so! Gute Mundhygiene beibehalten',
+                        'Zahnseide regelmäßig nutzen',
+                        'Fluorid-Zahnpasta verwenden'
+                    ];
+                }
+            } else {
+                // IMPLANT-Empfehlungen
+                const implantType = prompt('Implantat-Typ:\n\n1 = Einzelimplantat\n2 = Brücke\n3 = Prothese\n\nBitte wählen:');
+                recommendation.implantType = implantType === '1' ? 'Einzelimplantat' : implantType === '2' ? 'Brücke' : 'Prothese';
+                
+                const healing = prompt('Heilungsstatus:\n\n1 = Sehr gut\n2 = Gut\n3 = Mittel\n\nBitte wählen:');
+                recommendation.healingStatus = healing === '1' ? 'Sehr gut' : healing === '2' ? 'Gut' : 'Mittel';
+                
+                // Standard Implant-Empfehlungen
+                recommendation.recommendations = [
+                    'Wunde schonen - 1 Woche',
+                    'Weiche Kost - 3-5 Tage',
+                    'Kein Sport - 1 Woche',
+                    'Mundspülung 2x täglich',
+                    'Nicht rauchen!',
+                    'Vorsichtig putzen um Implantation'
+                ];
+            }
+            
+            // CUSTOM FIELDS - 3 Freitextfelder!
+            const field1 = prompt('Custom-Feld 1 (z.B. Knochenqualität, Besonderheiten):');
+            if (field1) recommendation.customField1 = field1;
+            
+            const field2 = prompt('Custom-Feld 2 (z.B. Einheilzeit, Medikation):');
+            if (field2) recommendation.customField2 = field2;
+            
+            const field3 = prompt('Custom-Feld 3 (z.B. Nächste Kontrolle, Hinweise):');
+            if (field3) recommendation.customField3 = field3;
+            
+            // Speichern
+            const allRecommendations = getFromStorage('patientRecommendations') || [];
+            allRecommendations.push(recommendation);
+            saveToStorage('patientRecommendations', allRecommendations);
+            
+            alert(`✅ ${recommendationType === 'pzr' ? 'PZR' : 'Implantations'}-Empfehlung erstellt!\n\nFür: ${patient.name}\n\nDer Patient kann die Empfehlung in seinem Dashboard sehen.`);
         }
 
         // Load patient list and populate appointment select
