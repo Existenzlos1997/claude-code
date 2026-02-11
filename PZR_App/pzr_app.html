@@ -2060,7 +2060,9 @@
             // SCHRITT 6: Bestätigung an Patient
             alert(`✅ Absage-Anfrage gesendet!\n\nIhr Termin vom ${appointment.date} um ${appointment.time} wurde zur Absage vorgemerkt.\n\nDie Praxis wird Sie kontaktieren.${appointment.requestNewAppointment ? '\n\nIhre Terminwünsche wurden übermittelt.' : ''}`);
             
+            // UI aktualisieren
             loadPatientAppointments();
+            updateRemindersList(); // WICHTIG: Erinnerungen auch aktualisieren!
         }
 
         // Patient akzeptiert Terminvorschlag
@@ -2255,61 +2257,52 @@
         function updateRemindersList() {
             const container = document.getElementById('remindersList');
             
-            // PATIENTENSPEZIFISCH: Nur Erinnerungen für diesen Patienten laden
-            const allReminders = getFromStorage('patientReminders') || [];
-            const myReminders = allReminders.filter(r => r.patientId === currentUser.id);
-            
             // PATIENTENSPEZIFISCH: Nur Termine für diesen Patienten laden
             const allAppointments = getFromStorage('appointments') || [];
-            const myAppointments = allAppointments.filter(apt => apt.patientId === currentUser.id);
+            const myAppointments = allAppointments.filter(apt => apt.patientId === currentUser.id && apt.status !== 'cancelled-pending' && apt.status !== 'cancelled-confirmed');
             
-            if (myReminders.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p>Keine aktiven Erinnerungen.<br>Termine werden vom Behandler angelegt.</p>
-                    </div>
-                `;
-                return;
-            }
-
+            // AUTO-GENERATE ERINNERUNGEN aus Terminen
             const now = new Date();
-            const activeReminders = myReminders.filter(rem => new Date(rem.time) > now);
+            const upcomingAppointments = myAppointments.filter(apt => {
+                const aptDate = new Date(apt.date + ' ' + apt.time);
+                return aptDate > now;
+            });
             
-            if (activeReminders.length === 0) {
+            if (upcomingAppointments.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <p>Alle Erinnerungen sind abgelaufen.<br>Neue Termine werden vom Behandler angelegt.</p>
+                        <p>Keine bevorstehenden Termine.<br>Termine werden vom Behandler angelegt.</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = activeReminders.map(rem => {
-                const reminderDate = new Date(rem.time);
-                const appointment = myAppointments.find(apt => apt.id === rem.appointmentId);
+            // Zeige bevorstehende Termine als Erinnerungen
+            container.innerHTML = upcomingAppointments.map(apt => {
+                const aptDate = new Date(apt.date + ' ' + apt.time);
+                const daysUntil = Math.ceil((aptDate - now) / (1000 * 60 * 60 * 24));
                 
-                let typeLabel = '';
-                switch(rem.type) {
-                    case '24h': typeLabel = '24 Stunden vorher'; break;
-                    case '1h': typeLabel = '1 Stunde vorher'; break;
-                    case 'aftercare': typeLabel = 'Nachsorge (6 Monate)'; break;
-                }
-
-                // Include recommendations in reminder
-                let recommendationHint = '';
-                if (currentUser && currentUser.recommendations) {
-                    recommendationHint = `<p style="margin-top: 8px; padding: 8px; background: #fff3cd; border-radius: 6px; font-size: 12px;">
-                        💡 <strong>Denken Sie daran:</strong> ${currentUser.recommendations.split('.')[0]}.
-                    </p>`;
+                let urgencyClass = 'reminder-normal';
+                let urgencyIcon = '📅';
+                if (daysUntil <= 1) {
+                    urgencyClass = 'reminder-urgent';
+                    urgencyIcon = '🔴';
+                } else if (daysUntil <= 7) {
+                    urgencyClass = 'reminder-soon';
+                    urgencyIcon = '🟠';
+                } else {
+                    urgencyIcon = '🟢';
                 }
 
                 return `
-                    <div class="reminder-item">
-                        <h4>🔔 ${rem.message}</h4>
-                        <p>⏰ ${formatDate(reminderDate.toISOString().split('T')[0])} um ${reminderDate.toTimeString().slice(0,5)} Uhr</p>
-                        <p>📋 ${typeLabel}</p>
-                        ${appointment ? `<p>🦷 Termin: ${appointment.title}</p>` : ''}
-                        ${recommendationHint}
+                    <div class="reminder-item ${urgencyClass}">
+                        <h4>${urgencyIcon} Termin: ${apt.type || 'PZR'}</h4>
+                        <p>⏰ ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                        <p>⏱ In ${daysUntil} Tag${daysUntil === 1 ? '' : 'en'}</p>
+                        <button onclick="cancelPatientAppointment(${apt.id})" 
+                                style="margin-top: 10px; background: #f44336; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">
+                            ❌ Termin absagen
+                        </button>
                     </div>
                 `;
             }).join('');
