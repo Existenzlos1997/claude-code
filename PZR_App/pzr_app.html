@@ -2255,7 +2255,11 @@
         function updateRemindersList() {
             const container = document.getElementById('remindersList');
             
-            if (reminders.length === 0) {
+            // PATIENTENSPEZIFISCH: Nur Erinnerungen für diesen Patienten laden
+            const allReminders = getFromStorage('patientReminders') || [];
+            const myReminders = allReminders.filter(r => r.patientId === currentUser.id);
+            
+            if (myReminders.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <p>Keine aktiven Erinnerungen.<br>Termine werden vom Behandler angelegt.</p>
@@ -2265,7 +2269,7 @@
             }
 
             const now = new Date();
-            const activeReminders = reminders.filter(rem => new Date(rem.time) > now);
+            const activeReminders = myReminders.filter(rem => new Date(rem.time) > now);
             
             if (activeReminders.length === 0) {
                 container.innerHTML = `
