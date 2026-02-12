@@ -827,7 +827,7 @@
 
             <div id="employeeLogin" class="hidden">
                 <div class="form-group">
-                    <label for="employeeId">Mitarbeiter-ID</label>
+                    <label for="employeeId">Behandler-ID</label>
                     <input type="text" id="employeeId" placeholder="z.B. MA-001">
                 </div>
                 <div class="form-group">
@@ -840,7 +840,7 @@
             <p style="margin-top: 20px; font-size: 12px; color: #999;">
                 Demo-Zugänge:<br>
                 Patient: PAT-12345 / PIN: 1234<br>
-                Mitarbeiter: MA-001 / Passwort: admin
+                Behandler: MA-001 / Passwort: admin
             </p>
         </div>
 
@@ -1586,7 +1586,7 @@
             const password = document.getElementById('employeePassword').value.trim();
 
             if (!employeeId || !password) {
-                alert('Bitte Mitarbeiter-ID und Passwort eingeben.');
+                alert('Bitte Behandler-ID und Passwort eingeben.');
                 return;
             }
 
