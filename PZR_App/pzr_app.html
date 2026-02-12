@@ -1071,6 +1071,7 @@
                 <div class="tabs">
                     <button class="tab active" onclick="switchTab('patientManagement', event)">Patienten</button>
                     <button class="tab" onclick="switchTab('employeeAppointments', event)">Termine</button>
+                    <button class="tab" onclick="switchTab('employeeRecommendations', event)">📋 Empfehlungen</button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
                 </div>
 
@@ -1134,6 +1135,63 @@
                         <h3>Alle Termine</h3>
                         <div id="employeeAppointmentsList">
                             <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Employee Recommendations Tab -->
+                    <div id="employeeRecommendations" class="tab-content">
+                        <h2>📋 Behandlungsempfehlungen erstellen</h2>
+                        <p style="color: #666; margin-bottom: 20px;">Erstellen Sie Empfehlungen für existierende Patienten - ohne diese neu anlegen zu müssen!</p>
+                        
+                        <div class="form-group">
+                            <label for="recommendationPatientSelect">Patient auswählen *</label>
+                            <select id="recommendationPatientSelect" onchange="loadSelectedPatientInfo()">
+                                <option value="">-- Bitte Patient auswählen --</option>
+                            </select>
+                        </div>
+                        
+                        <div id="selectedPatientInfo" style="display: none; background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <h4 style="margin: 0 0 10px 0;">👤 Ausgewählter Patient:</h4>
+                            <div id="selectedPatientDetails"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="recommendationType">Empfehlungstyp *</label>
+                            <select id="recommendationType" onchange="toggleRecommendationFields()">
+                                <option value="">-- Typ wählen --</option>
+                                <option value="pzr">PZR-Empfehlung</option>
+                                <option value="implant">Implantations-Empfehlung</option>
+                            </select>
+                        </div>
+                        
+                        <div id="recommendationFields" style="display: none;">
+                            <h3 style="margin: 20px 0 15px 0;">Individuelle Empfehlungsfelder</h3>
+                            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Nutzen Sie diese Felder für spezifische Hinweise:</p>
+                            
+                            <div class="form-group voice-input-container">
+                                <label for="customField1">Feld 1 (z.B. Knochenqualität, Zahnstatus)</label>
+                                <textarea id="customField1" placeholder="z.B. Knochenqualität: Sehr gut, ausreichend für Sofortbelastung"></textarea>
+                                <button type="button" class="voice-btn" onclick="toggleVoiceInput('customField1')" title="Spracheingabe">🎤</button>
+                                <div id="customField1-status" class="voice-status"></div>
+                            </div>
+                            
+                            <div class="form-group voice-input-container">
+                                <label for="customField2">Feld 2 (z.B. Einheilzeit, Behandlungsdauer)</label>
+                                <textarea id="customField2" placeholder="z.B. Einheilzeit: 3-4 Monate, Kontrolle nach 1 Woche"></textarea>
+                                <button type="button" class="voice-btn" onclick="toggleVoiceInput('customField2')" title="Spracheingabe">🎤</button>
+                                <div id="customField2-status" class="voice-status"></div>
+                            </div>
+                            
+                            <div class="form-group voice-input-container">
+                                <label for="customField3">Feld 3 (z.B. Nächste Schritte, Kontrolle)</label>
+                                <textarea id="customField3" placeholder="z.B. Nächste Kontrolle: 1 Woche, dann Nahtentfernung"></textarea>
+                                <button type="button" class="voice-btn" onclick="toggleVoiceInput('customField3')" title="Spracheingabe">🎤</button>
+                                <div id="customField3-status" class="voice-status"></div>
+                            </div>
+                            
+                            <button class="btn" onclick="createRecommendationForPatient()" style="margin-top: 20px;">
+                                ✅ Empfehlung speichern
+                            </button>
                         </div>
                     </div>
 
@@ -2128,6 +2186,128 @@
             loadPatientAppointments();
         }
 
+        // ===== BEHANDLUNGS-EMPFEHLUNGEN FÜR EXISTIERENDE PATIENTEN =====
+        
+        // Patienten in Dropdown laden
+        function loadPatientsForRecommendations() {
+            const patients = getFromStorage('patients') || [];
+            const select = document.getElementById('recommendationPatientSelect');
+            
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">-- Bitte Patient auswählen --</option>';
+            
+            patients.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.patientNumber} - ${p.name}`;
+                select.appendChild(option);
+            });
+        }
+        
+        // Info zum ausgewählten Patienten anzeigen
+        function loadSelectedPatientInfo() {
+            const patientId = document.getElementById('recommendationPatientSelect').value;
+            const infoDiv = document.getElementById('selectedPatientInfo');
+            const detailsDiv = document.getElementById('selectedPatientDetails');
+            
+            if (!patientId) {
+                infoDiv.style.display = 'none';
+                return;
+            }
+            
+            const patients = getFromStorage('patients') || [];
+            const patient = patients.find(p => p.id === patientId);
+            
+            if (!patient) {
+                infoDiv.style.display = 'none';
+                return;
+            }
+            
+            detailsDiv.innerHTML = `
+                <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
+                <p><strong>Name:</strong> ${patient.name}</p>
+                <p><strong>E-Mail:</strong> ${patient.email || 'Nicht angegeben'}</p>
+                <p><strong>Telefon:</strong> ${patient.phone || 'Nicht angegeben'}</p>
+            `;
+            
+            infoDiv.style.display = 'block';
+        }
+        
+        // Empfehlungsfelder ein/ausblenden
+        function toggleRecommendationFields() {
+            const type = document.getElementById('recommendationType').value;
+            const fieldsDiv = document.getElementById('recommendationFields');
+            
+            if (type) {
+                fieldsDiv.style.display = 'block';
+            } else {
+                fieldsDiv.style.display = 'none';
+            }
+        }
+        
+        // Empfehlung für existierenden Patienten erstellen
+        function createRecommendationForPatient() {
+            const patientId = document.getElementById('recommendationPatientSelect').value;
+            const type = document.getElementById('recommendationType').value;
+            const field1 = document.getElementById('customField1').value.trim();
+            const field2 = document.getElementById('customField2').value.trim();
+            const field3 = document.getElementById('customField3').value.trim();
+            
+            if (!patientId) {
+                alert('❌ Bitte Patient auswählen!');
+                return;
+            }
+            
+            if (!type) {
+                alert('❌ Bitte Empfehlungstyp wählen!');
+                return;
+            }
+            
+            if (!field1 && !field2 && !field3) {
+                alert('❌ Bitte mindestens ein Empfehlungsfeld ausfüllen!');
+                return;
+            }
+            
+            const patients = getFromStorage('patients') || [];
+            const patient = patients.find(p => p.id === patientId);
+            
+            if (!patient) {
+                alert('❌ Patient nicht gefunden!');
+                return;
+            }
+            
+            const recommendation = {
+                id: Date.now(),
+                patientId: patientId,
+                patientName: patient.name,
+                patientNumber: patient.patientNumber,
+                type: type,
+                customField1: field1,
+                customField2: field2,
+                customField3: field3,
+                createdBy: currentUser.id,
+                createdByName: currentUser.name,
+                createdAt: new Date().toISOString(),
+                status: 'active'
+            };
+            
+            const recommendations = getFromStorage('patientRecommendations') || [];
+            recommendations.push(recommendation);
+            saveToStorage('patientRecommendations', recommendations);
+            
+            alert(`✅ Empfehlung erfolgreich gespeichert!\n\nPatient: ${patient.name}\nTyp: ${type === 'pzr' ? 'PZR' : 'Implantation'}\n\nDer Patient kann die Empfehlung in seinem Dashboard einsehen.`);
+            
+            // Felder leeren
+            document.getElementById('customField1').value = '';
+            document.getElementById('customField2').value = '';
+            document.getElementById('customField3').value = '';
+            document.getElementById('recommendationType').value = '';
+            document.getElementById('recommendationPatientSelect').value = '';
+            document.getElementById('selectedPatientInfo').style.display = 'none';
+            document.getElementById('recommendationFields').style.display = 'none';
+        }
+
         // Create new patient
         function createNewPatient() {
             const patientNumber = document.getElementById('newPatientNumber').value.trim();
@@ -2250,6 +2430,11 @@
             // Check notification permission when opening reminders tab
             if (tabName === 'reminders') {
                 checkNotificationPermission();
+            }
+            
+            // Load patients when opening employee recommendations tab
+            if (tabName === 'employeeRecommendations') {
+                loadPatientsForRecommendations();
             }
         }
 
