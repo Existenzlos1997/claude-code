@@ -1144,6 +1144,15 @@
                         <p style="color: #666; margin-bottom: 20px;">Erstellen Sie Empfehlungen für existierende Patienten - ohne diese neu anlegen zu müssen!</p>
                         
                         <div class="form-group">
+                            <label for="patientSearchInput">🔍 Patient suchen (Nummer oder Name)</label>
+                            <input type="text" 
+                                   id="patientSearchInput" 
+                                   placeholder="z.B. PAT-12345 oder Max Mustermann..." 
+                                   oninput="filterPatients()"
+                                   style="margin-bottom: 10px;">
+                        </div>
+                        
+                        <div class="form-group">
                             <label for="recommendationPatientSelect">Patient auswählen *</label>
                             <select id="recommendationPatientSelect" onchange="loadSelectedPatientInfo()">
                                 <option value="">-- Bitte Patient auswählen --</option>
@@ -1292,33 +1301,6 @@
                 <div class="form-group">
                     <label for="editPatientPhone">Telefon</label>
                     <input type="text" id="editPatientPhone">
-                </div>
-
-                <h3>Behandler-Empfehlungen</h3>
-                
-                <div class="mic-permission-info">
-                    <strong>🎤 Spracheingabe:</strong> Klicken Sie auf das Mikrofon-Symbol neben den Feldern, um Empfehlungen per Sprache zu erfassen.
-                </div>
-                
-                <div class="form-group voice-input-container">
-                    <label for="editRecommendations">Empfehlungen nach PZR</label>
-                    <textarea id="editRecommendations"></textarea>
-                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editRecommendations')" title="Spracheingabe">🎤</button>
-                    <div id="editRecommendations-status" class="voice-status"></div>
-                </div>
-
-                <div class="form-group voice-input-container">
-                    <label for="editBrushingTechnique">Putztechnik-Anpassungen</label>
-                    <textarea id="editBrushingTechnique"></textarea>
-                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editBrushingTechnique')" title="Spracheingabe">🎤</button>
-                    <div id="editBrushingTechnique-status" class="voice-status"></div>
-                </div>
-
-                <div class="form-group voice-input-container">
-                    <label for="editToolsUsage">Hilfsmittel und Anwendung</label>
-                    <textarea id="editToolsUsage"></textarea>
-                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editToolsUsage')" title="Spracheingabe">🎤</button>
-                    <div id="editToolsUsage-status" class="voice-status"></div>
                 </div>
 
                 <div class="form-group voice-input-container">
@@ -2243,6 +2225,55 @@
                 fieldsDiv.style.display = 'block';
             } else {
                 fieldsDiv.style.display = 'none';
+            }
+        }
+        
+        // Lade Patienten für Empfehlungen mit Suchfilter
+        function loadPatientsForRecommendations() {
+            const patients = getFromStorage('patients') || [];
+            const select = document.getElementById('recommendationPatientSelect');
+            
+            select.innerHTML = '<option value="">-- Bitte Patient auswählen --</option>';
+            
+            patients.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.patientNumber} - ${p.name}`;
+                select.appendChild(option);
+            });
+        }
+        
+        // Filter Patienten nach Nummer oder Name (Echtzeit-Suche)
+        function filterPatients() {
+            const searchTerm = document.getElementById('patientSearchInput').value.toLowerCase().trim();
+            const patients = getFromStorage('patients') || [];
+            const select = document.getElementById('recommendationPatientSelect');
+            
+            select.innerHTML = '<option value="">-- Bitte Patient auswählen --</option>';
+            
+            // Filter Patienten
+            const filtered = patients.filter(p => {
+                if (!searchTerm) return true; // Zeige alle wenn leer
+                const number = (p.patientNumber || '').toLowerCase();
+                const name = (p.name || '').toLowerCase();
+                return number.includes(searchTerm) || name.includes(searchTerm);
+            });
+            
+            // Dropdown befüllen
+            filtered.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.patientNumber} - ${p.name}`;
+                select.appendChild(option);
+            });
+            
+            // Info wenn keine Ergebnisse
+            if (filtered.length === 0 && searchTerm) {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = "Keine Patienten gefunden";
+                option.disabled = true;
+                select.appendChild(option);
             }
         }
         
