@@ -1143,21 +1143,22 @@
                         <h2>📋 Behandlungsempfehlungen erstellen</h2>
                         <p style="color: #666; margin-bottom: 20px;">Erstellen Sie Empfehlungen für existierende Patienten - ohne diese neu anlegen zu müssen!</p>
                         
-                        <div class="form-group">
-                            <label for="patientSearchInput">🔍 Patient suchen (Nummer oder Name)</label>
+                        <div class="form-group" style="position: relative;">
+                            <label for="patientSearchInput">🔍 Patient suchen (Nummer oder Name) *</label>
                             <input type="text" 
                                    id="patientSearchInput" 
                                    placeholder="z.B. PAT-12345 oder Max Mustermann..." 
-                                   oninput="filterPatients()"
-                                   style="margin-bottom: 10px;">
+                                   oninput="showPatientSuggestions()"
+                                   onblur="hidePatientSuggestions()"
+                                   autocomplete="off"
+                                   style="width: 100%; padding: 10px; font-size: 14px;">
+                            
+                            <!-- Vorschläge-Liste -->
+                            <div id="patientSuggestions" style="display: none; position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 100%; margin-top: 2px;"></div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="recommendationPatientSelect">Patient auswählen *</label>
-                            <select id="recommendationPatientSelect" onchange="loadSelectedPatientInfo()">
-                                <option value="">-- Bitte Patient auswählen --</option>
-                            </select>
-                        </div>
+                        <!-- Hidden Field für gewählte Patient-ID -->
+                        <input type="hidden" id="selectedPatientId">
                         
                         <div id="selectedPatientInfo" style="display: none; background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
                             <h4 style="margin: 0 0 10px 0;">👤 Ausgewählter Patient:</h4>
@@ -2189,7 +2190,7 @@
         
         // Info zum ausgewählten Patienten anzeigen
         function loadSelectedPatientInfo() {
-            const patientId = document.getElementById('recommendationPatientSelect').value;
+            const patientId = document.getElementById('selectedPatientId').value;
             const infoDiv = document.getElementById('selectedPatientInfo');
             const detailsDiv = document.getElementById('selectedPatientDetails');
             
@@ -2228,58 +2229,70 @@
             }
         }
         
-        // Lade Patienten für Empfehlungen mit Suchfilter
+        // Lade Patienten für Empfehlungen (clear fields when opening tab)
         function loadPatientsForRecommendations() {
-            const patients = getFromStorage('patients') || [];
-            const select = document.getElementById('recommendationPatientSelect');
-            
-            select.innerHTML = '<option value="">-- Bitte Patient auswählen --</option>';
-            
-            patients.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.id;
-                option.textContent = `${p.patientNumber} - ${p.name}`;
-                select.appendChild(option);
-            });
+            document.getElementById('patientSearchInput').value = '';
+            document.getElementById('selectedPatientId').value = '';
+            document.getElementById('patientSuggestions').style.display = 'none';
+            document.getElementById('selectedPatientInfo').style.display = 'none';
         }
         
-        // Filter Patienten nach Nummer oder Name (Echtzeit-Suche)
-        function filterPatients() {
-            const searchTerm = document.getElementById('patientSearchInput').value.toLowerCase().trim();
+        // Show patient suggestions (Autocomplete)
+        function showPatientSuggestions() {
+            const input = document.getElementById('patientSearchInput');
+            const searchTerm = input.value.toLowerCase().trim();
+            const suggestions = document.getElementById('patientSuggestions');
+            
+            if (!searchTerm) {
+                suggestions.style.display = 'none';
+                document.getElementById('selectedPatientId').value = '';
+                return;
+            }
+            
             const patients = getFromStorage('patients') || [];
-            const select = document.getElementById('recommendationPatientSelect');
-            
-            select.innerHTML = '<option value="">-- Bitte Patient auswählen --</option>';
-            
-            // Filter Patienten
             const filtered = patients.filter(p => {
-                if (!searchTerm) return true; // Zeige alle wenn leer
                 const number = (p.patientNumber || '').toLowerCase();
                 const name = (p.name || '').toLowerCase();
                 return number.includes(searchTerm) || name.includes(searchTerm);
             });
             
-            // Dropdown befüllen
-            filtered.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.id;
-                option.textContent = `${p.patientNumber} - ${p.name}`;
-                select.appendChild(option);
-            });
-            
-            // Info wenn keine Ergebnisse
-            if (filtered.length === 0 && searchTerm) {
-                const option = document.createElement('option');
-                option.value = "";
-                option.textContent = "Keine Patienten gefunden";
-                option.disabled = true;
-                select.appendChild(option);
+            if (filtered.length === 0) {
+                suggestions.innerHTML = '<div style="padding: 10px; color: #999; cursor: default;">Keine Patienten gefunden</div>';
+                suggestions.style.display = 'block';
+                return;
             }
+            
+            suggestions.innerHTML = filtered.map(p => `
+                <div style="padding: 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0;" 
+                     onmouseover="this.style.background='#f0f9ff'" 
+                     onmouseout="this.style.background='white'"
+                     onmousedown="selectPatientFromSuggestion('${p.id}', '${p.patientNumber}', '${p.name}')">
+                    <strong>${p.patientNumber}</strong> - ${p.name}
+                </div>
+            `).join('');
+            
+            suggestions.style.display = 'block';
+        }
+        
+        // Select patient from suggestion
+        function selectPatientFromSuggestion(id, number, name) {
+            document.getElementById('patientSearchInput').value = `${number} - ${name}`;
+            document.getElementById('selectedPatientId').value = id;
+            document.getElementById('patientSuggestions').style.display = 'none';
+            
+            loadSelectedPatientInfo();
+        }
+        
+        // Hide suggestions
+        function hidePatientSuggestions() {
+            setTimeout(() => {
+                document.getElementById('patientSuggestions').style.display = 'none';
+            }, 200);
         }
         
         // Empfehlung für existierenden Patienten erstellen
         function createRecommendationForPatient() {
-            const patientId = document.getElementById('recommendationPatientSelect').value;
+            const patientId = document.getElementById('selectedPatientId').value;
             const type = document.getElementById('recommendationType').value;
             const field1 = document.getElementById('customField1').value.trim();
             const field2 = document.getElementById('customField2').value.trim();
