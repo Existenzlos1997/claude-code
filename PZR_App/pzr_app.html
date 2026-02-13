@@ -2249,7 +2249,7 @@
                 return;
             }
             
-            const patients = getFromStorage('patients') || [];
+            const patients = getFromStorage('pzrPatients') || [];
             const filtered = patients.filter(p => {
                 const number = (p.patientNumber || '').toLowerCase();
                 const name = (p.name || '').toLowerCase();
@@ -2313,7 +2313,7 @@
                 return;
             }
             
-            const patients = getFromStorage('patients') || [];
+            const patients = getFromStorage('pzrPatients') || [];
             const patient = patients.find(p => p.id === patientId);
             
             if (!patient) {
