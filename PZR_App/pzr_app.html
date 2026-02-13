@@ -1097,12 +1097,17 @@
                         <div class="appointment-form">
                             <h3>Neuer Termin</h3>
                             
-                            <div class="form-group">
-                                <label for="appointmentPatient">Patient *</label>
-                                <select id="appointmentPatient">
-                                    <option value="">Bitte wählen...</option>
-                                </select>
+                            <div class="form-group" style="position: relative;">
+                                <label for="appointmentPatientSearch">🔍 Patient suchen (Nummer oder Name) *</label>
+                                <input type="text" 
+                                       id="appointmentPatientSearch" 
+                                       placeholder="z.B. PAT-12345 oder Max Mustermann..." 
+                                       oninput="showAppointmentPatientSuggestions()"
+                                       onblur="hideAppointmentPatientSuggestions()"
+                                       autocomplete="off">
+                                <div id="appointmentPatientSuggestions" style="display: none; position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 100%;"></div>
                             </div>
+                            <input type="hidden" id="selectedAppointmentPatientId">
 
                             <div class="form-group">
                                 <label for="appointmentTitle">Bezeichnung</label>
@@ -1645,6 +1650,9 @@
 
         // Show main app after login
         function showMainApp() {
+            // Initialize demo data if not present
+            initDemoData();
+            
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
 
@@ -2290,6 +2298,59 @@
             }, 200);
         }
         
+        // ===== APPOINTMENT PATIENT SEARCH (Autocomplete) =====
+        
+        // Show appointment patient suggestions
+        function showAppointmentPatientSuggestions() {
+            const input = document.getElementById('appointmentPatientSearch');
+            const searchTerm = input.value.toLowerCase().trim();
+            const suggestions = document.getElementById('appointmentPatientSuggestions');
+            
+            if (!searchTerm) {
+                suggestions.style.display = 'none';
+                document.getElementById('selectedAppointmentPatientId').value = '';
+                return;
+            }
+            
+            const patients = getFromStorage('pzrPatients') || [];
+            const filtered = patients.filter(p => {
+                const number = (p.patientNumber || '').toLowerCase();
+                const name = (p.name || '').toLowerCase();
+                return number.includes(searchTerm) || name.includes(searchTerm);
+            });
+            
+            if (filtered.length === 0) {
+                suggestions.innerHTML = '<div style="padding: 10px; color: #999; cursor: default;">Keine Patienten gefunden</div>';
+                suggestions.style.display = 'block';
+                return;
+            }
+            
+            suggestions.innerHTML = filtered.map(p => `
+                <div style="padding: 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0;"
+                     onmouseover="this.style.background='#f0f9ff'" 
+                     onmouseout="this.style.background='white'"
+                     onmousedown="selectAppointmentPatient('${p.id}', '${p.patientNumber}', '${p.name}')">
+                    <strong>${p.patientNumber}</strong> - ${p.name}
+                </div>
+            `).join('');
+            
+            suggestions.style.display = 'block';
+        }
+        
+        // Select patient for appointment
+        function selectAppointmentPatient(id, number, name) {
+            document.getElementById('appointmentPatientSearch').value = `${number} - ${name}`;
+            document.getElementById('selectedAppointmentPatientId').value = id;
+            document.getElementById('appointmentPatientSuggestions').style.display = 'none';
+        }
+        
+        // Hide appointment patient suggestions
+        function hideAppointmentPatientSuggestions() {
+            setTimeout(() => {
+                document.getElementById('appointmentPatientSuggestions').style.display = 'none';
+            }, 200);
+        }
+        
         // Empfehlung für existierenden Patienten erstellen
         function createRecommendationForPatient() {
             const patientId = document.getElementById('selectedPatientId').value;
@@ -2718,7 +2779,7 @@
 
         // Create appointment (employee)
         function createAppointment() {
-            const patientId = document.getElementById('appointmentPatient').value;
+            const patientId = document.getElementById('selectedAppointmentPatientId').value;
             const title = document.getElementById('appointmentTitle').value.trim();
             const date = document.getElementById('appointmentDate').value;
             const time = document.getElementById('appointmentTime').value;
@@ -2967,11 +3028,8 @@
             loadEmployeeAppointmentsList();
             
             // Populate patient select for appointments
-            const select = document.getElementById('appointmentPatient');
-            if (select) {
-                select.innerHTML = '<option value="">Bitte wählen...</option>' + 
-                    patients.map(p => `<option value="${p.id}">${p.name} (${p.patientNumber})</option>`).join('');
-            }
+            // Note: appointmentPatient select has been replaced with autocomplete search
+            // No longer need to populate select dropdown
         }
 
         // Initialize app
