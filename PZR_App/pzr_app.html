@@ -608,6 +608,46 @@
             margin-top: 15px;
         }
 
+        /* Appointment Cancellation Styles */
+        .appointment-pending-cancel {
+            color: #ff6b6b;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .appointment-cancelled {
+            color: #d32f2f;
+            text-decoration: line-through;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-left: 8px;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge {
+            background: #d32f2f;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -1087,6 +1127,7 @@
                 <div class="tabs">
                     <button class="tab active" onclick="switchTab('patientManagement', event)">Patienten</button>
                     <button class="tab" onclick="switchTab('employeeAppointments', event)">Termine</button>
+                    <button class="tab" onclick="switchTab('cancellationRequests', event)">📋 Terminanfragen <span id="pendingCancellationsCount" class="badge" style="display:none;"></span></button>
                     <button class="tab" onclick="switchTab('employeeRecommendations', event)">📋 Empfehlungen</button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
                 </div>
@@ -1156,6 +1197,16 @@
                         <h3>Alle Termine</h3>
                         <div id="employeeAppointmentsList">
                             <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Cancellation Requests Tab -->
+                    <div id="cancellationRequests" class="tab-content">
+                        <h2>📋 Terminabsage-Anfragen</h2>
+                        <p style="color: #666; margin-bottom: 20px;">Hier sehen Sie alle Terminabsagen, die noch auf Ihre Bestätigung warten.</p>
+                        
+                        <div id="pendingCancellationsList">
+                            <!-- Will be populated by loadPendingCancellations() -->
                         </div>
                     </div>
 
@@ -1521,6 +1572,13 @@
             }
         }
 
+        // Appointment status constants
+        const APPOINTMENT_STATUS = {
+            ACTIVE: 'active',
+            PENDING_CANCEL: 'pending_cancel',
+            CANCELLED: 'cancelled'
+        };
+
         // Initialize demo data
         function initDemoData() {
             const savedPatients = localStorage.getItem('pzrPatients');
@@ -1814,15 +1872,27 @@
                     const daysUntil = Math.ceil((appointmentDate - now) / (1000 * 60 * 60 * 24));
                     const tl = getTrafficLight(apt.date + ' ' + apt.time);
                     
-                    // CHECK CANCELLED-PENDING STATUS
-                    if (apt.status === 'cancelled-pending' || apt.status === 'cancelled-confirmed') {
+                    // CHECK STATUS - NEW STATUS SYSTEM
+                    let cssClass = '';
+                    let statusBadge = '';
+                    
+                    if (apt.status === APPOINTMENT_STATUS.PENDING_CANCEL || apt.status === 'cancelled-pending') {
+                        cssClass = 'appointment-pending-cancel';
+                        statusBadge = '<span class="status-badge status-pending">🟡 Wartet auf Bestätigung</span>';
+                    } else if (apt.status === APPOINTMENT_STATUS.CANCELLED || apt.status === 'cancelled-confirmed') {
+                        cssClass = 'appointment-cancelled';
+                        statusBadge = '<span class="status-badge status-cancelled">⛔ Abgesagt</span>';
+                    }
+                    
+                    // CANCELLED/PENDING APPOINTMENT
+                    if (cssClass) {
                         return `
-                            <div class="appointment-item appointment-cancelled-pending">
-                                <h4 style="text-decoration: line-through; text-decoration-color: #f44336;">
+                            <div class="appointment-item ${cssClass}">
+                                <h4>
                                     ${apt.title}
-                                    <span class="status-badge-cancellation">Absage läuft</span>
+                                    ${statusBadge}
                                 </h4>
-                                <p style="text-decoration: line-through;">📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
+                                <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
                                 ${tl ? `<p class="${tl.cssClass}">${tl.emoji} ${tl.text}</p>` : ''}
                                 
                                 ${apt.requestNewAppointment ? `
@@ -1849,7 +1919,7 @@
                         `;
                     }
                     
-                    // NORMAL APPOINTMENT
+                    // NORMAL/ACTIVE APPOINTMENT
                     const trafficLight = `
                         <p class="${tl.cssClass}" style="padding: 8px; border-radius: 8px; margin-top: 8px; font-weight: 600;">
                             ${tl.emoji} ${tl.text}
@@ -2108,8 +2178,11 @@
                 return;
             }
             
-            // SCHRITT 3: Status ändern
-            appointment.status = 'cancelled-pending';
+            // SCHRITT 3: Status auf PENDING_CANCEL setzen (wartet auf Behandler)
+            appointment.status = APPOINTMENT_STATUS.PENDING_CANCEL;
+            appointment.cancelledBy = 'patient';
+            appointment.cancelledAt = new Date().toISOString();
+            appointment.cancelReason = `${tl.emoji} ${tl.text}`;
             appointment.cancellationDate = new Date().toISOString();
             appointment.cancellationReason = 'Patient-initiated';
             
@@ -2145,11 +2218,109 @@
             saveToStorage('practiceNotifications', notifications);
             
             // SCHRITT 6: Bestätigung an Patient
-            alert(`✅ Absage-Anfrage gesendet!\n\nIhr Termin vom ${appointment.date} um ${appointment.time} wurde zur Absage vorgemerkt.\n\nDie Praxis wird Sie kontaktieren.${appointment.requestNewAppointment ? '\n\nIhre Terminwünsche wurden übermittelt.' : ''}`);
+            alert(`✅ Absage-Anfrage gesendet!\n\nIhr Termin vom ${appointment.date} um ${appointment.time} wurde zur Absage vorgemerkt.\n\n🟡 Status: Wartet auf Behandler-Bestätigung\n\nDie Praxis wird Ihre Absage prüfen und bestätigen.${appointment.requestNewAppointment ? '\n\nIhre Terminwünsche wurden übermittelt.' : ''}`);
             
             // UI aktualisieren
             loadPatientAppointments();
             updateRemindersList(); // WICHTIG: Erinnerungen auch aktualisieren!
+        }
+
+        // Behandler bestätigt Terminabsage
+        function approveAppointmentCancellation(appointmentId) {
+            const appointments = getFromStorage('pzrAppointments') || [];
+            const appointment = appointments.find(a => a.id === appointmentId);
+            
+            if (!appointment) {
+                alert('❌ Termin nicht gefunden!');
+                return;
+            }
+            
+            // Status auf CANCELLED setzen
+            appointment.status = APPOINTMENT_STATUS.CANCELLED;
+            appointment.approvedBy = window.currentUserName || 'Behandler';
+            appointment.approvedAt = new Date().toISOString();
+            
+            saveToStorage('pzrAppointments', appointments);
+            
+            alert('✅ Terminabsage wurde bestätigt!\n\nDer Patient wurde informiert.\nDer Termin bleibt in der Liste (durchgestrichen).');
+            
+            // UI aktualisieren
+            loadPendingCancellations();
+        }
+
+        // Behandler lehnt Terminabsage ab
+        function rejectAppointmentCancellation(appointmentId) {
+            const appointments = getFromStorage('pzrAppointments') || [];
+            const appointment = appointments.find(a => a.id === appointmentId);
+            
+            if (!appointment) {
+                alert('❌ Termin nicht gefunden!');
+                return;
+            }
+            
+            // Status zurück auf ACTIVE
+            appointment.status = APPOINTMENT_STATUS.ACTIVE;
+            delete appointment.cancelledBy;
+            delete appointment.cancelledAt;
+            delete appointment.cancelReason;
+            
+            saveToStorage('pzrAppointments', appointments);
+            
+            alert('✅ Terminabsage wurde abgelehnt!\n\nDer Termin bleibt bestehen.\nDer Patient wurde informiert.');
+            
+            // UI aktualisieren
+            loadPendingCancellations();
+        }
+
+        // Lädt offene Terminabsage-Anfragen für Behandler
+        function loadPendingCancellations() {
+            const appointments = getFromStorage('pzrAppointments') || [];
+            const patients = getFromStorage('pzrPatients') || [];
+            
+            // Filtere Termine mit Status 'pending_cancel'
+            const pending = appointments.filter(
+                a => a.status === APPOINTMENT_STATUS.PENDING_CANCEL
+            );
+            
+            // Zeige Badge mit Anzahl
+            const badge = document.getElementById('pendingCancellationsCount');
+            if (badge) {
+                badge.textContent = pending.length || '';
+                badge.style.display = pending.length > 0 ? 'inline' : 'none';
+            }
+            
+            // Erstelle Liste-HTML
+            const html = pending.map(appointment => {
+                const patient = patients.find(p => p.id === appointment.patientId);
+                return `
+                    <div class="cancellation-request-item" style="background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #ff6b6b;">
+                        <div style="margin-bottom: 10px;">
+                            <strong style="font-size: 1.1em;">📋 ${patient?.patientNumber || 'Unbekannt'}</strong> - ${patient?.firstName} ${patient?.lastName}
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            📅 <strong>${new Date(appointment.date).toLocaleDateString('de-DE')}</strong> um ⏰ <strong>${appointment.time}</strong>
+                        </div>
+                        <div style="margin-bottom: 12px; padding: 8px; background: #fff3cd; border-radius: 4px;">
+                            <strong>Grund:</strong> ${appointment.cancelReason || 'Keine Angabe'}
+                        </div>
+                        <div class="action-buttons">
+                            <button onclick="approveAppointmentCancellation('${appointment.id}')" 
+                                    style="background: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">
+                                ✅ Absage bestätigen
+                            </button>
+                            <button onclick="rejectAppointmentCancellation('${appointment.id}')" 
+                                    style="background: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">
+                                ❌ Absage ablehnen
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            const listEl = document.getElementById('pendingCancellationsList');
+            if (listEl) {
+                listEl.innerHTML = html || '<p style="text-align: center; color: #666; padding: 20px;">✅ Keine offenen Terminabsagen.</p>';
+            }
         }
 
         // Patient akzeptiert Terminvorschlag
@@ -2578,6 +2749,11 @@
             // Load patients when opening employee recommendations tab
             if (tabName === 'employeeRecommendations') {
                 loadPatientsForRecommendations();
+            }
+            
+            // Load pending cancellations when opening cancellation requests tab
+            if (tabName === 'cancellationRequests') {
+                loadPendingCancellations();
             }
         }
 
