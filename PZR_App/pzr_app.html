@@ -2090,7 +2090,7 @@
 
         // PATIENTEN-ABSAGESYSTEM: 6-Schritte Workflow
         function cancelPatientAppointment(appointmentId) {
-            const appointments = getFromStorage('appointments') || [];
+            const appointments = getFromStorage('pzrAppointments') || [];
             const appointment = appointments.find(a => a.id === appointmentId);
             
             if (!appointment) {
@@ -2126,7 +2126,7 @@
             }
             
             // SCHRITT 5: Speichern & Praxis-Benachrichtigung
-            saveToStorage('appointments', appointments);
+            saveToStorage('pzrAppointments', appointments);
             
             const notifications = getFromStorage('practiceNotifications') || [];
             notifications.push({
