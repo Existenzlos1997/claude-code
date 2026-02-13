@@ -1499,6 +1499,28 @@
             }
         }
 
+        // Helper: Get from localStorage
+        function getFromStorage(key) {
+            try {
+                const item = localStorage.getItem(key);
+                return item ? JSON.parse(item) : null;
+            } catch (e) {
+                console.error('Error reading from localStorage:', e);
+                return null;
+            }
+        }
+
+        // Helper: Save to localStorage
+        function saveToStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+                return true;
+            } catch (e) {
+                console.error('Error saving to localStorage:', e);
+                return false;
+            }
+        }
+
         // Initialize demo data
         function initDemoData() {
             const savedPatients = localStorage.getItem('pzrPatients');
