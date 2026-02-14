@@ -3780,6 +3780,17 @@
             loadData();
             initSpeechRecognition();
             scheduleNotifications();
+            
+            // Auto-refresh lists every 30 seconds if logged in
+            setInterval(function() {
+                if (window.currentRole === 'employee' && document.getElementById('employeeInterface').classList.contains('hidden') === false) {
+                    loadPendingCancellations();
+                    loadRegistrations();
+                    if (document.getElementById('appointmentsTab').style.display !== 'none') {
+                        loadEmployeeAppointmentsList();
+                    }
+                }
+            }, 30000);
         };
     </script>
 </body>
