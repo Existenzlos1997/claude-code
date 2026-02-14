@@ -979,6 +979,46 @@
                 Patient: PAT-12345 / PIN: 1234<br>
                 Behandler: MA-001 / Passwort: admin
             </p>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                <p style="color: #666; margin-bottom: 10px;">Noch kein Patient?</p>
+                <button class="btn" onclick="showRegistration()" style="background: #00A8CC;">
+                    📝 Jetzt registrieren
+                </button>
+            </div>
+        </div>
+
+        <!-- Registration Screen (hidden initially) -->
+        <div id="registrationScreen" class="login-screen hidden">
+            <h1>📝 Patient-Registrierung</h1>
+            <p>Zahnärzte Burgau</p>
+            
+            <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                <p style="margin: 0; font-size: 14px; color: #1565c0;">
+                    Bitte füllen Sie das Formular aus. Nach Prüfung durch unsere Praxis erhalten Sie Ihre Zugangsdaten.
+                </p>
+            </div>
+            
+            <form id="registrationForm" onsubmit="registerPatient(event)">
+                <h3 style="margin-top: 20px; color: #006B9E;">Persönliche Daten</h3>
+                <div class="form-group">
+                    <label for="regFirstName">Vorname *</label>
+                    <input type="text" id="regFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regLastName">Nachname *</label>
+                    <input type="text" id="regLastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regBirthDate">Geburtsdatum *</label>
+                    <input type="date" id="regBirthDate" required>
+                </div>
+                
+                <button type="submit" class="btn">Registrierung absenden</button>
+                <button type="button" class="btn" onclick="showLogin()" style="background: #666; margin-top: 10px;">
+                    ← Zurück zum Login
+                </button>
+            </form>
         </div>
 
         <!-- Main App (hidden initially) -->
@@ -3054,6 +3094,59 @@
             if (fileType.includes('word') || fileType.includes('document')) return '📄';
             if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
             return '📎';
+        }
+
+        // Registration Functions
+        function showRegistration() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('registrationScreen').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('registrationScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+        }
+
+        function registerPatient(event) {
+            event.preventDefault();
+            
+            const firstName = document.getElementById('regFirstName').value;
+            const lastName = document.getElementById('regLastName').value;
+            const birthDate = document.getElementById('regBirthDate').value;
+            
+            // Check for duplicates
+            const patients = getFromStorage('pzrPatients') || [];
+            const duplicate = patients.find(p => 
+                p.firstName === firstName && 
+                p.lastName === lastName && 
+                p.birthDate === birthDate
+            );
+            
+            if (duplicate) {
+                alert('❌ Ein Patient mit diesen Daten ist bereits registriert!');
+                return;
+            }
+            
+            // Create pre-registered patient
+            const newPatient = {
+                id: generateId(),
+                number: '', // Will be assigned on approval
+                firstName: firstName,
+                lastName: lastName,
+                birthDate: birthDate,
+                status: 'pre-registered',
+                registeredAt: new Date().toISOString(),
+                pin: '' // Will be generated on approval
+            };
+            
+            patients.push(newPatient);
+            saveToStorage('pzrPatients', patients);
+            
+            alert('✅ Registrierung erfolgreich! Sie erhalten bald Ihre Zugangsdaten von der Praxis.');
+            
+            // Reset form and return to login
+            document.getElementById('registrationForm').reset();
+            showLogin();
         }
 
         // Update reminders list
