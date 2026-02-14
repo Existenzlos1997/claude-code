@@ -1279,6 +1279,7 @@
                     <button class="tab active" onclick="switchTab('patientManagement', event)">Patienten</button>
                     <button class="tab" onclick="switchTab('employeeAppointments', event)">Termine</button>
                     <button class="tab" onclick="switchTab('cancellationRequests', event)">📋 Terminanfragen <span id="pendingCancellationsCount" class="badge" style="display:none;"></span></button>
+                    <button class="tab" onclick="switchTab('patients', event)">👥 Patienten</button>
                     <button class="tab" onclick="switchTab('employeeRecommendations', event)">📋 Empfehlungen</button>
                     <button class="tab" onclick="switchTab('registrations', event)">📝 Registrierungen <span id="pendingRegistrationsCount" class="badge" style="display:none;"></span></button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
@@ -1494,6 +1495,17 @@
                         </div>
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
+                    </div>
+
+                    <!-- Patients Tab -->
+                    <div id="patients" class="tab-content">
+                        <h2>👥 Patienten-Verwaltung</h2>
+                        <div id="patientsListView"></div>
+                        <div id="patientFileView" style="display:none;">
+                            <button onclick="closePatientFile()" class="btn-secondary" style="margin-bottom:20px;">← Zurück zur Liste</button>
+                            <h3 id="patientFileName"></h3>
+                            <div id="patientFileContent"></div>
+                        </div>
                     </div>
 
                     <!-- Registrations Tab -->
@@ -2969,6 +2981,11 @@
                 loadPendingCancellations();
             }
             
+            // Load patients list when opening patients tab
+            if (tabName === 'patients') {
+                loadPatientsList();
+            }
+            
             // Load documents when opening documents tab
             if (tabName === 'documents') {
                 loadDocuments();
@@ -3282,6 +3299,125 @@
             
             alert('✅ Registrierung abgelehnt!');
             loadRegistrations();
+        }
+
+        // Load patients list
+        function loadPatientsList() {
+            const container = document.getElementById('patientsListView');
+            const patients = getFromStorage('pzrPatients') || [];
+            const activePatients = patients.filter(p => p.status === 'active');
+            
+            if (activePatients.length === 0) {
+                container.innerHTML = '<p>Keine aktiven Patienten vorhanden.</p>';
+                return;
+            }
+            
+            let html = '<div class="patient-list">';
+            activePatients.forEach(patient => {
+                html += `
+                    <div class="patient-item" onclick="showPatientFile('${patient.id}')" style="cursor:pointer;padding:15px;border:1px solid #ddd;margin:10px 0;border-radius:5px;background:#f9f9f9;transition:background 0.3s;">
+                        <strong>${patient.firstName} ${patient.lastName}</strong> <span style="color:#666;">(${patient.number})</span><br>
+                        <small>📧 ${patient.email || 'N/A'} | 📱 ${patient.mobile || 'N/A'}</small>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+        
+        // Show patient file
+        function showPatientFile(patientId) {
+            const patients = getFromStorage('pzrPatients') || [];
+            const patient = patients.find(p => p.id === patientId);
+            
+            if (!patient) {
+                alert('Patient nicht gefunden!');
+                return;
+            }
+            
+            document.getElementById('patientsListView').style.display = 'none';
+            document.getElementById('patientFileView').style.display = 'block';
+            document.getElementById('patientFileName').textContent = `${patient.firstName} ${patient.lastName} (${patient.number})`;
+            
+            // Get recommendations for this patient
+            const recommendations = getFromStorage('pzrRecommendations') || [];
+            const patientRecs = recommendations.filter(r => r.patientId === patientId);
+            
+            // Get appointments for this patient
+            const appointments = getFromStorage('pzrAppointments') || [];
+            const patientApts = appointments.filter(a => a.patientId === patientId);
+            
+            // Get documents for this patient
+            const documents = getFromStorage('pzrDocuments') || [];
+            const patientDocs = documents.filter(d => d.patientId === patientId);
+            
+            let html = '<div class="patient-file">';
+            
+            // Patient Info
+            html += '<div class="file-section"><h4>📋 Patient-Information</h4>';
+            html += `<p><strong>Name:</strong> ${patient.firstName} ${patient.lastName}</p>`;
+            html += `<p><strong>Nummer:</strong> ${patient.number}</p>`;
+            html += `<p><strong>Geburtsdatum:</strong> ${patient.birthdate || 'N/A'}</p>`;
+            html += `<p><strong>E-Mail:</strong> ${patient.email || 'N/A'}</p>`;
+            html += `<p><strong>Telefon:</strong> ${patient.phone || 'N/A'}</p>`;
+            html += `<p><strong>Mobil:</strong> ${patient.mobile || 'N/A'}</p>`;
+            html += '</div>';
+            
+            // Recommendations
+            html += '<div class="file-section"><h4>💡 Empfehlungen</h4>';
+            if (patientRecs.length === 0) {
+                html += '<p>Keine Empfehlungen vorhanden.</p>';
+            } else {
+                patientRecs.forEach(rec => {
+                    html += `<div class="recommendation-item" style="padding:10px;border-left:3px solid #00A8CC;margin:10px 0;background:#f0f8ff;">`;
+                    html += `<strong>${rec.type || 'PZR'}</strong> - ${rec.date}<br>`;
+                    if (rec.customField1) html += `${rec.customField1}<br>`;
+                    if (rec.customField2) html += `${rec.customField2}<br>`;
+                    if (rec.customField3) html += `${rec.customField3}<br>`;
+                    html += `</div>`;
+                });
+            }
+            html += '</div>';
+            
+            // Appointments
+            html += '<div class="file-section"><h4>📅 Termine</h4>';
+            if (patientApts.length === 0) {
+                html += '<p>Keine Termine vorhanden.</p>';
+            } else {
+                patientApts.forEach(apt => {
+                    const statusText = apt.status === 'CANCELLED' ? '(ABGESAGT)' : apt.status === 'PENDING_CANCEL' ? '(ABSAGE BEANTRAGT)' : '';
+                    html += `<div class="appointment-item" style="padding:10px;border-left:3px solid ${apt.status === 'CANCELLED' ? '#ff0000' : '#00A8CC'};margin:10px 0;background:#f9f9f9;">`;
+                    html += `${apt.date} um ${apt.time} ${statusText}<br>`;
+                    html += `<small>${apt.type || 'Termin'}</small>`;
+                    html += `</div>`;
+                });
+            }
+            html += '</div>';
+            
+            // Documents
+            html += '<div class="file-section"><h4>📎 Dokumente</h4>';
+            if (patientDocs.length === 0) {
+                html += '<p>Keine Dokumente vorhanden.</p>';
+            } else {
+                patientDocs.forEach(doc => {
+                    html += `<div class="document-item" style="padding:10px;border:1px solid #ddd;margin:10px 0;border-radius:5px;">`;
+                    html += `${doc.icon} ${doc.name}<br>`;
+                    html += `<small>${doc.category} - ${doc.uploadDate}</small>`;
+                    html += `</div>`;
+                });
+            }
+            html += '</div>';
+            
+            html += '</div>';
+            
+            document.getElementById('patientFileContent').innerHTML = html;
+        }
+        
+        // Close patient file
+        function closePatientFile() {
+            document.getElementById('patientsListView').style.display = 'block';
+            document.getElementById('patientFileView').style.display = 'none';
         }
 
         // Update reminders list
