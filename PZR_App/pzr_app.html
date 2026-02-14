@@ -848,6 +848,87 @@
             font-weight: normal;
             margin-bottom: 0;
         }
+
+        /* Document Management Styles */
+        .document-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: box-shadow 0.2s;
+        }
+
+        .document-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .doc-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .doc-info {
+            flex: 1;
+        }
+
+        .doc-info strong {
+            color: #006B9E;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .doc-info small {
+            color: #666;
+            display: block;
+            margin-top: 3px;
+        }
+
+        .doc-patient {
+            color: #00A8CC;
+            font-weight: 500;
+        }
+
+        .doc-practice {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .doc-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn-download, .btn-delete {
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-download {
+            background: #00A8CC;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: #006B9E;
+        }
+
+        .btn-delete {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #b71c1c;
+        }
     </style>
 </head>
 <body>
@@ -1130,6 +1211,7 @@
                     <button class="tab" onclick="switchTab('cancellationRequests', event)">📋 Terminanfragen <span id="pendingCancellationsCount" class="badge" style="display:none;"></span></button>
                     <button class="tab" onclick="switchTab('employeeRecommendations', event)">📋 Empfehlungen</button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
+                    <button class="tab" onclick="switchTab('documents', event)">📎 Dokumente</button>
                 </div>
 
                 <div class="content">
@@ -1342,6 +1424,55 @@
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
                     </div>
+
+                    <!-- Documents Tab -->
+                    <div id="documents" class="tab-content">
+                        <h2>📎 Dokumenten-Verwaltung</h2>
+                        
+                        <!-- Upload Section -->
+                        <div class="form-section">
+                            <h3>Neues Dokument hochladen</h3>
+                            
+                            <div class="form-group">
+                                <label for="documentFile">Datei auswählen (max 5MB)</label>
+                                <input type="file" id="documentFile">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="documentName">Dokumentenname</label>
+                                <input type="text" id="documentName" placeholder="z.B. Praxis-Info, Behandlungsplan...">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="documentCategory">Kategorie</label>
+                                <select id="documentCategory" onchange="togglePatientSelect()">
+                                    <option value="practice">Praxis-Dokument</option>
+                                    <option value="patient">Patienten-Dokument</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="documentPatientGroup" style="display:none;">
+                                <label for="documentPatient">Patient</label>
+                                <select id="documentPatient">
+                                    <option value="">Bitte wählen...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="documentNotes">Notizen</label>
+                                <textarea id="documentNotes" rows="2" placeholder="Optionale Notizen zum Dokument..."></textarea>
+                            </div>
+                            
+                            <button class="btn" onclick="uploadDocument()">📤 Hochladen</button>
+                        </div>
+                        
+                        <!-- Documents List -->
+                        <div class="form-section">
+                            <h3>Hochgeladene Dokumente</h3>
+                            <div id="documentsList"></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
