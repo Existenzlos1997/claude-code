@@ -1971,6 +1971,8 @@
                 document.getElementById('employeeInterface').classList.remove('hidden');
                 document.getElementById('patientInterface').classList.add('hidden');
                 loadEmployeeDashboard();
+                loadRegistrations(); // Load pending registrations
+                loadPendingCancellations(); // Load pending cancellations
             }
         }
 
