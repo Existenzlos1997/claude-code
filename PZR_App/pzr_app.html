@@ -2886,6 +2886,172 @@
             if (tabName === 'cancellationRequests') {
                 loadPendingCancellations();
             }
+            
+            // Load documents when opening documents tab
+            if (tabName === 'documents') {
+                loadDocuments();
+                loadPatientsForDocuments();
+            }
+        }
+
+        // Document Management Functions
+        function togglePatientSelect() {
+            const category = document.getElementById('documentCategory').value;
+            const patientGroup = document.getElementById('documentPatientGroup');
+            
+            if (category === 'patient') {
+                patientGroup.style.display = 'block';
+            } else {
+                patientGroup.style.display = 'none';
+            }
+        }
+
+        function loadPatientsForDocuments() {
+            const patients = getFromStorage('pzrPatients') || [];
+            const select = document.getElementById('documentPatient');
+            
+            select.innerHTML = '<option value="">Bitte wählen...</option>';
+            
+            patients.forEach(patient => {
+                const option = document.createElement('option');
+                option.value = patient.id;
+                option.textContent = `${patient.number} - ${patient.firstName} ${patient.lastName}`;
+                select.appendChild(option);
+            });
+        }
+
+        function uploadDocument() {
+            const fileInput = document.getElementById('documentFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('❌ Bitte wählen Sie eine Datei aus!');
+                return;
+            }
+            
+            // Check file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('❌ Datei zu groß! Maximale Größe: 5MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const document = {
+                    id: generateId(),
+                    name: document.getElementById('documentName').value.trim() || file.name,
+                    fileName: file.name,
+                    fileType: file.type,
+                    fileSize: file.size,
+                    fileData: e.target.result, // Base64
+                    category: document.getElementById('documentCategory').value,
+                    patientId: document.getElementById('documentPatient').value || null,
+                    notes: document.getElementById('documentNotes').value.trim(),
+                    uploadedBy: currentUser.id,
+                    uploadedAt: new Date().toISOString()
+                };
+                
+                const documents = getFromStorage('pzrDocuments') || [];
+                documents.push(document);
+                saveToStorage('pzrDocuments', documents);
+                
+                alert('✅ Dokument erfolgreich hochgeladen!');
+                
+                // Reset form
+                document.getElementById('documentFile').value = '';
+                document.getElementById('documentName').value = '';
+                document.getElementById('documentNotes').value = '';
+                
+                loadDocuments();
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function loadDocuments() {
+            const documents = getFromStorage('pzrDocuments') || [];
+            const patients = getFromStorage('pzrPatients') || [];
+            const container = document.getElementById('documentsList');
+            
+            if (documents.length === 0) {
+                container.innerHTML = '<p style="color:#666; text-align:center; padding:20px;">Noch keine Dokumente hochgeladen.</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            documents.forEach(doc => {
+                const patient = doc.patientId ? patients.find(p => p.id === doc.patientId) : null;
+                const uploadDate = new Date(doc.uploadedAt).toLocaleDateString('de-DE');
+                const fileIcon = getFileIcon(doc.fileType);
+                
+                html += `
+                    <div class="document-item">
+                        <div class="doc-icon">${fileIcon}</div>
+                        <div class="doc-info">
+                            <strong>${doc.name}</strong>
+                            <small>${doc.fileName} (${formatFileSize(doc.fileSize)})</small>
+                            <small>${patient ? 
+                                `<span class="doc-patient">👤 ${patient.number} - ${patient.firstName} ${patient.lastName}</span>` : 
+                                '<span class="doc-practice">🏥 Praxis-Dokument</span>'
+                            }</small>
+                            <small>Hochgeladen: ${uploadDate}</small>
+                            ${doc.notes ? `<small>📝 ${doc.notes}</small>` : ''}
+                        </div>
+                        <div class="doc-actions">
+                            <button onclick="downloadDocument('${doc.id}')" class="btn-download">⬇️ Download</button>
+                            <button onclick="deleteDocument('${doc.id}')" class="btn-delete">🗑️ Löschen</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function downloadDocument(documentId) {
+            const documents = getFromStorage('pzrDocuments') || [];
+            const doc = documents.find(d => d.id === documentId);
+            
+            if (!doc) {
+                alert('❌ Dokument nicht gefunden!');
+                return;
+            }
+            
+            // Create download link
+            const a = document.createElement('a');
+            a.href = doc.fileData; // Base64 data URL
+            a.download = doc.fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function deleteDocument(documentId) {
+            if (!confirm('Dokument wirklich löschen?')) {
+                return;
+            }
+            
+            const documents = getFromStorage('pzrDocuments') || [];
+            const filtered = documents.filter(d => d.id !== documentId);
+            saveToStorage('pzrDocuments', filtered);
+            
+            alert('✅ Dokument gelöscht!');
+            loadDocuments();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function getFileIcon(fileType) {
+            if (fileType.startsWith('image/')) return '🖼️';
+            if (fileType.includes('pdf')) return '📕';
+            if (fileType.includes('word') || fileType.includes('document')) return '📄';
+            if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
+            return '📎';
         }
 
         // Update reminders list
