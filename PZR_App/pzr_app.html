@@ -1278,6 +1278,7 @@
                     <button class="tab" onclick="switchTab('employeeAppointments', event)">Termine</button>
                     <button class="tab" onclick="switchTab('cancellationRequests', event)">📋 Terminanfragen <span id="pendingCancellationsCount" class="badge" style="display:none;"></span></button>
                     <button class="tab" onclick="switchTab('employeeRecommendations', event)">📋 Empfehlungen</button>
+                    <button class="tab" onclick="switchTab('registrations', event)">📝 Registrierungen <span id="pendingRegistrationsCount" class="badge" style="display:none;"></span></button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
                     <button class="tab" onclick="switchTab('documents', event)">📎 Dokumente</button>
                 </div>
@@ -1491,6 +1492,13 @@
                         </div>
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
+                    </div>
+
+                    <!-- Registrations Tab -->
+                    <div id="registrations" class="tab-content">
+                        <h2>📝 Patient-Registrierungen</h2>
+                        <p>Hier sehen Sie alle noch nicht freigeschalteten Patienten-Registrierungen.</p>
+                        <div id="registrationsList"></div>
                     </div>
 
                     <!-- Documents Tab -->
@@ -3187,6 +3195,89 @@
             // Reset form and return to login
             document.getElementById('registrationForm').reset();
             showLogin();
+        }
+
+        // Registration Management Functions
+        function loadRegistrations() {
+            const patients = getFromStorage('pzrPatients') || [];
+            const pending = patients.filter(p => p.status === 'pre-registered');
+            
+            const container = document.getElementById('registrationsList');
+            
+            if (pending.length === 0) {
+                container.innerHTML = '<p style="color: #666;">Keine offenen Registrierungen.</p>';
+                document.getElementById('pendingRegistrationsCount').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('pendingRegistrationsCount').textContent = pending.length;
+            document.getElementById('pendingRegistrationsCount').style.display = 'inline';
+            
+            let html = '';
+            pending.forEach(patient => {
+                const regDate = new Date(patient.registeredAt).toLocaleString('de-DE');
+                html += `
+                    <div class="appointment-item">
+                        <div>
+                            <strong style="color: #006B9E;">${patient.firstName} ${patient.lastName}</strong><br>
+                            <small>Geburtsdatum: ${patient.birthDate}</small><br>
+                            <small>E-Mail: ${patient.email || '-'}</small><br>
+                            <small>Mobil: ${patient.mobile || '-'}</small><br>
+                            <small>Adresse: ${patient.street || ''}, ${patient.zip || ''} ${patient.city || ''}</small><br>
+                            <small style="color: #666;">Registriert: ${regDate}</small>
+                        </div>
+                        <div class="appointment-actions">
+                            <button class="btn-approve" onclick="approveRegistration('${patient.id}')">✅ Freischalten</button>
+                            <button class="btn-reject" onclick="rejectRegistration('${patient.id}')">❌ Ablehnen</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function approveRegistration(patientId) {
+            const patients = getFromStorage('pzrPatients') || [];
+            const patient = patients.find(p => p.id === patientId);
+            
+            if (!patient) {
+                alert('❌ Patient nicht gefunden!');
+                return;
+            }
+            
+            // Generate patient number
+            const existingNumbers = patients
+                .filter(p => p.number)
+                .map(p => parseInt(p.number.split('-')[1]));
+            const nextNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1;
+            patient.number = `PAT-${String(nextNumber).padStart(5, '0')}`;
+            
+            // Generate PIN
+            patient.pin = String(Math.floor(1000 + Math.random() * 9000));
+            
+            // Update status
+            patient.status = 'active';
+            patient.approvedAt = new Date().toISOString();
+            
+            saveToStorage('pzrPatients', patients);
+            
+            alert(`✅ Patient freigeschalten!\\n\\nPatientennummer: ${patient.number}\\nPIN: ${patient.pin}\\n\\nBitte diese Zugangsdaten dem Patienten mitteilen.`);
+            
+            loadRegistrations();
+        }
+
+        function rejectRegistration(patientId) {
+            if (!confirm('Registrierung wirklich ablehnen? Der Patient wird gelöscht.')) {
+                return;
+            }
+            
+            const patients = getFromStorage('pzrPatients') || [];
+            const filtered = patients.filter(p => p.id !== patientId);
+            saveToStorage('pzrPatients', filtered);
+            
+            alert('✅ Registrierung abgelehnt!');
+            loadRegistrations();
         }
 
         // Update reminders list
