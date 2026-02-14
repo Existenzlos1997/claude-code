@@ -1014,6 +1014,34 @@
                     <input type="date" id="regBirthDate" required>
                 </div>
                 
+                <h3 style="margin-top: 20px; color: #006B9E;">Kontaktdaten</h3>
+                <div class="form-group">
+                    <label for="regEmail">E-Mail *</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPhone">Telefon</label>
+                    <input type="tel" id="regPhone">
+                </div>
+                <div class="form-group">
+                    <label for="regMobile">Mobil *</label>
+                    <input type="tel" id="regMobile" required>
+                </div>
+                
+                <h3 style="margin-top: 20px; color: #006B9E;">Adresse</h3>
+                <div class="form-group">
+                    <label for="regStreet">Straße + Hausnummer *</label>
+                    <input type="text" id="regStreet" required>
+                </div>
+                <div class="form-group">
+                    <label for="regZip">PLZ *</label>
+                    <input type="text" id="regZip" required>
+                </div>
+                <div class="form-group">
+                    <label for="regCity">Stadt *</label>
+                    <input type="text" id="regCity" required>
+                </div>
+                
                 <button type="submit" class="btn">Registrierung absenden</button>
                 <button type="button" class="btn" onclick="showLogin()" style="background: #666; margin-top: 10px;">
                     ← Zurück zum Login
@@ -3113,6 +3141,12 @@
             const firstName = document.getElementById('regFirstName').value;
             const lastName = document.getElementById('regLastName').value;
             const birthDate = document.getElementById('regBirthDate').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const mobile = document.getElementById('regMobile').value;
+            const street = document.getElementById('regStreet').value;
+            const zip = document.getElementById('regZip').value;
+            const city = document.getElementById('regCity').value;
             
             // Check for duplicates
             const patients = getFromStorage('pzrPatients') || [];
@@ -3134,6 +3168,12 @@
                 firstName: firstName,
                 lastName: lastName,
                 birthDate: birthDate,
+                email: email,
+                phone: phone,
+                mobile: mobile,
+                street: street,
+                zip: zip,
+                city: city,
                 status: 'pre-registered',
                 registeredAt: new Date().toISOString(),
                 pin: '' // Will be generated on approval
