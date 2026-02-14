@@ -2359,7 +2359,7 @@
         // Behandler bestätigt Terminabsage
         function approveAppointmentCancellation(appointmentId) {
             const appointments = getFromStorage('pzrAppointments') || [];
-            const appointment = appointments.find(a => a.id === appointmentId);
+            const appointment = appointments.find(a => a.id == appointmentId);
             
             if (!appointment) {
                 alert('❌ Termin nicht gefunden!');
@@ -2377,12 +2377,13 @@
             
             // UI aktualisieren
             loadPendingCancellations();
+            loadEmployeeAppointmentsList();
         }
 
         // Behandler lehnt Terminabsage ab
         function rejectAppointmentCancellation(appointmentId) {
             const appointments = getFromStorage('pzrAppointments') || [];
-            const appointment = appointments.find(a => a.id === appointmentId);
+            const appointment = appointments.find(a => a.id == appointmentId);
             
             if (!appointment) {
                 alert('❌ Termin nicht gefunden!');
@@ -2401,6 +2402,7 @@
             
             // UI aktualisieren
             loadPendingCancellations();
+            loadEmployeeAppointmentsList();
         }
 
         // Lädt offene Terminabsage-Anfragen für Behandler
