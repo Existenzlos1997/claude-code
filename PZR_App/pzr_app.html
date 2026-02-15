@@ -1279,10 +1279,14 @@
                     <button class="tab active" onclick="switchTab('patientManagement', event)">Patienten</button>
                     <button class="tab" onclick="switchTab('employeeAppointments', event)">Termine</button>
                     <button class="tab" onclick="switchTab('cancellationRequests', event)">📋 Terminanfragen <span id="pendingCancellationsCount" class="badge" style="display:none;"></span></button>
-                    <button class="tab" onclick="switchTab('patients', event)">👥 Patienten</button>
                     <button class="tab" onclick="switchTab('employeeRecommendations', event)">📋 Empfehlungen</button>
                     <button class="tab" onclick="switchTab('registrations', event)">📝 Registrierungen <span id="pendingRegistrationsCount" class="badge" style="display:none;"></span></button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
+                    <button class="tab" onclick="switchTab('addEmployee', event)">➕ Behandler</button>
+                    <button class="tab" onclick="switchTab('documents', event)">📄 Dokumente</button>
+                    <button class="tab" onclick="switchTab('settings', event)">⚙️ Einstellungen</button>
+                    <button class="btn-icon" onclick="logout()" style="float: right; margin: 10px;">Abmelden</button>
+                </div>
                     <button class="tab" onclick="switchTab('documents', event)">📎 Dokumente</button>
                 </div>
 
@@ -1296,8 +1300,14 @@
                                    onkeyup="searchPatients()">
                         </div>
 
-                        <div id="patientListContainer" class="patient-list">
-                            <!-- Will be populated by JavaScript -->
+                        <div id="patientListContainer" class="patient-list" style="cursor: pointer;">
+                            <!-- Will be populated by JavaScript - Patients clickable to open file -->
+                        </div>
+                        
+                        <!-- Patient File View -->
+                        <div id="patientDetailsView" style="display:none;">
+                            <button onclick="closePatientDetails()" class="btn-secondary" style="margin-bottom:20px;">← Zurück zur Liste</button>
+                            <div id="patientDetailsContent"></div>
                         </div>
                     </div>
 
@@ -1436,11 +1446,6 @@
                         <h2>Neuen Patienten anlegen</h2>
                         
                         <div class="form-group">
-                            <label for="newPatientNumber">Patientennummer *</label>
-                            <input type="text" id="newPatientNumber" placeholder="z.B. PAT-12345">
-                        </div>
-                        
-                        <div class="form-group">
                             <label for="newPatientName">Name *</label>
                             <input type="text" id="newPatientName" placeholder="Vor- und Nachname">
                         </div>
@@ -1495,6 +1500,71 @@
                         </div>
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
+                    </div>
+
+                    <!-- Add Employee Tab -->
+                    <div id="addEmployee" class="tab-content">
+                        <h2>➕ Neuen Behandler hinzufügen</h2>
+                        <p style="color: #666;">Fügen Sie einen neuen Behandler oder Administrator zum System hinzu.</p>
+                        
+                        <div class="form-group">
+                            <label for="newEmployeeNumber">Mitarbeiternummer *</label>
+                            <input type="text" id="newEmployeeNumber" placeholder="z.B. MA-003">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newEmployeeName">Name *</label>
+                            <input type="text" id="newEmployeeName" placeholder="Vor- und Nachname">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newEmployeeRole">Rolle *</label>
+                            <select id="newEmployeeRole">
+                                <option value="employee">Behandler</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newEmployeePin">PIN (4 Ziffern) *</label>
+                            <input type="password" id="newEmployeePin" placeholder="1234" maxlength="4">
+                        </div>
+                        
+                        <button class="btn" onclick="addNewEmployee()">Behandler hinzufügen</button>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div id="settings" class="tab-content">
+                        <h2>⚙️ System-Einstellungen</h2>
+                        
+                        <div class="form-section">
+                            <h3>Backend-Konfiguration</h3>
+                            <p style="color: #666;">Konfigurieren Sie diesen PC als zentralen Backend-Server für alle Praxis-Daten.</p>
+                            
+                            <div id="backendStatus" style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                                <strong>Status:</strong> <span id="backendStatusText">Lokaler Modus</span>
+                            </div>
+                            
+                            <button class="btn" onclick="activateBackend()" id="activateBackendBtn">
+                                🖥️ Diesen PC als Backend aktivieren
+                            </button>
+                            
+                            <div id="backendConfig" style="display:none; margin-top: 20px;">
+                                <h4>Backend-Konfiguration</h4>
+                                <p>Backend wurde aktiviert. Alle Daten werden zentral auf diesem PC verwaltet.</p>
+                                <div class="form-group">
+                                    <label>Netzwerk-Adresse:</label>
+                                    <input type="text" id="backendAddress" readonly>
+                                </div>
+                                <button class="btn-secondary" onclick="deactivateBackend()">Backend deaktivieren</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section" style="margin-top: 30px;">
+                            <h3>Daten-Management</h3>
+                            <button class="btn-secondary" onclick="exportData()">📥 Daten exportieren</button>
+                            <button class="btn-secondary" onclick="importData()" style="margin-left: 10px;">📤 Daten importieren</button>
+                        </div>
                     </div>
 
                     <!-- Patients Tab -->
@@ -2263,86 +2333,149 @@
         // Load patient list for employees
         function loadPatientList() {
             const container = document.getElementById('patientListContainer');
+            const patients = getFromStorage('pzrPatients') || [];
+            const activePatients = patients.filter(p => p.status === 'active');
             
-            if (patients.length === 0) {
+            if (activePatients.length === 0) {
                 container.innerHTML = '<p class="empty-state">Keine Patienten vorhanden.</p>';
                 return;
             }
 
-            container.innerHTML = patients.map(patient => `
-                <div class="patient-card" onclick="editPatient('${patient.id}')">
-                    <h4>👤 ${patient.name}</h4>
-                    <p><strong>Nummer:</strong> ${patient.patientNumber}</p>
+            container.innerHTML = activePatients.map(patient => `
+                <div class="patient-card" onclick="openPatientDetails('${patient.id}')" style="cursor:pointer;padding:15px;border:1px solid #ddd;margin:10px 0;border-radius:5px;background:#f9f9f9;transition:background 0.3s;">
+                    <h4>👤 ${patient.firstName} ${patient.lastName}</h4>
+                    <p><strong>Nummer:</strong> ${patient.number}</p>
                     <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                    <p><strong>Telefon:</strong> ${patient.phone || '-'}</p>
-                    <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
+                    <p><strong>Mobil:</strong> ${patient.mobile || '-'}</p>
                 </div>
             `).join('');
+        }
+        
+        // Open patient details/file
+        function openPatientDetails(patientId) {
+            const patients = getFromStorage('pzrPatients') || [];
+            const patient = patients.find(p => p.id === patientId);
+            
+            if (!patient) {
+                alert('Patient nicht gefunden!');
+                return;
+            }
+            
+            // Hide list, show details
+            document.getElementById('patientListContainer').style.display = 'none';
+            document.getElementById('patientDetailsView').style.display = 'block';
+            
+            // Get related data
+            const recommendations = getFromStorage('pzrRecommendations') || [];
+            const patientRecs = recommendations.filter(r => r.patientId === patientId);
+            
+            const appointments = getFromStorage('pzrAppointments') || [];
+            const patientApts = appointments.filter(a => a.patientId === patientId);
+            
+            const documents = getFromStorage('pzrDocuments') || [];
+            const patientDocs = documents.filter(d => d.patientId === patientId);
+            
+            let html = `<h3>👤 ${patient.firstName} ${patient.lastName}</h3>`;
+            
+            // Patient Info
+            html += '<div class="file-section" style="background:#f9f9f9;padding:15px;margin:15px 0;border-radius:8px;"><h4>📋 Patient-Information</h4>';
+            html += `<p><strong>Nummer:</strong> ${patient.number}</p>`;
+            html += `<p><strong>Geburtsdatum:</strong> ${patient.birthdate || 'N/A'}</p>`;
+            html += `<p><strong>E-Mail:</strong> ${patient.email || 'N/A'}</p>`;
+            html += `<p><strong>Telefon:</strong> ${patient.phone || 'N/A'}</p>`;
+            html += `<p><strong>Mobil:</strong> ${patient.mobile || 'N/A'}</p>`;
+            if (patient.street) html += `<p><strong>Adresse:</strong> ${patient.street}, ${patient.zip} ${patient.city}</p>`;
+            html += '</div>';
+            
+            // Recommendations
+            html += '<div class="file-section" style="background:#f9f9f9;padding:15px;margin:15px 0;border-radius:8px;"><h4>💡 Empfehlungen</h4>';
+            if (patientRecs.length === 0) {
+                html += '<p>Keine Empfehlungen vorhanden.</p>';
+            } else {
+                patientRecs.forEach(rec => {
+                    html += `<div style="padding:10px;border-left:3px solid #00A8CC;margin:10px 0;background:#fff;">`;
+                    html += `<strong>${rec.type || 'PZR'}</strong> - ${rec.date}<br>`;
+                    if (rec.customField1) html += `<p>${rec.customField1}</p>`;
+                    if (rec.customField2) html += `<p>${rec.customField2}</p>`;
+                    if (rec.customField3) html += `<p>${rec.customField3}</p>`;
+                    html += `</div>`;
+                });
+            }
+            html += '</div>';
+            
+            // Appointments
+            html += '<div class="file-section" style="background:#f9f9f9;padding:15px;margin:15px 0;border-radius:8px;"><h4>📅 Termine</h4>';
+            if (patientApts.length === 0) {
+                html += '<p>Keine Termine vorhanden.</p>';
+            } else {
+                patientApts.forEach(apt => {
+                    const statusText = apt.status === 'cancelled' ? '❌ Abgesagt' : apt.status === 'pending_cancel' ? '⏳ Absage anfragend' : '✅ Aktiv';
+                    html += `<div style="padding:10px;border:1px solid #ddd;margin:10px 0;background:#fff;">`;
+                    html += `<strong>${apt.title}</strong><br>`;
+                    html += `${apt.date} um ${apt.time} Uhr<br>`;
+                    html += `Status: ${statusText}`;
+                    html += `</div>`;
+                });
+            }
+            html += '</div>';
+            
+            // Documents
+            html += '<div class="file-section" style="background:#f9f9f9;padding:15px;margin:15px 0;border-radius:8px;"><h4>📄 Dokumente</h4>';
+            if (patientDocs.length === 0) {
+                html += '<p>Keine Dokumente vorhanden.</p>';
+            } else {
+                patientDocs.forEach(doc => {
+                    html += `<div style="padding:10px;border:1px solid #ddd;margin:10px 0;background:#fff;">`;
+                    html += `📎 ${doc.name} (${doc.category})<br>`;
+                    html += `<small>${doc.date}</small>`;
+                    html += `</div>`;
+                });
+            }
+            html += '</div>';
+            
+            document.getElementById('patientDetailsContent').innerHTML = html;
+        }
+        
+        // Close patient details
+        function closePatientDetails() {
+            document.getElementById('patientDetailsView').style.display = 'none';
+            document.getElementById('patientListContainer').style.display = 'block';
         }
 
         // Search patients (VERBESSERT: Relevanz-Sortierung + Highlighting)
         function searchPatients() {
             const searchTerm = document.getElementById('patientSearch').value.toLowerCase().trim();
             
+            const patients = getFromStorage('pzrPatients') || [];
+            const activePatients = patients.filter(p => p.status === 'active');
+            
             if (!searchTerm) {
                 loadPatientList();
                 return;
             }
             
-            // Score berechnen für Relevanz
-            const calculateScore = (patient, term) => {
-                let score = 0;
-                const nameLower = patient.name.toLowerCase();
-                const numberLower = patient.patientNumber.toLowerCase();
-                const emailLower = (patient.email || '').toLowerCase();
-                const phoneLower = (patient.phone || '').toLowerCase();
+            const filtered = activePatients.filter(patient => {
+                const name = (patient.firstName + ' ' + patient.lastName).toLowerCase();
+                const number = (patient.number || '').toLowerCase();
+                const email = (patient.email || '').toLowerCase();
                 
-                // Exakte Übereinstimmung = höchster Score
-                if (nameLower === term) score += 100;
-                if (numberLower === term) score += 100;
-                if (emailLower === term) score += 100;
-                if (phoneLower === term) score += 100;
-                
-                // Teilübereinstimmung
-                if (nameLower.includes(term)) score += 80;
-                if (numberLower.includes(term)) score += 60;
-                if (emailLower.includes(term)) score += 40;
-                if (phoneLower.includes(term)) score += 20;
-                
-                return score;
-            };
+                return name.includes(searchTerm) || number.includes(searchTerm) || email.includes(searchTerm);
+            });
             
-            // Filter und Score berechnen
-            const filteredWithScore = patients
-                .map(p => ({ patient: p, score: calculateScore(p, searchTerm) }))
-                .filter(item => item.score > 0)
-                .sort((a, b) => b.score - a.score); // Beste Treffer zuerst!
-
             const container = document.getElementById('patientListContainer');
-            if (filteredWithScore.length === 0) {
+            if (filtered.length === 0) {
                 container.innerHTML = '<p class="empty-state">Keine Patienten gefunden.</p>';
                 return;
             }
-
-            // Highlighting helper
-            const highlight = (text, term) => {
-                if (!term || !text) return text;
-                const regex = new RegExp(`(${term})`, 'gi');
-                return text.replace(regex, '<mark style="background: #ffeb3b; padding: 2px 4px; border-radius: 3px;">$1</mark>');
-            };
-
-            container.innerHTML = filteredWithScore.map(item => {
-                const patient = item.patient;
-                return `
-                    <div class="patient-card" onclick="editPatient('${patient.id}')">
-                        <h4>👤 ${highlight(patient.name, searchTerm)}</h4>
-                        <p><strong>Nummer:</strong> ${highlight(patient.patientNumber, searchTerm)}</p>
-                        <p><strong>E-Mail:</strong> ${patient.email ? highlight(patient.email, searchTerm) : '-'}</p>
-                        <p><strong>Telefon:</strong> ${patient.phone ? highlight(patient.phone, searchTerm) : '-'}</p>
-                        <p><strong>Empfehlungen:</strong> ${patient.recommendations ? 'Vorhanden' : 'Keine'}</p>
-                    </div>
-                `;
-            }).join('');
+            
+            container.innerHTML = filtered.map(patient => `
+                <div class="patient-card" onclick="openPatientDetails('${patient.id}')" style="cursor:pointer;padding:15px;border:1px solid #ddd;margin:10px 0;border-radius:5px;background:#f9f9f9;">
+                    <h4>👤 ${patient.firstName} ${patient.lastName}</h4>
+                    <p><strong>Nummer:</strong> ${patient.number}</p>
+                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                    <p><strong>Mobil:</strong> ${patient.mobile || '-'}</p>
+                </div>
+            `).join('');
         }
 
         // AMPEL-SYSTEM: Berechnet Farbe basierend auf Tagen bis Termin
@@ -2849,18 +2982,11 @@
 
         // Create new patient
         function createNewPatient() {
-            const patientNumber = document.getElementById('newPatientNumber').value.trim();
             const name = document.getElementById('newPatientName').value.trim();
             const pin = document.getElementById('newPatientPin').value.trim();
-            const email = document.getElementById('newPatientEmail').value.trim();
-            const phone = document.getElementById('newPatientPhone').value.trim();
-            const recommendations = document.getElementById('newRecommendations').value.trim();
-            const brushingTechnique = document.getElementById('newBrushingTechnique').value.trim();
-            const toolsUsage = document.getElementById('newToolsUsage').value.trim();
-            const notes = document.getElementById('newNotes').value.trim();
 
-            if (!patientNumber || !name || !pin) {
-                alert('Bitte füllen Sie alle Pflichtfelder aus (Patientennummer, Name, PIN).');
+            if (!name || !pin) {
+                alert('Bitte füllen Sie alle Pflichtfelder aus (Name, PIN).');
                 return;
             }
 
@@ -2869,41 +2995,196 @@
                 return;
             }
 
-            if (patients.find(p => p.patientNumber === patientNumber)) {
-                alert('Diese Patientennummer existiert bereits.');
-                return;
-            }
+            const patients = getFromStorage('pzrPatients') || [];
+            
+            // Generate patient number
+            const number = generatePatientNumber();
+            
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
 
             const newPatient = {
-                id: patientNumber,
-                patientNumber,
-                name,
+                id: 'pat_' + Date.now(),
+                number,
+                firstName,
+                lastName,
                 pin,
-                email,
-                phone,
-                recommendations,
-                brushingTechnique,
-                toolsUsage,
-                notes,
+                status: 'active',
+                birthdate: document.getElementById('newPatientBirthdate')?.value || '',
+                email: document.getElementById('newPatientEmail')?.value || '',
+                phone: document.getElementById('newPatientPhone')?.value || '',
+                mobile: document.getElementById('newPatientMobile')?.value || '',
+                street: document.getElementById('newPatientStreet')?.value || '',
+                zip: document.getElementById('newPatientZip')?.value || '',
+                city: document.getElementById('newPatientCity')?.value || '',
+                emergencyContact: document.getElementById('newEmergencyContact')?.value || '',
+                emergencyPhone: document.getElementById('newEmergencyPhone')?.value || '',
+                medicalHistory: document.getElementById('newMedicalHistory')?.value || '',
+                medications: document.getElementById('newMedications')?.value || '',
+                allergies: document.getElementById('newAllergies')?.value || '',
+                dentalHistory: document.getElementById('newDentalHistory')?.value || '',
+                brushingTechnique: document.getElementById('newBrushingTechnique')?.value || '',
+                toolsUsage: document.getElementById('newToolsUsage')?.value || '',
+                notes: document.getElementById('newNotes')?.value || '',
                 created: new Date().toISOString()
             };
 
             patients.push(newPatient);
-            saveData();
+            saveToStorage('pzrPatients', patients);
 
+            alert(`Patient erfolgreich angelegt!\n\nPatientennummer: ${number}\nPIN: ${pin}`);
+            
             // Clear form
-            document.getElementById('newPatientNumber').value = '';
             document.getElementById('newPatientName').value = '';
             document.getElementById('newPatientPin').value = '';
-            document.getElementById('newPatientEmail').value = '';
-            document.getElementById('newPatientPhone').value = '';
-            document.getElementById('newRecommendations').value = '';
-            document.getElementById('newBrushingTechnique').value = '';
-            document.getElementById('newToolsUsage').value = '';
-            document.getElementById('newNotes').value = '';
-
-            alert('Patient erfolgreich angelegt!');
+            
             loadPatientList();
+        }
+        
+        // Add new employee
+        function addNewEmployee() {
+            const number = document.getElementById('newEmployeeNumber').value.trim();
+            const name = document.getElementById('newEmployeeName').value.trim();
+            const role = document.getElementById('newEmployeeRole').value;
+            const pin = document.getElementById('newEmployeePin').value.trim();
+            
+            if (!number || !name || !role || !pin) {
+                alert('Bitte füllen Sie alle Felder aus.');
+                return;
+            }
+            
+            if (pin.length !== 4 || !/^\d+$/.test(pin)) {
+                alert('PIN muss genau 4 Ziffern enthalten.');
+                return;
+            }
+            
+            const employees = getFromStorage('pzrEmployees') || [];
+            
+            if (employees.find(e => e.number === number)) {
+                alert('Diese Mitarbeiternummer existiert bereits.');
+                return;
+            }
+            
+            const newEmployee = {
+                id: 'emp_' + Date.now(),
+                number,
+                name,
+                role,
+                pin,
+                created: new Date().toISOString()
+            };
+            
+            employees.push(newEmployee);
+            saveToStorage('pzrEmployees', employees);
+            
+            alert(`Behandler erfolgreich hinzugefügt!\n\nName: ${name}\nNummer: ${number}`);
+            
+            // Clear form
+            document.getElementById('newEmployeeNumber').value = '';
+            document.getElementById('newEmployeeName').value = '';
+            document.getElementById('newEmployeeRole').value = 'employee';
+            document.getElementById('newEmployeePin').value = '';
+        }
+        
+        // Backend activation
+        function activateBackend() {
+            if (confirm('Möchten Sie diesen PC als zentralen Backend-Server aktivieren?\n\nAlle Daten werden dann zentral auf diesem PC verwaltet.')) {
+                localStorage.setItem('pzrBackendActive', 'true');
+                localStorage.setItem('pzrBackendAddress', window.location.hostname || 'localhost');
+                
+                document.getElementById('backendStatusText').textContent = 'Backend aktiv';
+                document.getElementById('backendStatus').style.background = '#d4edda';
+                document.getElementById('activateBackendBtn').style.display = 'none';
+                document.getElementById('backendConfig').style.display = 'block';
+                document.getElementById('backendAddress').value = localStorage.getItem('pzrBackendAddress');
+                
+                alert('Backend erfolgreich aktiviert!\n\nDieser PC ist jetzt der zentrale Server.');
+            }
+        }
+        
+        // Backend deactivation
+        function deactivateBackend() {
+            if (confirm('Backend wirklich deaktivieren?')) {
+                localStorage.removeItem('pzrBackendActive');
+                localStorage.removeItem('pzrBackendAddress');
+                
+                document.getElementById('backendStatusText').textContent = 'Lokaler Modus';
+                document.getElementById('backendStatus').style.background = '#f0f9ff';
+                document.getElementById('activateBackendBtn').style.display = 'block';
+                document.getElementById('backendConfig').style.display = 'none';
+                
+                alert('Backend deaktiviert.');
+            }
+        }
+        
+        // Export data
+        function exportData() {
+            const data = {
+                patients: getFromStorage('pzrPatients') || [],
+                employees: getFromStorage('pzrEmployees') || [],
+                appointments: getFromStorage('pzrAppointments') || [],
+                recommendations: getFromStorage('pzrRecommendations') || [],
+                documents: getFromStorage('pzrDocuments') || [],
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pzr_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('Daten erfolgreich exportiert!');
+        }
+        
+        // Import data
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        if (confirm('Möchten Sie die importierten Daten mit den vorhandenen zusammenführen?\n\nJa = Zusammenführen\nNein = Vorhandene ersetzen')) {
+                            // Merge
+                            const patients = getFromStorage('pzrPatients') || [];
+                            const employees = getFromStorage('pzrEmployees') || [];
+                            const appointments = getFromStorage('pzrAppointments') || [];
+                            const recommendations = getFromStorage('pzrRecommendations') || [];
+                            const documents = getFromStorage('pzrDocuments') || [];
+                            
+                            saveToStorage('pzrPatients', [...patients, ...(data.patients || [])]);
+                            saveToStorage('pzrEmployees', [...employees, ...(data.employees || [])]);
+                            saveToStorage('pzrAppointments', [...appointments, ...(data.appointments || [])]);
+                            saveToStorage('pzrRecommendations', [...recommendations, ...(data.recommendations || [])]);
+                            saveToStorage('pzrDocuments', [...documents, ...(data.documents || [])]);
+                        } else {
+                            // Replace
+                            saveToStorage('pzrPatients', data.patients || []);
+                            saveToStorage('pzrEmployees', data.employees || []);
+                            saveToStorage('pzrAppointments', data.appointments || []);
+                            saveToStorage('pzrRecommendations', data.recommendations || []);
+                            saveToStorage('pzrDocuments', data.documents || []);
+                        }
+                        
+                        alert('Daten erfolgreich importiert!');
+                        location.reload();
+                    } catch (error) {
+                        alert('Fehler beim Importieren: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
         }
 
         // Edit patient
