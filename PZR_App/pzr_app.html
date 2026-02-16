@@ -1474,82 +1474,8 @@
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
                     </div>
 
-                    <!-- Add Employee Tab -->
-                    <div id="addEmployee" class="tab-content">
-                        <h2>➕ Neuen Behandler hinzufügen</h2>
-                        <p style="color: #666;">Fügen Sie einen neuen Behandler oder Administrator zum System hinzu.</p>
-                        
-                        <div class="form-group">
-                            <label for="newEmployeeNumber">Mitarbeiternummer *</label>
-                            <input type="text" id="newEmployeeNumber" placeholder="z.B. MA-003">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="newEmployeeName">Name *</label>
-                            <input type="text" id="newEmployeeName" placeholder="Vor- und Nachname">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="newEmployeeRole">Rolle *</label>
-                            <select id="newEmployeeRole">
-                                <option value="employee">Behandler</option>
-                                <option value="admin">Administrator</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="newEmployeePin">PIN (4 Ziffern) *</label>
-                            <input type="password" id="newEmployeePin" placeholder="1234" maxlength="4">
-                        </div>
-                        
-                        <button class="btn" onclick="addNewEmployee()">Behandler hinzufügen</button>
-                    </div>
-
-                    <!-- Settings Tab -->
-                    <div id="settings" class="tab-content">
-                        <h2>⚙️ System-Einstellungen</h2>
-                        
-                        <div class="form-section">
-                            <h3>Backend-Konfiguration</h3>
-                            <p style="color: #666;">Konfigurieren Sie diesen PC als zentralen Backend-Server für alle Praxis-Daten.</p>
-                            
-                            <div id="backendStatus" style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                                <strong>Status:</strong> <span id="backendStatusText">Lokaler Modus</span>
-                            </div>
-                            
-                            <button class="btn" onclick="activateBackend()" id="activateBackendBtn">
-                                🖥️ Diesen PC als Backend aktivieren
-                            </button>
-                            
-                            <div id="backendConfig" style="display:none; margin-top: 20px;">
-                                <h4>Backend-Konfiguration</h4>
-                                <p>Backend wurde aktiviert. Alle Daten werden zentral auf diesem PC verwaltet.</p>
-                                <div class="form-group">
-                                    <label>Netzwerk-Adresse:</label>
-                                    <input type="text" id="backendAddress" readonly>
-                                </div>
-                                <button class="btn-secondary" onclick="deactivateBackend()">Backend deaktivieren</button>
-                            </div>
-                        </div>
-                        
-                        <div class="form-section" style="margin-top: 30px;">
-                            <h3>Daten-Management</h3>
-                            <button class="btn-secondary" onclick="exportData()">📥 Daten exportieren</button>
-                            <button class="btn-secondary" onclick="importData()" style="margin-left: 10px;">📤 Daten importieren</button>
-                        </div>
-                    </div>
-
-                    <!-- Patients Tab -->
-                    <div id="patients" class="tab-content">
-                        <h2>👥 Patienten-Verwaltung</h2>
-                        <div id="patientsListView"></div>
-                        <div id="patientFileView" style="display:none;">
-                            <button onclick="closePatientFile()" class="btn-secondary" style="margin-bottom:20px;">← Zurück zur Liste</button>
-                            <h3 id="patientFileName"></h3>
-                            <div id="patientFileContent"></div>
-                        </div>
-                    </div>
-
+                    
+                    
                     <!-- Registrations Tab -->
                     <div id="registrations" class="tab-content">
                         <h2>📝 Patient-Registrierungen</h2>
@@ -1557,54 +1483,7 @@
                         <div id="registrationsList"></div>
                     </div>
 
-                    <!-- Documents Tab -->
-                    <div id="documents" class="tab-content">
-                        <h2>📎 Dokumenten-Verwaltung</h2>
-                        
-                        <!-- Upload Section -->
-                        <div class="form-section">
-                            <h3>Neues Dokument hochladen</h3>
-                            
-                            <div class="form-group">
-                                <label for="documentFile">Datei auswählen (max 5MB)</label>
-                                <input type="file" id="documentFile">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="documentName">Dokumentenname</label>
-                                <input type="text" id="documentName" placeholder="z.B. Praxis-Info, Behandlungsplan...">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="documentCategory">Kategorie</label>
-                                <select id="documentCategory" onchange="togglePatientSelect()">
-                                    <option value="practice">Praxis-Dokument</option>
-                                    <option value="patient">Patienten-Dokument</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group" id="documentPatientGroup" style="display:none;">
-                                <label for="documentPatient">Patient</label>
-                                <select id="documentPatient">
-                                    <option value="">Bitte wählen...</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="documentNotes">Notizen</label>
-                                <textarea id="documentNotes" rows="2" placeholder="Optionale Notizen zum Dokument..."></textarea>
-                            </div>
-                            
-                            <button class="btn" onclick="uploadDocument()">📤 Hochladen</button>
-                        </div>
-                        
-                        <!-- Documents List -->
-                        <div class="form-section">
-                            <h3>Hochgeladene Dokumente</h3>
-                            <div id="documentsList"></div>
-                        </div>
-                    </div>
-
+                    
                 </div>
             </div>
         </div>
