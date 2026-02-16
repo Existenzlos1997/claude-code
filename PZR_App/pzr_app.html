@@ -3546,10 +3546,12 @@
             
             // Generate patient number
             const existingNumbers = patients
-                .filter(p => p.number)
-                .map(p => parseInt(p.number.split('-')[1]));
+                .filter(p => p.number || p.patientNumber)
+                .map(p => parseInt((p.number || p.patientNumber).split('-')[1]));
             const nextNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1;
-            patient.number = `PAT-${String(nextNumber).padStart(5, '0')}`;
+            const newNumber = `PAT-${String(nextNumber).padStart(5, '0')}`;
+            patient.number = newNumber;
+            patient.patientNumber = newNumber;
             
             // Generate PIN
             patient.pin = String(Math.floor(1000 + Math.random() * 9000));
@@ -3560,7 +3562,7 @@
             
             saveToStorage('pzrPatients', patients);
             
-            alert(`✅ Patient freigeschalten!\\n\\nPatientennummer: ${patient.number}\\nPIN: ${patient.pin}\\n\\nBitte diese Zugangsdaten dem Patienten mitteilen.`);
+            alert(`✅ Patient freigeschaltet!\n\nPatientennummer: ${patient.number}\nPIN: ${patient.pin}\n\nBitte diese Zugangsdaten dem Patienten mitteilen.`);
             
             loadRegistrations();
         }
