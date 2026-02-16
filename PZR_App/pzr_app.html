@@ -1986,6 +1986,7 @@
                 return;
             }
 
+            const patients = getFromStorage('pzrPatients') || [];
             const patient = patients.find(p => p.patientNumber === patientNumber && p.pin === pin);
             
             if (patient) {
