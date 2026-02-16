@@ -3436,6 +3436,10 @@
             document.getElementById('registrationScreen').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'block';
         }
+        
+        function generateId() {
+            return 'pat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
 
         function registerPatient(event) {
             event.preventDefault();
