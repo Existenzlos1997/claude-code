@@ -3245,7 +3245,7 @@
             let html = '';
             
             documents.forEach(doc => {
-                const patient = doc.patientId ? patients.find(p => p.id === doc.patientId) : null;
+                const patient = doc.patientId ? patients.find(p => p.patientNumber === doc.patientId) : null;
                 const uploadDate = new Date(doc.uploadedAt).toLocaleDateString('de-DE');
                 const fileIcon = getFileIcon(doc.fileType);
                 
@@ -3256,7 +3256,7 @@
                             <strong>${doc.name}</strong>
                             <small>${doc.fileName} (${formatFileSize(doc.fileSize)})</small>
                             <small>${patient ? 
-                                `<span class="doc-patient">👤 ${patient.number} - ${patient.firstName} ${patient.lastName}</span>` : 
+                                `<span class="doc-patient">👤 ${patient.patientNumber} - ${patient.name}</span>` : 
                                 '<span class="doc-practice">🏥 Praxis-Dokument</span>'
                             }</small>
                             <small>Hochgeladen: ${uploadDate}</small>
@@ -3264,6 +3264,7 @@
                         </div>
                         <div class="doc-actions">
                             <button onclick="downloadDocument('${doc.id}')" class="btn-download">⬇️ Download</button>
+                            ${!doc.patientId ? `<button onclick="sendDocumentToPatient('${doc.id}')" class="btn-download" style="background:#00A8CC;">📤 An Patient senden</button>` : ''}
                             <button onclick="deleteDocument('${doc.id}')" class="btn-delete">🗑️ Löschen</button>
                         </div>
                     </div>
@@ -3301,6 +3302,43 @@
             saveToStorage('pzrDocuments', filtered);
             
             alert('✅ Dokument gelöscht!');
+            loadDocuments();
+        }
+
+        // Send document to patient
+        function sendDocumentToPatient(documentId) {
+            const documents = getFromStorage('pzrDocuments') || [];
+            const patients = getFromStorage('pzrPatients') || [];
+            const doc = documents.find(d => d.id === documentId);
+            
+            if (!doc) {
+                alert('❌ Dokument nicht gefunden!');
+                return;
+            }
+            
+            // Create patient selection dropdown
+            let patientOptions = '<option value="">-- Patient auswählen --</option>';
+            patients.filter(p => p.status === 'active').forEach(p => {
+                patientOptions += `<option value="${p.patientNumber}">${p.patientNumber} - ${p.name}</option>`;
+            });
+            
+            // Show dialog with patient selection
+            const selectedPatient = prompt(`Dokument "${doc.name}" an Patient senden.\n\nBitte Patienten-Nummer eingeben:`);
+            
+            if (!selectedPatient) return;
+            
+            // Verify patient exists
+            const patient = patients.find(p => p.patientNumber === selectedPatient);
+            if (!patient) {
+                alert('❌ Patient nicht gefunden!');
+                return;
+            }
+            
+            // Update document with patient ID
+            doc.patientId = selectedPatient;
+            saveToStorage('pzrDocuments', documents);
+            
+            alert(`✅ Dokument wurde an Patient ${selectedPatient} - ${patient.name} gesendet!`);
             loadDocuments();
         }
 
