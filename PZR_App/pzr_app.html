@@ -1067,6 +1067,7 @@
                     <button class="tab" onclick="switchTab('anamnese', event)">Anamnese</button>
                     <button class="tab" onclick="switchTab('recommendations', event)">Empfehlungen</button>
                     <button class="tab" onclick="switchTab('appointments', event)">Termine</button>
+                    <button class="tab" onclick="switchTab('myDocuments', event)">📄 Meine Dokumente</button>
                     <button class="tab" onclick="switchTab('reminders', event)">Erinnerungen</button>
                 </div>
 
@@ -1269,6 +1270,15 @@
 
                         <h3>Aktive Erinnerungen</h3>
                         <div id="remindersList"></div>
+                    </div>
+
+                    <!-- My Documents Tab -->
+                    <div id="myDocuments" class="tab-content">
+                        <h2>📄 Meine Dokumente</h2>
+                        
+                        <div id="patientDocumentsList" class="document-list">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1959,6 +1969,9 @@
             
             // Load anamnese
             loadAnamneseData();
+            
+            // Load patient documents
+            loadPatientDocuments();
         }
 
         // Load profile edit fields
@@ -3303,6 +3316,47 @@
             if (fileType.includes('word') || fileType.includes('document')) return '📄';
             if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
             return '📎';
+        }
+
+        // Load patient documents (for patient view)
+        function loadPatientDocuments() {
+            if (!currentUser || !currentUser.patientNumber) return;
+            
+            const container = document.getElementById('patientDocumentsList');
+            const allDocuments = getFromStorage('pzrDocuments') || [];
+            
+            // Filter documents assigned to this patient
+            const myDocuments = allDocuments.filter(doc => doc.patientId === currentUser.patientNumber);
+            
+            if (myDocuments.length === 0) {
+                container.innerHTML = '<p style="color:#666; text-align:center; padding:20px;">Sie haben noch keine Dokumente erhalten.</p>';
+                return;
+            }
+            
+            let html = '';
+            myDocuments.forEach(doc => {
+                const icon = getFileIcon(doc.fileType);
+                const size = formatFileSize(doc.fileSize);
+                const date = new Date(doc.uploadedAt).toLocaleDateString('de-DE');
+                
+                html += `
+                    <div class="doc-item">
+                        <div class="doc-icon">${icon}</div>
+                        <div class="doc-info">
+                            <strong>${doc.name}</strong>
+                            <small>${doc.fileName} • ${size} • ${date}</small>
+                            ${doc.notes ? `<p style="margin-top:5px;color:#666;">${doc.notes}</p>` : ''}
+                        </div>
+                        <div class="doc-actions">
+                            <button class="btn-download" onclick="downloadDocument('${doc.id}')">
+                                ⬇️ Download
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
         }
 
         // Registration Functions
