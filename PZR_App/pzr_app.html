@@ -2613,7 +2613,7 @@
         
         // Patienten in Dropdown laden
         function loadPatientsForRecommendations() {
-            const patients = getFromStorage('patients') || [];
+            const patients = getFromStorage('pzrPatients') || [];
             const select = document.getElementById('recommendationPatientSelect');
             
             if (!select) return;
@@ -2639,7 +2639,7 @@
                 return;
             }
             
-            const patients = getFromStorage('patients') || [];
+            const patients = getFromStorage('pzrPatients') || [];
             const patient = patients.find(p => p.id === patientId);
             
             if (!patient) {
