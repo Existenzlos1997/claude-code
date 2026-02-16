@@ -1459,38 +1459,16 @@
                             <input type="text" id="newPatientPhone" placeholder="+49 123 456789">
                         </div>
 
-                        <h3>Behandler-Empfehlungen</h3>
+                        <h3>Persönliche Daten</h3>
                         
-                        <div class="mic-permission-info">
-                            <strong>🎤 Spracheingabe:</strong> Klicken Sie auf das Mikrofon-Symbol neben den Feldern, um Empfehlungen per Sprache zu erfassen.
-                        </div>
-                        
-                        <div class="form-group voice-input-container">
-                            <label for="newRecommendations">Empfehlungen nach PZR</label>
-                            <textarea id="newRecommendations" placeholder="z.B. Fokus auf Zahnzwischenräume, verstärkte Pflege im Unterkiefer..."></textarea>
-                            <button type="button" class="voice-btn" onclick="toggleVoiceInput('newRecommendations')" title="Spracheingabe">🎤</button>
-                            <div id="newRecommendations-status" class="voice-status"></div>
+                        <div class="form-group">
+                            <label for="newPatientNumber">Patientennummer *</label>
+                            <input type="text" id="newPatientNumber" placeholder="z.B. PAT-12346">
                         </div>
 
-                        <div class="form-group voice-input-container">
-                            <label for="newBrushingTechnique">Putztechnik-Anpassungen</label>
-                            <textarea id="newBrushingTechnique" placeholder="z.B. Bass-Technik empfohlen, kreisende Bewegungen vermeiden..."></textarea>
-                            <button type="button" class="voice-btn" onclick="toggleVoiceInput('newBrushingTechnique')" title="Spracheingabe">🎤</button>
-                            <div id="newBrushingTechnique-status" class="voice-status"></div>
-                        </div>
-
-                        <div class="form-group voice-input-container">
-                            <label for="newToolsUsage">Hilfsmittel und Anwendung</label>
-                            <textarea id="newToolsUsage" placeholder="z.B. Interdentalbürsten Größe 3, elektrische Zahnbürste..."></textarea>
-                            <button type="button" class="voice-btn" onclick="toggleVoiceInput('newToolsUsage')" title="Spracheingabe">🎤</button>
-                            <div id="newToolsUsage-status" class="voice-status"></div>
-                        </div>
-
-                        <div class="form-group voice-input-container">
-                            <label for="newNotes">Weitere Bemerkungen</label>
-                            <textarea id="newNotes" placeholder="Zusätzliche Hinweise..."></textarea>
-                            <button type="button" class="voice-btn" onclick="toggleVoiceInput('newNotes')" title="Spracheingabe">🎤</button>
-                            <div id="newNotes-status" class="voice-status"></div>
+                        <div class="form-group">
+                            <label for="newPatientBirthdate">Geburtsdatum</label>
+                            <input type="date" id="newPatientBirthdate">
                         </div>
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
@@ -2977,11 +2955,12 @@
 
         // Create new patient
         function createNewPatient() {
+            const number = document.getElementById('newPatientNumber').value.trim();
             const name = document.getElementById('newPatientName').value.trim();
             const pin = document.getElementById('newPatientPin').value.trim();
 
-            if (!name || !pin) {
-                alert('Bitte füllen Sie alle Pflichtfelder aus (Name, PIN).');
+            if (!number || !name || !pin) {
+                alert('Bitte füllen Sie alle Pflichtfelder aus (Patientennummer, Name, PIN).');
                 return;
             }
 
@@ -2992,8 +2971,11 @@
 
             const patients = getFromStorage('pzrPatients') || [];
             
-            // Generate patient number
-            const number = generatePatientNumber();
+            // Check if patient number already exists
+            if (patients.find(p => p.number === number || p.patientNumber === number)) {
+                alert('❌ Diese Patientennummer existiert bereits!');
+                return;
+            }
             
             const nameParts = name.split(' ');
             const firstName = nameParts[0] || '';
@@ -3001,7 +2983,8 @@
 
             const newPatient = {
                 id: 'pat_' + Date.now(),
-                number,
+                number: number,
+                patientNumber: number,
                 firstName,
                 lastName,
                 pin,
@@ -3019,18 +3002,32 @@
                 medications: document.getElementById('newMedications')?.value || '',
                 allergies: document.getElementById('newAllergies')?.value || '',
                 dentalHistory: document.getElementById('newDentalHistory')?.value || '',
-                brushingTechnique: document.getElementById('newBrushingTechnique')?.value || '',
-                toolsUsage: document.getElementById('newToolsUsage')?.value || '',
-                notes: document.getElementById('newNotes')?.value || '',
-                created: new Date().toISOString()
+                brushingTechnique: '',
+                toolsUsage: '',
+                notes: '',
+                created: new Date().toISOString(),
+                anamnese: {
+                    allergies: document.getElementById('newAllergies')?.value || '',
+                    medications: document.getElementById('newMedications')?.value || '',
+                    bleedingTendency: false,
+                    heartDisease: false,
+                    diabetes: false,
+                    pregnancy: false,
+                    chronicConditions: document.getElementById('newMedicalHistory')?.value || '',
+                    previousSurgeries: '',
+                    smoker: false,
+                    alcoholConsumption: 'none',
+                    lastUpdated: null
+                }
             };
 
             patients.push(newPatient);
             saveToStorage('pzrPatients', patients);
 
-            alert(`Patient erfolgreich angelegt!\n\nPatientennummer: ${number}\nPIN: ${pin}`);
+            alert(`✅ Patient erfolgreich angelegt!\n\nPatientennummer: ${number}\nPIN: ${pin}`);
             
             // Clear form
+            document.getElementById('newPatientNumber').value = '';
             document.getElementById('newPatientName').value = '';
             document.getElementById('newPatientPin').value = '';
             
