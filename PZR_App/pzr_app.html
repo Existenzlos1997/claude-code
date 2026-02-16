@@ -1292,6 +1292,7 @@
                     <button class="tab" onclick="switchTab('employeeRecommendations', event)">📋 Empfehlungen</button>
                     <button class="tab" onclick="switchTab('registrations', event)">📝 Registrierungen <span id="pendingRegistrationsCount" class="badge" style="display:none;"></span></button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
+                    <button class="tab" onclick="switchTab('settings', event)">⚙️ Einstellungen</button>
                 </div>
 
                 <div class="content">
@@ -1484,6 +1485,68 @@
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
                     </div>
 
+                    <!-- Settings Tab -->
+                    <div id="settings" class="tab-content">
+                        <h2>⚙️ Einstellungen</h2>
+                        
+                        <!-- Backend Configuration -->
+                        <div class="settings-section">
+                            <h3>🖥️ Backend-Konfiguration</h3>
+                            <p>Aktivieren Sie diesen PC als zentralen Backend-Server für alle Praxis-Daten.</p>
+                            
+                            <div class="form-group">
+                                <label>Backend-Status:</label>
+                                <span id="backendStatus" style="font-weight: bold; color: #999;">Inaktiv</span>
+                            </div>
+                            
+                            <button class="btn" onclick="activateBackend()">Backend aktivieren</button>
+                            <button class="btn" onclick="deactivateBackend()" style="margin-left: 10px;">Backend deaktivieren</button>
+                        </div>
+                        
+                        <hr style="margin: 30px 0;">
+                        
+                        <!-- Employee Management -->
+                        <div class="settings-section">
+                            <h3>👥 Mitarbeiter-Verwaltung</h3>
+                            
+                            <div id="employeesList" style="margin-bottom: 20px;">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                            
+                            <h4>Neuen Mitarbeiter hinzufügen</h4>
+                            
+                            <div class="form-group">
+                                <label for="newEmployeeUsername">Benutzername *</label>
+                                <input type="text" id="newEmployeeUsername" placeholder="z.B. dr.mueller">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newEmployeePassword">Passwort *</label>
+                                <input type="password" id="newEmployeePassword" placeholder="Mindestens 6 Zeichen">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newEmployeeRole">Rolle *</label>
+                                <select id="newEmployeeRole">
+                                    <option value="employee">Behandler</option>
+                                    <option value="admin">Administrator</option>
+                                </select>
+                            </div>
+                            
+                            <button class="btn" onclick="addEmployee()">Mitarbeiter hinzufügen</button>
+                        </div>
+                        
+                        <hr style="margin: 30px 0;">
+                        
+                        <!-- Data Management -->
+                        <div class="settings-section">
+                            <h3>💾 Daten-Verwaltung</h3>
+                            <p>Exportieren oder importieren Sie alle Praxis-Daten.</p>
+                            
+                            <button class="btn" onclick="exportData()">📥 Daten exportieren</button>
+                            <button class="btn" onclick="importData()" style="margin-left: 10px;">📤 Daten importieren</button>
+                        </div>
+                    </div>
                     
                     
                     <!-- Registrations Tab -->
@@ -1917,6 +1980,7 @@
                 loadEmployeeDashboard();
                 loadRegistrations(); // Load pending registrations
                 loadPendingCancellations(); // Load pending cancellations
+                loadEmployees(); // Load employees list
             }
         }
 
@@ -4159,6 +4223,157 @@
             // No longer need to populate select dropdown
         }
 
+        // Settings Functions
+        function activateBackend() {
+            if (confirm('Möchten Sie diesen PC als Backend-Server aktivieren? Alle Daten werden auf diesem PC zentral gespeichert.')) {
+                localStorage.setItem('backendActive', 'true');
+                localStorage.setItem('backendPC', navigator.userAgent);
+                document.getElementById('backendStatus').textContent = 'Aktiv';
+                document.getElementById('backendStatus').style.color = '#4CAF50';
+                alert('Backend wurde erfolgreich aktiviert!');
+            }
+        }
+
+        function deactivateBackend() {
+            if (confirm('Möchten Sie das Backend wirklich deaktivieren?')) {
+                localStorage.removeItem('backendActive');
+                localStorage.removeItem('backendPC');
+                document.getElementById('backendStatus').textContent = 'Inaktiv';
+                document.getElementById('backendStatus').style.color = '#999';
+                alert('Backend wurde deaktiviert.');
+            }
+        }
+
+        function exportData() {
+            const data = {
+                pzrPatients: getFromStorage('pzrPatients') || [],
+                employees: getFromStorage('employees') || [],
+                appointments: getFromStorage('appointments') || [],
+                recommendations: getFromStorage('recommendations') || [],
+                documents: getFromStorage('documents') || [],
+                registrations: getFromStorage('registrations') || [],
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pzr_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Daten wurden erfolgreich exportiert!');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        if (confirm('Möchten Sie die importierten Daten wirklich übernehmen? Dies überschreibt alle aktuellen Daten!')) {
+                            if (data.pzrPatients) saveToStorage('pzrPatients', data.pzrPatients);
+                            if (data.employees) saveToStorage('employees', data.employees);
+                            if (data.appointments) saveToStorage('appointments', data.appointments);
+                            if (data.recommendations) saveToStorage('recommendations', data.recommendations);
+                            if (data.documents) saveToStorage('documents', data.documents);
+                            if (data.registrations) saveToStorage('registrations', data.registrations);
+                            
+                            alert('Daten wurden erfolgreich importiert!');
+                            location.reload();
+                        }
+                    } catch (error) {
+                        alert('Fehler beim Importieren der Daten: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function addEmployee() {
+            const username = document.getElementById('newEmployeeUsername').value.trim();
+            const password = document.getElementById('newEmployeePassword').value.trim();
+            const role = document.getElementById('newEmployeeRole').value;
+            
+            if (!username || !password) {
+                alert('Bitte füllen Sie alle Felder aus!');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Das Passwort muss mindestens 6 Zeichen lang sein!');
+                return;
+            }
+            
+            const employees = getFromStorage('employees') || [];
+            
+            // Check if username already exists
+            if (employees.some(emp => emp.username === username)) {
+                alert('Dieser Benutzername existiert bereits!');
+                return;
+            }
+            
+            employees.push({
+                id: generateId(),
+                username: username,
+                password: password,
+                role: role,
+                createdAt: new Date().toISOString()
+            });
+            
+            saveToStorage('employees', employees);
+            
+            document.getElementById('newEmployeeUsername').value = '';
+            document.getElementById('newEmployeePassword').value = '';
+            document.getElementById('newEmployeeRole').value = 'employee';
+            
+            loadEmployees();
+            alert('Mitarbeiter wurde erfolgreich hinzugefügt!');
+        }
+
+        function loadEmployees() {
+            const employees = getFromStorage('employees') || [];
+            const container = document.getElementById('employeesList');
+            
+            if (employees.length === 0) {
+                container.innerHTML = '<p style="color: #999;">Keine Mitarbeiter vorhanden.</p>';
+                return;
+            }
+            
+            let html = '<div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #f9f9f9;">';
+            html += '<h4 style="margin-top: 0;">Mitarbeiter-Liste</h4>';
+            html += '<ul style="list-style: none; padding: 0; margin: 0;">';
+            
+            employees.forEach(emp => {
+                const roleLabel = emp.role === 'admin' ? '👑 Administrator' : '👤 Behandler';
+                html += `<li style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <strong>${emp.username}</strong> - ${roleLabel}
+                    ${emp.role !== 'admin' ? '<button class="btn" style="float: right; padding: 5px 10px; font-size: 12px;" onclick="deleteEmployee(\'' + emp.id + '\')">Löschen</button>' : ''}
+                </li>`;
+            });
+            
+            html += '</ul></div>';
+            container.innerHTML = html;
+        }
+
+        function deleteEmployee(id) {
+            if (!confirm('Möchten Sie diesen Mitarbeiter wirklich löschen?')) return;
+            
+            let employees = getFromStorage('employees') || [];
+            employees = employees.filter(emp => emp.id !== id);
+            saveToStorage('employees', employees);
+            loadEmployees();
+            alert('Mitarbeiter wurde gelöscht.');
+        }
+
         // Initialize app
         // Initialize app on load
         window.onload = function() {
@@ -4166,6 +4381,15 @@
             loadData();
             initSpeechRecognition();
             scheduleNotifications();
+            
+            // Check and display backend status
+            if (localStorage.getItem('backendActive') === 'true') {
+                const statusEl = document.getElementById('backendStatus');
+                if (statusEl) {
+                    statusEl.textContent = 'Aktiv';
+                    statusEl.style.color = '#4CAF50';
+                }
+            }
             
             // Auto-refresh lists every 30 seconds if logged in
             setInterval(function() {
