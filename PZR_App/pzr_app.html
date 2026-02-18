@@ -1300,6 +1300,7 @@
                     <button class="tab" onclick="switchTab('employeeRecommendations', event)">📋 Empfehlungen</button>
                     <button class="tab" onclick="switchTab('registrations', event)">📝 Registrierungen <span id="pendingRegistrationsCount" class="badge" style="display:none;"></span></button>
                     <button class="tab" onclick="switchTab('createPatient', event)">Neu anlegen</button>
+                    <button class="tab" onclick="switchTab('documents', event)">📎 Dokumente</button>
                     <button class="tab" onclick="switchTab('settings', event)">⚙️ Einstellungen</button>
                 </div>
 
@@ -1491,6 +1492,44 @@
                         </div>
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
+                    </div>
+
+                    <!-- Documents Tab -->
+                    <div id="documents" class="tab-content">
+                        <h2>📎 Dokumente verwalten</h2>
+                        
+                        <!-- Upload Form -->
+                        <div class="card">
+                            <h3>Dokument hochladen</h3>
+                            <div class="form-group">
+                                <label for="documentFile">Datei auswählen (max. 5MB) *</label>
+                                <input type="file" id="documentFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            </div>
+                            <div class="form-group">
+                                <label for="documentCategory">Kategorie *</label>
+                                <select id="documentCategory">
+                                    <option value="practice">Praxis-Dokument</option>
+                                    <option value="patient">Patienten-Dokument</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="documentPatientNumber">Patienten-Nummer (optional, für Zuweisung)</label>
+                                <input type="text" id="documentPatientNumber" placeholder="z.B. PAT-12345">
+                            </div>
+                            <div class="form-group">
+                                <label for="documentNotes">Notizen</label>
+                                <textarea id="documentNotes" rows="3" placeholder="Optionale Notizen zum Dokument..."></textarea>
+                            </div>
+                            <button class="btn" onclick="uploadDocument()">📤 Hochladen</button>
+                        </div>
+                        
+                        <!-- Documents List -->
+                        <div class="card">
+                            <h3>Hochgeladene Dokumente</h3>
+                            <div id="documentsList">
+                                <p class="info-message">Lade Dokumente...</p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Settings Tab -->
