@@ -1552,6 +1552,25 @@
                         
                         <hr style="margin: 30px 0;">
                         
+                        <!-- Desktop App Download -->
+                        <div class="settings-section">
+                            <h3>💾 Desktop-App</h3>
+                            <p>Installieren Sie die Desktop-App für volle Funktionalität und Backend-Server.</p>
+                            
+                            <button class="btn" onclick="downloadDesktopInstaller()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                💾 Desktop-App herunterladen
+                            </button>
+                            
+                            <div id="downloadInfo" style="margin-top: 15px; padding: 10px; background: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 4px; display: none;">
+                                <p style="margin: 0; font-size: 14px;">
+                                    <strong>Download läuft...</strong><br>
+                                    Nach dem Download die Datei öffnen und den Installer ausführen.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <hr style="margin: 30px 0;">
+                        
                         <!-- Employee Management -->
                         <div class="settings-section">
                             <h3>👥 Mitarbeiter-Verwaltung</h3>
@@ -4419,6 +4438,61 @@
             saveToStorage('employees', employees);
             loadEmployees();
             alert('Mitarbeiter wurde gelöscht.');
+        }
+
+        // Download Desktop Installer
+        function downloadDesktopInstaller() {
+            // Detect platform
+            const platform = detectPlatform();
+            
+            // Get installer URL
+            const installerURL = getInstallerURL(platform);
+            
+            // Show download info
+            const downloadInfo = document.getElementById('downloadInfo');
+            if (downloadInfo) {
+                downloadInfo.style.display = 'block';
+            }
+            
+            // Start download
+            setTimeout(() => {
+                window.location.href = installerURL;
+            }, 500);
+            
+            // Hide info after 5 seconds
+            setTimeout(() => {
+                if (downloadInfo) {
+                    downloadInfo.style.display = 'none';
+                }
+            }, 5000);
+        }
+        
+        function detectPlatform() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.indexOf('win') !== -1) {
+                return 'windows';
+            } else if (userAgent.indexOf('mac') !== -1) {
+                return 'mac';
+            } else if (userAgent.indexOf('linux') !== -1) {
+                return 'linux';
+            }
+            return 'windows'; // Default
+        }
+        
+        function getInstallerURL(platform) {
+            // GitHub releases URL - User muss später die echten Installer hochladen
+            const baseURL = 'https://github.com/Existenzlos1997/claude-code/releases/download/v1.0.0/';
+            
+            switch(platform) {
+                case 'windows':
+                    return baseURL + 'PZR-App-Setup-1.0.0.exe';
+                case 'mac':
+                    return baseURL + 'PZR-App-1.0.0.dmg';
+                case 'linux':
+                    return baseURL + 'pzr-app_1.0.0_amd64.deb';
+                default:
+                    return baseURL + 'PZR-App-Setup-1.0.0.exe';
+            }
         }
 
         // Initialize app
