@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PZR Assistent Pro - Professionelle Zahnreinigung</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#006B9E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PZR App">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <style>
         * {
             margin: 0;
@@ -4401,6 +4409,43 @@
                     }
                 }
             }, 30000);
+            
+            // PWA: Service Worker Registration
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('sw.js')
+                        .then(function(registration) {
+                            console.log('✅ Service Worker registered:', registration.scope);
+                        })
+                        .catch(function(error) {
+                            console.log('❌ Service Worker registration failed:', error);
+                        });
+                });
+            }
+            
+            // PWA: Install Prompt
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                deferredPrompt = e;
+                console.log('📱 App kann installiert werden!');
+                // Show install notification to user
+                if (confirm('📱 Diese App als Progressive Web App installieren?\n\n✅ Funktioniert offline\n✅ Schnellerer Start\n✅ Eigenes App-Icon')) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(function(choiceResult) {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('✅ App wurde installiert');
+                        }
+                        deferredPrompt = null;
+                    });
+                }
+            });
+            
+            // PWA: Track installation
+            window.addEventListener('appinstalled', function(evt) {
+                console.log('✅ App erfolgreich installiert!');
+                alert('✅ App erfolgreich installiert!\n\nSie können die App jetzt wie eine normale Anwendung verwenden.');
+            });
         };
     </script>
 </body>
