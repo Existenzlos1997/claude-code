@@ -574,6 +574,40 @@
             margin-bottom: 20px;
         }
 
+        .installer-step {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .installer-step .step-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .installer-step.step-done {
+            opacity: 0.5;
+        }
+
+        .installer-step.step-active {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102,126,234,0.2);
+        }
+
+        #installerPlatformInfo {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+        }
+
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -1554,17 +1588,31 @@
                         
                         <!-- Desktop App Download -->
                         <div class="settings-section">
-                            <h3>💾 Desktop-App</h3>
-                            <p>Installieren Sie die Desktop-App für volle Funktionalität und Backend-Server.</p>
-                            
-                            <button class="btn" onclick="downloadDesktopInstaller()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                💾 Desktop-App herunterladen
-                            </button>
-                            
-                            <div id="downloadInfo" style="margin-top: 15px; padding: 10px; background: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 4px; display: none;">
-                                <p style="margin: 0; font-size: 14px;">
-                                    <strong>Download läuft...</strong><br>
-                                    Nach dem Download die Datei öffnen und den Installer ausführen.
+                            <h3>💾 Desktop-App installieren</h3>
+                            <p>Installieren Sie die PZR Desktop-App für vollen Offline-Betrieb mit lokalem Backend-Server.</p>
+
+                            <!-- Step 1: Download -->
+                            <div id="installerStep1" class="installer-step step-active">
+                                <span class="step-badge">Schritt 1</span>
+                                <p style="margin: 0 0 12px 0; font-weight: 500;">Installer herunterladen</p>
+                                <button class="btn" onclick="downloadDesktopInstaller()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    ⬇️ Installer herunterladen
+                                </button>
+                                <p id="installerPlatformInfo"></p>
+                            </div>
+
+                            <!-- Step 2: Run Installer (hidden until download starts) -->
+                            <div id="installerStep2" class="installer-step" style="display:none;">
+                                <span class="step-badge" style="background:#43a047;">Schritt 2</span>
+                                <p style="margin: 0 0 12px 0; font-weight: 500;">Installer ausführen</p>
+                                <p style="font-size: 14px; color: #555; margin-bottom: 12px;">
+                                    Der Download hat gestartet. Öffnen Sie die heruntergeladene Datei in Ihrem Download-Ordner und folgen Sie dem Installations-Assistenten.
+                                </p>
+                                <button class="btn" onclick="launchInstaller()" style="background: linear-gradient(135deg, #43a047 0%, #1de9b6 100%);">
+                                    ▶️ Installer starten
+                                </button>
+                                <p style="font-size: 12px; color: #888; margin-top: 8px;">
+                                    💡 Tipp: Die Datei befindet sich in Ihrem Downloads-Ordner.
                                 </p>
                             </div>
                         </div>
@@ -4442,31 +4490,38 @@
 
         // Download Desktop Installer
         function downloadDesktopInstaller() {
-            // Detect platform
             const platform = detectPlatform();
-            
-            // Get installer URL
-            const installerURL = getInstallerURL(platform);
-            
-            // Show download info
-            const downloadInfo = document.getElementById('downloadInfo');
-            if (downloadInfo) {
-                downloadInfo.style.display = 'block';
+            const url = getInstallerURL(platform);
+            const filename = getInstallerFilename(platform);
+
+            // Trigger download via hidden anchor (does not navigate away)
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Mark step 1 as done, reveal step 2
+            const step1 = document.getElementById('installerStep1');
+            const step2 = document.getElementById('installerStep2');
+            if (step1) {
+                step1.classList.remove('step-active');
+                step1.classList.add('step-done');
             }
-            
-            // Start download
-            setTimeout(() => {
-                window.location.href = installerURL;
-            }, 500);
-            
-            // Hide info after 5 seconds
-            setTimeout(() => {
-                if (downloadInfo) {
-                    downloadInfo.style.display = 'none';
-                }
-            }, 5000);
+            if (step2) {
+                step2.style.display = 'block';
+                step2.classList.add('step-active');
+            }
         }
-        
+
+        function launchInstaller() {
+            // Open the installer URL in a new tab – browser will prompt to run/save
+            const platform = detectPlatform();
+            const url = getInstallerURL(platform);
+            window.open(url, '_blank');
+        }
+
         function detectPlatform() {
             const userAgent = navigator.userAgent.toLowerCase();
             if (userAgent.indexOf('win') !== -1) {
@@ -4478,11 +4533,9 @@
             }
             return 'windows'; // Default
         }
-        
+
         function getInstallerURL(platform) {
-            // GitHub releases URL - User muss später die echten Installer hochladen
             const baseURL = 'https://github.com/Existenzlos1997/claude-code/releases/download/v1.0.0/';
-            
             switch(platform) {
                 case 'windows':
                     return baseURL + 'PZR-App-Setup-1.0.0.exe';
@@ -4495,6 +4548,15 @@
             }
         }
 
+        function getInstallerFilename(platform) {
+            switch(platform) {
+                case 'windows': return 'PZR-App-Setup-1.0.0.exe';
+                case 'mac': return 'PZR-App-1.0.0.dmg';
+                case 'linux': return 'pzr-app_1.0.0_amd64.deb';
+                default: return 'PZR-App-Setup-1.0.0.exe';
+            }
+        }
+
         // Initialize app
         // Initialize app on load
         window.onload = function() {
@@ -4502,6 +4564,14 @@
             loadData();
             initSpeechRecognition();
             scheduleNotifications();
+
+            // Show detected platform in installer section
+            const platformInfo = document.getElementById('installerPlatformInfo');
+            if (platformInfo) {
+                const platform = detectPlatform();
+                const labels = { windows: '🪟 Windows (.exe)', mac: '🍎 macOS (.dmg)', linux: '🐧 Linux (.deb)' };
+                platformInfo.textContent = 'Erkanntes Betriebssystem: ' + (labels[platform] || platform);
+            }
             
             // Check and display backend status
             if (localStorage.getItem('backendActive') === 'true') {
