@@ -1573,15 +1573,65 @@
                         <!-- Backend Configuration -->
                         <div class="settings-section">
                             <h3>🖥️ Backend-Konfiguration</h3>
-                            <p>Aktivieren Sie diesen PC als zentralen Backend-Server für alle Praxis-Daten.</p>
-                            
-                            <div class="form-group">
-                                <label>Backend-Status:</label>
-                                <span id="backendStatus" style="font-weight: bold; color: #999;">Inaktiv</span>
+                            <p id="backendIntroText">Stellen Sie ein, ob dieser PC der zentrale Server ist oder sich mit einem anderen Server verbindet.</p>
+
+                            <!-- Running in browser warning -->
+                            <div id="backendBrowserWarning" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:15px; margin-bottom:15px;">
+                                <strong>⚠️ Browser-Modus</strong><br>
+                                Die Backend-Funktion ist nur in der <strong>installierten Desktop-App</strong> verfügbar.<br>
+                                Bitte laden Sie die Desktop-App herunter (Abschnitt unten).
                             </div>
-                            
-                            <button class="btn" onclick="activateBackend()">Backend aktivieren</button>
-                            <button class="btn" onclick="deactivateBackend()" style="margin-left: 10px;">Backend deaktivieren</button>
+
+                            <!-- Backend mode selector (only in Electron) -->
+                            <div id="backendElectronUI" style="display:none;">
+
+                                <!-- Current status bar -->
+                                <div style="background:#f8f9fa; border:1px solid #e0e0e0; border-radius:8px; padding:12px; margin-bottom:15px; display:flex; align-items:center; gap:12px;">
+                                    <span id="backendStatusDot" style="width:12px; height:12px; border-radius:50%; background:#ccc; display:inline-block; flex-shrink:0;"></span>
+                                    <span id="backendStatus" style="font-weight:600;">Inaktiv</span>
+                                </div>
+
+                                <!-- Mode: activate this PC as server -->
+                                <div class="installer-step step-active" id="backendActivateCard">
+                                    <span class="step-badge">🖥️ Dieser PC = Server</span>
+                                    <p style="margin:8px 0 12px; font-size:14px;">Aktiviert den Backend-Server auf diesem PC. Alle Praxis- und Patientendaten werden zentral hier gespeichert.</p>
+                                    <button class="btn" id="activateBackendBtn" onclick="activateBackend()" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">
+                                        ▶️ Backend auf diesem PC starten
+                                    </button>
+                                    <button class="btn" id="deactivateBackendBtn" onclick="deactivateBackend()" style="display:none; background:linear-gradient(135deg,#e53935 0%,#b71c1c 100%); margin-left:10px;">
+                                        ⏹️ Backend stoppen
+                                    </button>
+
+                                    <!-- Server info shown after activation -->
+                                    <div id="backendServerInfo" style="display:none; margin-top:15px; background:#e8f5e9; border:1px solid #a5d6a7; border-radius:8px; padding:12px;">
+                                        <p style="margin:0 0 8px; font-weight:600; color:#2e7d32;">✅ Server läuft</p>
+                                        <p style="margin:0 0 5px; font-size:13px;">Andere PCs können sich über diese Adresse verbinden:</p>
+                                        <p style="margin:0; font-size:16px; font-family:monospace; font-weight:bold;" id="backendServerAddress"></p>
+                                        <p style="margin:8px 0 0; font-size:12px; color:#666;">Diese Adresse im Netzwerk/WLAN der Praxis eingeben.</p>
+                                    </div>
+                                </div>
+
+                                <div style="text-align:center; margin:15px 0; color:#aaa;">— oder —</div>
+
+                                <!-- Mode: connect to another backend PC -->
+                                <div class="installer-step" id="backendConnectCard">
+                                    <span class="step-badge" style="background:#1976d2;">🔗 Mit Server verbinden</span>
+                                    <p style="margin:8px 0 12px; font-size:14px;">Verbindet diese Desktop-App mit dem zentralen Server (einem anderen PC in der Praxis).</p>
+                                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                        <input type="text" id="backendConnectUrl" placeholder="z.B. http://192.168.1.50:3000"
+                                            style="flex:1; min-width:200px; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px;"
+                                            value="">
+                                        <button class="btn" onclick="connectToBackend()" style="background:linear-gradient(135deg,#1976d2 0%,#42a5f5 100%);">
+                                            🔗 Verbinden
+                                        </button>
+                                        <button class="btn" onclick="disconnectBackend()" style="background:#757575;">
+                                            ✖ Trennen
+                                        </button>
+                                    </div>
+                                    <p id="backendConnectStatus" style="font-size:13px; color:#555; margin:8px 0 0;"></p>
+                                </div>
+
+                            </div>
                         </div>
                         
                         <hr style="margin: 30px 0;">
@@ -3185,37 +3235,6 @@
             document.getElementById('newEmployeePin').value = '';
         }
         
-        // Backend activation
-        function activateBackend() {
-            if (confirm('Möchten Sie diesen PC als zentralen Backend-Server aktivieren?\n\nAlle Daten werden dann zentral auf diesem PC verwaltet.')) {
-                localStorage.setItem('pzrBackendActive', 'true');
-                localStorage.setItem('pzrBackendAddress', window.location.hostname || 'localhost');
-                
-                document.getElementById('backendStatusText').textContent = 'Backend aktiv';
-                document.getElementById('backendStatus').style.background = '#d4edda';
-                document.getElementById('activateBackendBtn').style.display = 'none';
-                document.getElementById('backendConfig').style.display = 'block';
-                document.getElementById('backendAddress').value = localStorage.getItem('pzrBackendAddress');
-                
-                alert('Backend erfolgreich aktiviert!\n\nDieser PC ist jetzt der zentrale Server.');
-            }
-        }
-        
-        // Backend deactivation
-        function deactivateBackend() {
-            if (confirm('Backend wirklich deaktivieren?')) {
-                localStorage.removeItem('pzrBackendActive');
-                localStorage.removeItem('pzrBackendAddress');
-                
-                document.getElementById('backendStatusText').textContent = 'Lokaler Modus';
-                document.getElementById('backendStatus').style.background = '#f0f9ff';
-                document.getElementById('activateBackendBtn').style.display = 'block';
-                document.getElementById('backendConfig').style.display = 'none';
-                
-                alert('Backend deaktiviert.');
-            }
-        }
-        
         // Export data
         function exportData() {
             const data = {
@@ -4373,25 +4392,140 @@
             // No longer need to populate select dropdown
         }
 
-        // Settings Functions
-        function activateBackend() {
-            if (confirm('Möchten Sie diesen PC als Backend-Server aktivieren? Alle Daten werden auf diesem PC zentral gespeichert.')) {
-                localStorage.setItem('backendActive', 'true');
-                localStorage.setItem('backendPC', navigator.userAgent);
-                document.getElementById('backendStatus').textContent = 'Aktiv';
-                document.getElementById('backendStatus').style.color = '#4CAF50';
-                alert('Backend wurde erfolgreich aktiviert!');
+        // ─── Backend / Server Functions ──────────────────────────────────────────
+
+        /** Returns true when running inside the Electron desktop app */
+        function isElectron() {
+            return typeof window !== 'undefined' && typeof window.require === 'function';
+        }
+
+        /** Initialize backend UI depending on runtime environment */
+        function initBackendUI() {
+            const isDesktop = isElectron();
+            const warningEl = document.getElementById('backendBrowserWarning');
+            const electronUI = document.getElementById('backendElectronUI');
+
+            if (!isDesktop) {
+                // Browser — show warning, hide controls
+                if (warningEl) warningEl.style.display = 'block';
+                if (electronUI) electronUI.style.display = 'none';
+                return;
+            }
+
+            // Electron — show controls
+            if (warningEl) warningEl.style.display = 'none';
+            if (electronUI) electronUI.style.display = 'block';
+
+            // Set up IPC listeners
+            const { ipcRenderer } = window.require('electron');
+
+            ipcRenderer.on('backend-status', (event, status) => {
+                setBackendStatusUI(status.active, status.url || null);
+            });
+
+            ipcRenderer.on('backend-stopped', () => {
+                setBackendStatusUI(false, null);
+            });
+
+            // Query current status
+            ipcRenderer.send('get-backend-status');
+
+            // Pre-fill saved connect URL
+            const savedUrl = localStorage.getItem('pzrBackendConnectUrl');
+            if (savedUrl) {
+                const input = document.getElementById('backendConnectUrl');
+                if (input) input.value = savedUrl;
+                // Auto-connect silently (show status only)
+                checkBackendConnection(savedUrl, false);
             }
         }
 
-        function deactivateBackend() {
-            if (confirm('Möchten Sie das Backend wirklich deaktivieren?')) {
+        /** Update the status indicator and button states */
+        function setBackendStatusUI(active, serverUrl) {
+            const dot = document.getElementById('backendStatusDot');
+            const label = document.getElementById('backendStatus');
+            const activateBtn = document.getElementById('activateBackendBtn');
+            const deactivateBtn = document.getElementById('deactivateBackendBtn');
+            const serverInfo = document.getElementById('backendServerInfo');
+            const serverAddr = document.getElementById('backendServerAddress');
+
+            if (!dot) return;
+
+            if (active) {
+                dot.style.background = '#4CAF50';
+                label.textContent = 'Backend aktiv auf diesem PC';
+                label.style.color = '#2e7d32';
+                activateBtn.style.display = 'none';
+                deactivateBtn.style.display = 'inline-block';
+                if (serverUrl && serverInfo && serverAddr) {
+                    serverAddr.textContent = serverUrl;
+                    serverInfo.style.display = 'block';
+                }
+                localStorage.setItem('backendActive', 'true');
+            } else {
+                dot.style.background = '#ccc';
+                label.textContent = 'Inaktiv';
+                label.style.color = '#999';
+                if (activateBtn) activateBtn.style.display = 'inline-block';
+                if (deactivateBtn) deactivateBtn.style.display = 'none';
+                if (serverInfo) serverInfo.style.display = 'none';
                 localStorage.removeItem('backendActive');
-                localStorage.removeItem('backendPC');
-                document.getElementById('backendStatus').textContent = 'Inaktiv';
-                document.getElementById('backendStatus').style.color = '#999';
-                alert('Backend wurde deaktiviert.');
             }
+        }
+
+        function activateBackend() {
+            if (!isElectron()) {
+                alert('Diese Funktion ist nur in der installierten Desktop-App verfügbar.');
+                return;
+            }
+            const { ipcRenderer } = window.require('electron');
+            ipcRenderer.send('activate-backend');
+        }
+
+        function deactivateBackend() {
+            if (!isElectron()) return;
+            if (!confirm('Backend wirklich stoppen? Alle verbundenen PCs verlieren die Verbindung.')) return;
+            const { ipcRenderer } = window.require('electron');
+            ipcRenderer.send('deactivate-backend');
+        }
+
+        /** Check connection to a backend server URL */
+        function checkBackendConnection(url, showAlert) {
+            const statusEl = document.getElementById('backendConnectStatus');
+            if (statusEl) statusEl.textContent = '⏳ Verbindung wird geprüft...';
+
+            fetch(url.replace(/\/$/, '') + '/api/health', { signal: AbortSignal.timeout(4000) })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        if (statusEl) statusEl.textContent = '✅ Verbunden mit ' + url;
+                        localStorage.setItem('pzrBackendConnectUrl', url);
+                        if (showAlert) alert('✅ Erfolgreich verbunden!\nDaten werden über ' + url + ' synchronisiert.');
+                    } else {
+                        throw new Error('Unexpected response');
+                    }
+                })
+                .catch(() => {
+                    if (statusEl) statusEl.textContent = '❌ Server nicht erreichbar: ' + url;
+                    if (showAlert) alert('❌ Verbindung fehlgeschlagen.\nBitte prüfen Sie die Adresse und ob der Server-PC eingeschaltet ist.');
+                });
+        }
+
+        function connectToBackend() {
+            const input = document.getElementById('backendConnectUrl');
+            if (!input || !input.value.trim()) {
+                alert('Bitte geben Sie die Server-Adresse ein (z.B. http://192.168.1.50:3000)');
+                return;
+            }
+            checkBackendConnection(input.value.trim(), true);
+        }
+
+        function disconnectBackend() {
+            localStorage.removeItem('pzrBackendConnectUrl');
+            const input = document.getElementById('backendConnectUrl');
+            if (input) input.value = '';
+            const statusEl = document.getElementById('backendConnectStatus');
+            if (statusEl) statusEl.textContent = 'Getrennt — Daten werden lokal gespeichert.';
         }
 
         function exportData() {
@@ -4649,6 +4783,9 @@
             initSpeechRecognition();
             scheduleNotifications();
 
+            // Initialize backend UI (Electron-aware)
+            initBackendUI();
+
             // Show detected platform in installer section
             const platformInfo = document.getElementById('installerPlatformInfo');
             if (platformInfo) {
@@ -4663,15 +4800,6 @@
                 if (androidSection) {
                     androidSection.style.borderColor = '#4CAF50';
                     androidSection.style.boxShadow = '0 0 0 3px rgba(76,175,80,0.25)';
-                }
-            }
-            
-            // Check and display backend status
-            if (localStorage.getItem('backendActive') === 'true') {
-                const statusEl = document.getElementById('backendStatus');
-                if (statusEl) {
-                    statusEl.textContent = 'Aktiv';
-                    statusEl.style.color = '#4CAF50';
                 }
             }
             

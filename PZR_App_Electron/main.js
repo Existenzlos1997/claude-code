@@ -1,11 +1,25 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { spawn } = require('child_process');
 
 let mainWindow;
 let backendServer = null;
 let isBackendActive = false;
+
+/** Returns the best LAN IP of this machine so other PCs can connect */
+function getServerUrl() {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return `http://${iface.address}:3000`;
+            }
+        }
+    }
+    return 'http://localhost:3000';
+}
 
 // Create the main application window
 function createWindow() {
@@ -126,7 +140,7 @@ function createWindow() {
 // Start backend server
 ipcMain.on('activate-backend', (event) => {
     if (backendServer) {
-        event.reply('backend-status', { active: true, message: 'Backend läuft bereits' });
+        event.reply('backend-status', { active: true, message: 'Backend läuft bereits', url: getServerUrl() });
         return;
     }
 
@@ -155,11 +169,12 @@ ipcMain.on('activate-backend', (event) => {
         });
 
         isBackendActive = true;
+        const url = getServerUrl();
         event.reply('backend-status', { 
             active: true, 
             message: 'Backend erfolgreich gestartet',
             port: 3000,
-            url: 'http://localhost:3000'
+            url: url
         });
     } catch (error) {
         event.reply('backend-error', error.message);
@@ -180,7 +195,8 @@ ipcMain.on('deactivate-backend', (event) => {
 ipcMain.on('get-backend-status', (event) => {
     event.reply('backend-status', { 
         active: isBackendActive,
-        port: isBackendActive ? 3000 : null
+        port: isBackendActive ? 3000 : null,
+        url: isBackendActive ? getServerUrl() : null
     });
 });
 
