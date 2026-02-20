@@ -1,0 +1,13 @@
+{
+  "appId": "com.burgau.pzrapp",
+  "appName": "PZR App",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}
