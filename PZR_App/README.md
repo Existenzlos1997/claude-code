@@ -4,15 +4,28 @@
 
 > **➡️ https://existenzlos1997.github.io/claude-code/**
 
-### ⚠️ Einmalige Einrichtung (nur 1 Klick!)
+---
 
-Damit die App live geht, muss der Repository-Owner **einmalig** GitHub Pages aktivieren:
+### 🚀 Workflows jetzt starten (2 Klicks als Repo-Owner)
 
-1. Gehe zu: **https://github.com/Existenzlos1997/claude-code/settings/pages**
-2. Unter **Source** → wähle **"GitHub Actions"**
-3. Speichern — fertig! 🎉
+GitHub hat die automatischen Workflow-Läufe blockiert, weil sie von einem Bot ausgelöst wurden.  
+Als **Repo-Owner** kannst du sie selbst manuell starten — dann laufen sie sofort durch:
 
-Ab dann wird die App **automatisch bei jedem Push** aktuell gehalten.
+#### Schritt 1 — App deployen (GitHub Pages)
+
+**👉 https://github.com/Existenzlos1997/claude-code/actions/workflows/deploy-pages.yml**
+
+1. Klicke **"Run workflow"** (rechts oben)
+2. Branch: `copilot/setup-installer-for-project` auswählen
+3. **"Run workflow"** bestätigen → nach ~1 Minute ist die App live ✅
+
+#### Schritt 2 — Android APK bauen
+
+**👉 https://github.com/Existenzlos1997/claude-code/actions/workflows/build-android-apk.yml**
+
+1. Klicke **"Run workflow"** (rechts oben)
+2. Branch: `copilot/setup-installer-for-project` auswählen
+3. **"Run workflow"** bestätigen → nach ~5 Minuten ist der APK unter [Releases](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly) verfügbar ✅
 
 ---
 
@@ -33,7 +46,7 @@ Ab dann wird die App **automatisch bei jedem Push** aktuell gehalten.
 4. Abschnitt **"🤖 Android-App installieren"** → **"⬇️ Android APK herunterladen"** klicken
 5. APK auf Android-Gerät installieren (Einstellungen → Unbekannte Quellen erlauben)
 
-> Der APK-Download wird automatisch bei jedem Code-Push gebaut und ist unter dem [Nightly Release](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly) verfügbar.
+> Der APK wird automatisch bei jedem Workflow-Run gebaut: [Nightly Release](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly)
 
 ---
 
