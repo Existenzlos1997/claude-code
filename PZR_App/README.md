@@ -6,26 +6,24 @@
 
 ---
 
-### 🚀 Workflows jetzt starten (2 Klicks als Repo-Owner)
+### 🚀 Einmalige Einrichtung (2 Schritte)
 
-GitHub hat die automatischen Workflow-Läufe blockiert, weil sie von einem Bot ausgelöst wurden.  
-Als **Repo-Owner** kannst du sie selbst manuell starten — dann laufen sie sofort durch:
+#### Schritt 1 — Pages-Quelle auf "Branch: gh-pages" stellen
 
-#### Schritt 1 — App deployen (GitHub Pages)
+1. Gehe zu: **https://github.com/Existenzlos1997/claude-code/settings/pages**
+2. Unter **Source** → wähle **"Deploy from a branch"**
+3. Branch: **`gh-pages`** / Ordner: **`/ (root)`**
+4. Speichern ✅
+
+#### Schritt 2 — Deploy-Workflow manuell starten
 
 **👉 https://github.com/Existenzlos1997/claude-code/actions/workflows/deploy-pages.yml**
 
-1. Klicke **"Run workflow"** (rechts oben)
-2. Branch: `copilot/setup-installer-for-project` auswählen
+1. **"Run workflow"** klicken (rechts oben)
+2. Branch: `copilot/setup-installer-for-project`
 3. **"Run workflow"** bestätigen → nach ~1 Minute ist die App live ✅
 
-#### Schritt 2 — Android APK bauen
-
-**👉 https://github.com/Existenzlos1997/claude-code/actions/workflows/build-android-apk.yml**
-
-1. Klicke **"Run workflow"** (rechts oben)
-2. Branch: `copilot/setup-installer-for-project` auswählen
-3. **"Run workflow"** bestätigen → nach ~5 Minuten ist der APK unter [Releases](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly) verfügbar ✅
+> Ab sofort läuft der Workflow **automatisch** bei jedem Push — kein manuelles Starten mehr nötig.
 
 ---
 
@@ -46,7 +44,7 @@ Als **Repo-Owner** kannst du sie selbst manuell starten — dann laufen sie sofo
 4. Abschnitt **"🤖 Android-App installieren"** → **"⬇️ Android APK herunterladen"** klicken
 5. APK auf Android-Gerät installieren (Einstellungen → Unbekannte Quellen erlauben)
 
-> Der APK wird automatisch bei jedem Workflow-Run gebaut: [Nightly Release](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly)
+> **Android APK bauen:** **👉 https://github.com/Existenzlos1997/claude-code/actions/workflows/build-android-apk.yml** → "Run workflow" → nach ~5 Min unter [Nightly Release](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly) verfügbar
 
 ---
 

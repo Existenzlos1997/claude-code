@@ -8,9 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
@@ -18,37 +16,26 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy to GitHub Pages
+    name: Deploy to gh-pages branch
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
       - name: Prepare site files
         run: |
           mkdir -p _site
-          # Main app as index.html (so the root URL loads the app directly)
           cp PZR_App/pzr_app.html _site/index.html
-          # Also keep original name for direct linking
           cp PZR_App/pzr_app.html _site/pzr_app.html
-          # PWA assets
           cp PZR_App/manifest.json _site/manifest.json
           cp PZR_App/sw.js _site/sw.js
           echo "✅ Site ready:"
           ls -lh _site/
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: _site
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          force_orphan: true
