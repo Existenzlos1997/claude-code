@@ -1,0 +1,51 @@
+{
+  "name": "pzr-app-desktop",
+  "version": "1.0.0",
+  "description": "PZR Praxis Management - Desktop App mit Backend-Server",
+  "main": "main.js",
+  "author": "Zahnärzte Burgau",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2",
+    "sqlite3": "^5.1.6",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.burgau.pzr-app",
+    "productName": "PZR Praxis Manager",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "server.js",
+      "app/**/*",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "app/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "app/icon.icns"
+    },
+    "linux": {
+      "target": "deb",
+      "icon": "app/icon.png",
+      "category": "Office"
+    }
+  }
+}

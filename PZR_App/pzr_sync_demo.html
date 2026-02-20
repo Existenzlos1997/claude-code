@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PZR Export/Import Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover { background: #5568d3; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        button.secondary {
+            background: #6c757d;
+        }
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        #qrcode {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .data-preview {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .data-preview h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .data-item {
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .data-item:last-child {
+            border-bottom: none;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦷 PZR Export/Import Demo</h1>
+        <p class="subtitle">Cross-Device Datensynchronisation mit QR-Codes</p>
+
+        <!-- Lokale Daten -->
+        <div class="section">
+            <h2>📊 Lokale Daten</h2>
+            <div id="localDataDisplay" class="data-preview">
+                <p style="color:#666;">Keine Daten vorhanden. Erstellen Sie Demo-Daten oder importieren Sie welche.</p>
+            </div>
+            <button onclick="createDemoData()">✨ Demo-Daten erstellen</button>
+            <button class="secondary" onclick="clearLocalData()">🗑️ Lokale Daten löschen</button>
+        </div>
+
+        <!-- Export -->
+        <div class="section">
+            <h2>📤 Export (Daten exportieren)</h2>
+            <p>Exportieren Sie Ihre Daten um sie auf einem anderen Gerät zu importieren.</p>
+            <button onclick="exportData()">📦 Daten exportieren</button>
+            <div id="exportResult"></div>
+        </div>
+
+        <!-- Import -->
+        <div class="section">
+            <h2>📥 Import (Daten importieren)</h2>
+            <p>Importieren Sie Daten von einem anderen Gerät:</p>
+            
+            <h3 style="margin-top:15px;">Option 1: JSON-Text einfügen</h3>
+            <textarea id="importText" placeholder="Fügen Sie hier den exportierten JSON-Text ein..."></textarea>
+            <button onclick="importFromText()">Aus Text importieren</button>
+            
+            <h3 style="margin-top:15px;">Option 2: Datei hochladen</h3>
+            <input type="file" id="importFile" accept=".json" onchange="importFromFile(event)">
+            
+            <div id="importResult"></div>
+        </div>
+
+        <!-- QR-Code Library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    </div>
+
+    <script>
+        // Lokale Daten
+        const STORAGE_KEY = 'pzr_demo_data';
+
+        // Demo-Daten erstellen
+        function createDemoData() {
+            const demoData = {
+                practice: {
+                    id: 'DEMO-' + Date.now(),
+                    name: 'Demo Zahnarztpraxis',
+                    address: 'Musterstraße 123, 12345 Musterstadt',
+                    phone: '0123-456789',
+                    email: 'info@demo-praxis.de'
+                },
+                patients: [
+                    {
+                        id: 'PAT-001',
+                        number: 'PAT-12345',
+                        name: 'Max Mustermann',
+                        email: 'max@example.com',
+                        phone: '0123-111111',
+                        lastModified: new Date().toISOString()
+                    },
+                    {
+                        id: 'PAT-002',
+                        number: 'PAT-67890',
+                        name: 'Anna Schmidt',
+                        email: 'anna@example.com',
+                        phone: '0123-222222',
+                        lastModified: new Date().toISOString()
+                    },
+                    {
+                        id: 'PAT-003',
+                        number: 'PAT-11111',
+                        name: 'Peter Müller',
+                        email: 'peter@example.com',
+                        phone: '0123-333333',
+                        lastModified: new Date().toISOString()
+                    }
+                ],
+                appointments: [
+                    {
+                        id: 'APP-001',
+                        patientId: 'PAT-001',
+                        date: '2026-02-15',
+                        time: '10:00',
+                        type: 'PZR',
+                        notes: 'Kontrolltermin',
+                        lastModified: new Date().toISOString()
+                    },
+                    {
+                        id: 'APP-002',
+                        patientId: 'PAT-002',
+                        date: '2026-02-16',
+                        time: '14:30',
+                        type: 'PZR',
+                        notes: 'Ersttermin',
+                        lastModified: new Date().toISOString()
+                    }
+                ],
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(demoData));
+            displayLocalData();
+            showStatus('success', 'Demo-Daten erfolgreich erstellt!');
+        }
+
+        // Lokale Daten anzeigen
+        function displayLocalData() {
+            const data = getLocalData();
+            const display = document.getElementById('localDataDisplay');
+
+            if (!data) {
+                display.innerHTML = '<p style="color:#666;">Keine Daten vorhanden.</p>';
+                return;
+            }
+
+            let html = '';
+            
+            // Praxis
+            html += '<h3>🏥 Praxis</h3>';
+            html += `<div class="data-item"><strong>${data.practice.name}</strong><br>${data.practice.address}</div>`;
+            
+            // Patienten
+            html += '<h3 style="margin-top:15px;">👥 Patienten (${data.patients.length})</h3>';
+            data.patients.forEach(p => {
+                html += `<div class="data-item"><strong>${p.name}</strong> - ${p.number}<br>📧 ${p.email} | 📞 ${p.phone}</div>`;
+            });
+            
+            // Termine
+            html += `<h3 style="margin-top:15px;">📅 Termine (${data.appointments.length})</h3>`;
+            data.appointments.forEach(a => {
+                const patient = data.patients.find(p => p.id === a.patientId);
+                html += `<div class="data-item"><strong>${a.date} ${a.time}</strong> - ${patient ? patient.name : 'Unbekannt'}<br>${a.type}: ${a.notes}</div>`;
+            });
+
+            display.innerHTML = html;
+        }
+
+        // Lokale Daten abrufen
+        function getLocalData() {
+            const json = localStorage.getItem(STORAGE_KEY);
+            return json ? JSON.parse(json) : null;
+        }
+
+        // Lokale Daten löschen
+        function clearLocalData() {
+            if (confirm('Möchten Sie wirklich alle lokalen Daten löschen?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                displayLocalData();
+                showStatus('info', 'Lokale Daten gelöscht.');
+            }
+        }
+
+        // Daten exportieren
+        function exportData() {
+            const data = getLocalData();
+            if (!data) {
+                showStatus('error', 'Keine Daten zum Exportieren vorhanden!', 'exportResult');
+                return;
+            }
+
+            const jsonString = JSON.stringify(data, null, 2);
+            
+            // QR-Code erstellen
+            const qrDiv = document.createElement('div');
+            qrDiv.id = 'qrcode-export';
+            
+            // Textarea mit JSON
+            const textarea = document.createElement('textarea');
+            textarea.value = jsonString;
+            textarea.readOnly = true;
+            textarea.style.width = '100%';
+            textarea.style.minHeight = '200px';
+            textarea.style.marginTop = '15px';
+            
+            // Download Button
+            const downloadBtn = document.createElement('button');
+            downloadBtn.textContent = '💾 Als Datei herunterladen';
+            downloadBtn.onclick = () => downloadJSON(jsonString);
+            
+            // Kopieren Button
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'secondary';
+            copyBtn.textContent = '📋 Text kopieren';
+            copyBtn.onclick = () => {
+                textarea.select();
+                document.execCommand('copy');
+                showStatus('success', 'Text in Zwischenablage kopiert!', 'exportResult');
+            };
+
+            const resultDiv = document.getElementById('exportResult');
+            resultDiv.innerHTML = '';
+            resultDiv.appendChild(qrDiv);
+            
+            // QR-Code generieren (komprimierte Version für QR)
+            const compactData = JSON.stringify(data); // Ohne Formatierung
+            new QRCode(qrDiv, {
+                text: compactData,
+                width: 256,
+                height: 256,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.L // Low für mehr Daten
+            });
+            
+            resultDiv.appendChild(textarea);
+            resultDiv.appendChild(document.createElement('br'));
+            resultDiv.appendChild(copyBtn);
+            resultDiv.appendChild(downloadBtn);
+            
+            showStatus('success', '✅ Daten exportiert! Scannen Sie den QR-Code oder kopieren Sie den Text.', 'exportResult');
+        }
+
+        // JSON herunterladen
+        function downloadJSON(jsonString) {
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pzr_backup_${new Date().getTime()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Import aus Text
+        function importFromText() {
+            const text = document.getElementById('importText').value.trim();
+            if (!text) {
+                showStatus('error', 'Bitte fügen Sie JSON-Text ein!', 'importResult');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(text);
+                importData(data);
+            } catch (e) {
+                showStatus('error', 'Ungültiges JSON-Format: ' + e.message, 'importResult');
+            }
+        }
+
+        // Import aus Datei
+        function importFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    importData(data);
+                } catch (err) {
+                    showStatus('error', 'Ungültiges JSON in Datei: ' + err.message, 'importResult');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Daten importieren
+        function importData(importedData) {
+            // Validierung
+            if (!importedData.version || !importedData.practice) {
+                showStatus('error', 'Ungültiges Datenformat!', 'importResult');
+                return;
+            }
+
+            const localData = getLocalData();
+            
+            if (localData) {
+                // Merge: Fragen ob überschreiben oder mergen
+                if (confirm('Lokale Daten vorhanden. Möchten Sie diese überschreiben?\n\n' +
+                    'OK = Überschreiben (alte Daten gehen verloren)\n' +
+                    'Abbrechen = Abbrechen')) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(importedData));
+                    displayLocalData();
+                    showStatus('success', `✅ Daten importiert! Praxis: ${importedData.practice.name}, ` +
+                        `${importedData.patients.length} Patienten, ${importedData.appointments.length} Termine`, 
+                        'importResult');
+                    document.getElementById('importText').value = '';
+                }
+            } else {
+                // Keine lokalen Daten: Einfach importieren
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(importedData));
+                displayLocalData();
+                showStatus('success', `✅ Daten importiert! Praxis: ${importedData.practice.name}, ` +
+                    `${importedData.patients.length} Patienten, ${importedData.appointments.length} Termine`, 
+                    'importResult');
+                document.getElementById('importText').value = '';
+            }
+        }
+
+        // Status-Nachricht anzeigen
+        function showStatus(type, message, containerId = null) {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            
+            if (containerId) {
+                const container = document.getElementById(containerId);
+                const existing = container.querySelector('.status');
+                if (existing) existing.remove();
+                container.insertBefore(div, container.firstChild);
+            }
+
+            // Nach 5 Sekunden ausblenden
+            setTimeout(() => div.remove(), 5000);
+        }
+
+        // Initial anzeigen
+        displayLocalData();
+    </script>
+</body>
+</html>
