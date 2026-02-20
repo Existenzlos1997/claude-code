@@ -1,18 +1,33 @@
 # PZR Assistent Pro - Installierbare Progressive Web App
 
+## 🌐 LIVE APP — Direkt im Browser öffnen!
+
+> **➡️ https://existenzlos1997.github.io/claude-code/**
+
+Die App läuft direkt im Browser — kein Download, keine Installation nötig.  
+Von dort aus können Sie auch den **Android APK Installer** testen (Einstellungen → Android-App installieren).
+
+### Demo-Zugangsdaten
+
+| Rolle | Benutzername | Passwort |
+|-------|-------------|----------|
+| Behandler | `MA-001` | `admin` |
+| Patient | Patientennummer: `PAT-12345` | PIN: `1234` |
+
+---
+
 ## 📱 INSTALLIERBAR AUF ALLEN PLATTFORMEN!
 
 Die PZR App ist jetzt eine **Progressive Web App (PWA)** - installierbar wie eine native App auf Android, iOS und Desktop!
 
 ---
 
-## 🔗 Direkter Link
+## 🔗 App-Links
 
-```
-https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_app.html
-```
-
-> Nach Merge: `.../main/PZR_App/pzr_app.html`
+| Plattform | URL |
+|-----------|-----|
+| **Browser (Live)** | https://existenzlos1997.github.io/claude-code/ |
+| **Direktdatei** | https://existenzlos1997.github.io/claude-code/pzr_app.html |
 
 ---
 
