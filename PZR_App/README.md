@@ -6,24 +6,19 @@
 
 ---
 
-### 🚀 Einmalige Einrichtung (2 Schritte)
+### 🚀 Einmalige Einrichtung (1 Klick!)
 
-#### Schritt 1 — Pages-Quelle auf "Branch: gh-pages" stellen
+Die App-Dateien liegen bereits fertig im **`docs/`**-Ordner dieses Branches.  
+Du musst nur GitHub Pages einmalig auf diesen Ordner zeigen:
 
 1. Gehe zu: **https://github.com/Existenzlos1997/claude-code/settings/pages**
 2. Unter **Source** → wähle **"Deploy from a branch"**
-3. Branch: **`gh-pages`** / Ordner: **`/ (root)`**
-4. Speichern ✅
+3. Branch: **`copilot/setup-installer-for-project`** / Ordner: **`/docs`**
+4. **Save** klicken ✅
 
-#### Schritt 2 — Deploy-Workflow manuell starten
+→ Nach ~1 Minute ist die App live unter **https://existenzlos1997.github.io/claude-code/** 🎉
 
-**👉 https://github.com/Existenzlos1997/claude-code/actions/workflows/deploy-pages.yml**
-
-1. **"Run workflow"** klicken (rechts oben)
-2. Branch: `copilot/setup-installer-for-project`
-3. **"Run workflow"** bestätigen → nach ~1 Minute ist die App live ✅
-
-> Ab sofort läuft der Workflow **automatisch** bei jedem Push — kein manuelles Starten mehr nötig.
+> Kein Workflow, kein Branch, kein Download nötig — die Dateien sind direkt im Repo.
 
 ---
 

@@ -1,41 +1,49 @@
-name: Deploy PZR App to GitHub Pages
+name: Sync PZR App to docs/
 
 on:
   push:
     branches:
       - main
       - copilot/setup-installer-for-project
+    paths:
+      - 'PZR_App/pzr_app.html'
+      - 'PZR_App/manifest.json'
+      - 'PZR_App/sw.js'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: pages
+  group: docs-sync
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: Deploy to gh-pages branch
+  sync:
+    name: Sync to docs/
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Prepare site files
+      - name: Sync site files to docs/
         run: |
-          mkdir -p _site
-          cp PZR_App/pzr_app.html _site/index.html
-          cp PZR_App/pzr_app.html _site/pzr_app.html
-          cp PZR_App/manifest.json _site/manifest.json
-          cp PZR_App/sw.js _site/sw.js
-          echo "✅ Site ready:"
-          ls -lh _site/
+          cp PZR_App/pzr_app.html docs/index.html
+          cp PZR_App/pzr_app.html docs/pzr_app.html
+          cp PZR_App/manifest.json docs/manifest.json
+          cp PZR_App/sw.js docs/sw.js
+          echo "✅ docs/ synced:"
+          ls -lh docs/
 
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
-          force_orphan: true
+      - name: Commit and push docs/ update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          if git diff --staged --quiet; then
+            echo "No changes to docs/ — skipping commit"
+          else
+            git commit -m "sync: update docs/ from PZR_App/ [skip ci]"
+            git push
+          fi
