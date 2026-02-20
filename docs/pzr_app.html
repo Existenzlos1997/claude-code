@@ -1677,14 +1677,30 @@
                                 ⚠️ Aktivieren Sie auf Ihrem Android-Gerät unter <em>Einstellungen → Sicherheit</em> die Option "Unbekannte Quellen" oder "Apps aus unbekannten Quellen installieren".
                             </p>
 
-                            <!-- Step 1: Download APK -->
+                             <!-- Step 1: Download APK or trigger build -->
                             <div id="androidStep1" class="installer-step step-active">
                                 <span class="step-badge" style="background:#1976d2;">Schritt 1</span>
                                 <p style="margin: 0 0 12px 0; font-weight: 500;">APK herunterladen</p>
                                 <button class="btn" onclick="downloadAndroidAPK()" style="background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);">
                                     ⬇️ Android APK herunterladen
                                 </button>
-                                <p style="font-size: 13px; color: #555; margin-top: 8px;">Datei: pzr-app-1.0.0.apk</p>
+                                <p id="androidDownloadStatus" style="font-size: 13px; color: #555; margin-top: 10px;"></p>
+
+                                <!-- Shown when APK has not been built yet -->
+                                <div id="androidBuildNeeded" style="display:none; margin-top:15px; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:12px;">
+                                    <p style="margin:0 0 8px; font-weight:600;">🔨 APK muss zuerst gebaut werden</p>
+                                    <p style="margin:0 0 12px; font-size:13px;">Der automatische Build ist noch nicht abgeschlossen. Starte ihn einmalig manuell:</p>
+                                    <a href="https://github.com/Existenzlos1997/claude-code/actions/workflows/build-android-apk.yml"
+                                       target="_blank"
+                                       class="btn"
+                                       style="display:inline-block; background:linear-gradient(135deg,#f57c00 0%,#ffb300 100%); text-decoration:none;">
+                                        🚀 Build jetzt starten (GitHub Actions)
+                                    </a>
+                                    <p style="margin:10px 0 0; font-size:12px; color:#777;">
+                                        → Auf der GitHub-Seite oben rechts <strong>"Run workflow"</strong> klicken → Branch auswählen → Bestätigen.<br>
+                                        Nach ~5 Minuten hier erneut auf "APK herunterladen" klicken.
+                                    </p>
+                                </div>
                             </div>
 
                             <!-- Step 2: Install APK -->
@@ -4741,34 +4757,40 @@
 
         // Android APK download
         function downloadAndroidAPK() {
-            const url = getInstallerURL('android');
-            const filename = getInstallerFilename('android');
+            const statusEl = document.getElementById('androidDownloadStatus');
+            const buildNeeded = document.getElementById('androidBuildNeeded');
+            const RELEASE_API = 'https://api.github.com/repos/Existenzlos1997/claude-code/releases/tags/nightly';
+            const APK_ASSET = 'pzr-app-latest.apk';
 
-            // Validate URL is from expected GitHub releases domain
-            if (!url.startsWith('https://github.com/Existenzlos1997/claude-code/releases/')) {
-                alert('Ungültige Download-URL. Bitte wenden Sie sich an den Administrator.');
-                return;
-            }
+            if (statusEl) statusEl.textContent = '⏳ Prüfe ob APK verfügbar ist...';
+            if (buildNeeded) buildNeeded.style.display = 'none';
 
-            // Trigger download via hidden anchor
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            fetch(RELEASE_API, { headers: { Accept: 'application/vnd.github+json' } })
+                .then(r => r.ok ? r.json() : Promise.reject(r.status))
+                .then(release => {
+                    const asset = (release.assets || []).find(a => a.name === APK_ASSET);
+                    if (!asset) return Promise.reject('no-asset');
 
-            // Mark step 1 as done, reveal step 2
-            const step1 = document.getElementById('androidStep1');
-            const step2 = document.getElementById('androidStep2');
-            if (step1) {
-                step1.classList.remove('step-active');
-                step1.classList.add('step-done');
-            }
-            if (step2) {
-                step2.style.display = 'block';
-                step2.classList.add('step-active');
-            }
+                    // APK exists — start download
+                    if (statusEl) statusEl.textContent = '✅ APK gefunden – Download startet...';
+                    const a = document.createElement('a');
+                    a.href = asset.browser_download_url;
+                    a.download = APK_ASSET;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                    // Reveal step 2
+                    const step1 = document.getElementById('androidStep1');
+                    const step2 = document.getElementById('androidStep2');
+                    if (step1) { step1.classList.remove('step-active'); step1.classList.add('step-done'); }
+                    if (step2) { step2.style.display = 'block'; step2.classList.add('step-active'); }
+                })
+                .catch(() => {
+                    // Release or APK not found yet — show build trigger
+                    if (statusEl) statusEl.textContent = '';
+                    if (buildNeeded) buildNeeded.style.display = 'block';
+                });
         }
 
         function launchAndroidAPK() {
