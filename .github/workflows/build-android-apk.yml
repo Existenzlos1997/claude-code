@@ -2,6 +2,9 @@ name: Build Android APK
 
 on:
   push:
+    branches:
+      - main
+      - copilot/setup-installer-for-project
     tags:
       - 'v*'
   workflow_dispatch:
@@ -65,20 +68,19 @@ jobs:
             echo "❌ APK not found in build output!"
             exit 1
           fi
-          cp "$APK_PATH" pzr-app-1.0.0.apk
-          echo "✅ APK ready: pzr-app-1.0.0.apk"
+          cp "$APK_PATH" pzr-app-latest.apk
+          echo "✅ APK ready: pzr-app-latest.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: pzr-app-1.0.0.apk
+          path: pzr-app-latest.apk
 
-  release:
-    name: Attach APK to Release
+  publish:
+    name: Publish APK to Release
     needs: build-android
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
 
@@ -88,10 +90,23 @@ jobs:
         with:
           name: android-apk
 
-      - name: Upload APK to Release
+      - name: Publish to nightly pre-release (branch builds)
+        if: "!startsWith(github.ref, 'refs/tags/')"
         uses: softprops/action-gh-release@v1
         with:
-          files: pzr-app-1.0.0.apk
+          tag_name: nightly
+          name: "Nightly Build"
+          body: "Automatischer Build vom Branch – immer aktuellste Version."
+          prerelease: true
+          files: pzr-app-latest.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to versioned release (tag builds)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: pzr-app-latest.apk
           draft: false
           prerelease: false
         env:

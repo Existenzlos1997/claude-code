@@ -4,15 +4,36 @@
 
 > **➡️ https://existenzlos1997.github.io/claude-code/**
 
-Die App läuft direkt im Browser — kein Download, keine Installation nötig.  
-Von dort aus können Sie auch den **Android APK Installer** testen (Einstellungen → Android-App installieren).
+### ⚠️ Einmalige Einrichtung (nur 1 Klick!)
 
-### Demo-Zugangsdaten
+Damit die App live geht, muss der Repository-Owner **einmalig** GitHub Pages aktivieren:
+
+1. Gehe zu: **https://github.com/Existenzlos1997/claude-code/settings/pages**
+2. Unter **Source** → wähle **"GitHub Actions"**
+3. Speichern — fertig! 🎉
+
+Ab dann wird die App **automatisch bei jedem Push** aktuell gehalten.
+
+---
+
+### 🔐 Demo-Zugangsdaten
 
 | Rolle | Benutzername | Passwort |
 |-------|-------------|----------|
 | Behandler | `MA-001` | `admin` |
 | Patient | Patientennummer: `PAT-12345` | PIN: `1234` |
+
+---
+
+### 📲 Android APK testen
+
+1. App im Browser öffnen (URL oben)
+2. Als **Behandler** anmelden (MA-001 / admin)
+3. Tab **⚙️ Einstellungen** öffnen
+4. Abschnitt **"🤖 Android-App installieren"** → **"⬇️ Android APK herunterladen"** klicken
+5. APK auf Android-Gerät installieren (Einstellungen → Unbekannte Quellen erlauben)
+
+> Der APK-Download wird automatisch bei jedem Code-Push gebaut und ist unter dem [Nightly Release](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly) verfügbar.
 
 ---
 
