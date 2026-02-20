@@ -35,16 +35,13 @@
       "node_modules/**/*"
     ],
     "win": {
-      "target": "nsis",
-      "icon": "app/icon.ico"
+      "target": "nsis"
     },
     "mac": {
-      "target": "dmg",
-      "icon": "app/icon.icns"
+      "target": "dmg"
     },
     "linux": {
       "target": "deb",
-      "icon": "app/icon.png",
       "category": "Office"
     }
   }
