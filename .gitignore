@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+build/
+release/
+
+# Electron builder output
+PZR_App_Electron/dist/
+PZR_App_Electron/out/
+
+# Android build output
+PZR_App_Android/android/
+PZR_App_Android/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.swp
+*.swo

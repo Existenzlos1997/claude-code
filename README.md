@@ -1,43 +1,48 @@
-# Claude Code
+# PZR Assistent Pro
 
-![](https://img.shields.io/badge/Node.js-18%2B-brightgreen?style=flat-square) [![npm]](https://www.npmjs.com/package/@anthropic-ai/claude-code)
+Praxis-Management-App für Zahnarztpraxen — läuft im Browser, als installierbare App auf Android/iOS und als Desktop-Anwendung (Windows/Mac/Linux).
 
-[npm]: https://img.shields.io/npm/v/@anthropic-ai/claude-code.svg?style=flat-square
+---
 
-Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows -- all through natural language commands. Use it in your terminal, IDE, or tag @claude on Github.
+## 🌐 Live-App (Browser)
 
-**Learn more in the [official documentation](https://docs.anthropic.com/en/docs/claude-code/overview)**.
+**➡️ https://existenzlos1997.github.io/claude-code/**
 
-<img src="./demo.gif" />
+Login: `MA-001` / `admin`
 
-## Get started
+---
 
-1. Install Claude Code:
+## Plattformen & Installation
 
-```sh
-npm install -g @anthropic-ai/claude-code
+| Plattform | Methode |
+|-----------|---------|
+| Browser | Direkt öffnen — kein Download nötig |
+| Android | APK aus Einstellungen → Downloaden & Installieren |
+| iOS | Einstellungen → "Zum Home-Bildschirm" (Safari) |
+| Windows | .exe Installer aus Einstellungen → Downloaden |
+| macOS | .dmg Installer aus Einstellungen → Downloaden |
+| Linux | .deb Paket aus Einstellungen → Downloaden |
+
+---
+
+## Struktur
+
+```
+PZR_App/          → Haupt-App (pzr_app.html + manifest.json + sw.js)
+PZR_App_Electron/ → Desktop-App (Electron + Node.js Backend)
+PZR_App_Android/  → Android-Wrapper (Capacitor)
+docs/             → GitHub Pages (Browser-App)
+.github/workflows/
+  deploy-pages.yml          → Deployed Browser-App
+  build-electron-installer.yml → Baut Windows/Mac/Linux Installer
+  build-android-apk.yml     → Baut Android APK
 ```
 
-2. Navigate to your project directory and run `claude`.
+---
 
-## Reporting Bugs
+## GitHub Pages einrichten (einmalig)
 
-We welcome your feedback. Use the `/bug` command to report issues directly within Claude Code, or file a [GitHub issue](https://github.com/anthropics/claude-code/issues).
-
-## Connect on Discord
-
-Join the [Claude Developers Discord](https://anthropic.com/discord) to connect with other developers using Claude Code. Get help, share feedback, and discuss your projects with the community.
-
-## Data collection, usage, and retention
-
-When you use Claude Code, we collect feedback, which includes usage data (such as code acceptance or rejections), associated conversation data, and user feedback submitted via the `/bug` command.
-
-### How we use your data
-
-See our [data usage policies](https://docs.anthropic.com/en/docs/claude-code/data-usage).
-
-### Privacy safeguards
-
-We have implemented several safeguards to protect your data, including limited retention periods for sensitive information, restricted access to user session data, and clear policies against using feedback for model training.
-
-For full details, please review our [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) and [Privacy Policy](https://www.anthropic.com/legal/privacy).
+1. Gehe zu: https://github.com/Existenzlos1997/claude-code/settings/pages
+2. Source → "Deploy from a branch"
+3. Branch: `copilot/setup-installer-for-project` / Ordner: `/docs`
+4. Save
