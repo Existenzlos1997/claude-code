@@ -628,6 +628,66 @@
             display: none !important;
         }
 
+        /* Update Banner */
+        #updateBanner {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: linear-gradient(90deg, #1a73e8, #0d47a1);
+            color: #fff;
+            padding: 12px 20px;
+            z-index: 9999;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            font-size: 14px;
+        }
+        #updateBanner a, #updateBanner button {
+            background: #fff;
+            color: #1a73e8;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 14px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        #updateBanner .dismiss-btn {
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            font-weight: normal;
+            font-size: 18px;
+            padding: 2px 8px;
+        }
+
+        /* SW update toast (bottom of screen) */
+        .sw-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a73e8;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 9998;
+            font-size: 14px;
+            text-align: center;
+        }
+        .sw-toast button {
+            background: #fff;
+            color: #1a73e8;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         /* Patient Autocomplete Suggestions */
         #patientSuggestions,
         #appointmentPatientSuggestions {
@@ -974,6 +1034,13 @@
     </style>
 </head>
 <body>
+    <!-- Update Banner (shown when a newer release is available) -->
+    <div id="updateBanner">
+        <span id="updateBannerText">🔄 Neue Version verfügbar!</span>
+        <a id="updateBannerLink" href="#" target="_blank" rel="noopener">Jetzt aktualisieren</a>
+        <button class="dismiss-btn" onclick="dismissUpdateBanner()" title="Schließen">✕</button>
+    </div>
+
     <div class="container">
         <!-- Login Screen -->
         <div id="loginScreen" class="login-screen">
@@ -1022,32 +1089,6 @@
                     📝 Jetzt registrieren
                 </button>
             </div>
-        </div>
-
-        <!-- First-Run Setup Screen -->
-        <div id="setupScreen" class="login-screen" style="display:none;">
-            <h1>🦷 PZR Assistent Pro</h1>
-            <p style="color:#667eea; font-weight:600;">Ersteinrichtung – Administrator-Konto anlegen</p>
-            <p style="font-size:14px; color:#555; margin: 15px 0;">Legen Sie Ihren persönlichen Administrator-Zugang an. Diese Zugangsdaten ersetzen den Standard-Login.</p>
-            <div class="form-group">
-                <label>Ihr Name</label>
-                <input type="text" id="setupName" placeholder="z.B. Dr. Müller">
-            </div>
-            <div class="form-group">
-                <label>Behandler-ID (Login-Name)</label>
-                <input type="text" id="setupId" placeholder="z.B. admin oder dr.mueller">
-            </div>
-            <div class="form-group">
-                <label>Passwort</label>
-                <input type="password" id="setupPassword" placeholder="Mindestens 6 Zeichen">
-            </div>
-            <div class="form-group">
-                <label>Passwort wiederholen</label>
-                <input type="password" id="setupPasswordConfirm" placeholder="Passwort wiederholen">
-            </div>
-            <button class="btn" onclick="saveFirstRunSetup()" style="width:100%;">
-                ✅ Administrator-Konto erstellen
-            </button>
         </div>
 
         <!-- Registration Screen (hidden initially) -->
@@ -1669,6 +1710,12 @@
                                     ⬇️ Installer herunterladen
                                 </button>
                                 <p id="installerPlatformInfo"></p>
+                                <p id="desktopDownloadStatus" style="font-size:13px;margin-top:8px;"></p>
+                                <div id="desktopBuildNeeded" style="display:none;margin-top:12px;padding:12px;background:#fff3e0;border-radius:8px;border-left:4px solid #ff9800;">
+                                    <p style="margin:0 0 8px 0;font-size:13px;font-weight:500;color:#e65100;">⚙️ Installer noch nicht verfügbar</p>
+                                    <p style="margin:0 0 8px 0;font-size:12px;color:#666;">Der Desktop-Installer wird gerade gebaut. Bitte warten Sie einige Minuten und versuchen Sie es erneut.</p>
+                                    <a href="https://github.com/Existenzlos1997/claude-code/actions/workflows/build-electron-installer.yml" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:#1976d2;">▶ Build-Status auf GitHub prüfen</a>
+                                </div>
                             </div>
 
                             <!-- Step 2: Run Installer (hidden until download starts) -->
@@ -1749,32 +1796,34 @@
                                 <!-- Will be populated by JavaScript -->
                             </div>
                             
-                            <h4>Neuen Mitarbeiter hinzufügen</h4>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeId">Behandler-ID (Login) *</label>
-                                <input type="text" id="newEmployeeId" placeholder="z.B. dr.mueller">
+                            <div id="addEmployeeForm">
+                                <h4 id="addEmployeeHeading">Neuen Mitarbeiter hinzufügen</h4>
+                                
+                                <div class="form-group">
+                                    <label for="newEmployeeId">Login-ID *</label>
+                                    <input type="text" id="newEmployeeId" placeholder="z.B. dr.mueller">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="newEmployeeDisplayName">Anzeigename *</label>
+                                    <input type="text" id="newEmployeeDisplayName" placeholder="z.B. Dr. Müller">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="newEmployeePassword">Passwort *</label>
+                                    <input type="password" id="newEmployeePassword" placeholder="Mindestens 6 Zeichen">
+                                </div>
+                                
+                                <div class="form-group" id="roleSelectGroup">
+                                    <label for="newEmployeeRole">Rolle *</label>
+                                    <select id="newEmployeeRole">
+                                        <option value="employee">Behandler</option>
+                                        <option value="admin">Praxis-Administrator</option>
+                                    </select>
+                                </div>
+                                
+                                <button class="btn" onclick="addEmployee()">➕ Hinzufügen</button>
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeDisplayName">Anzeigename *</label>
-                                <input type="text" id="newEmployeeDisplayName" placeholder="z.B. Dr. Müller">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeePassword">Passwort *</label>
-                                <input type="password" id="newEmployeePassword" placeholder="Mindestens 6 Zeichen">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="newEmployeeRole">Rolle *</label>
-                                <select id="newEmployeeRole">
-                                    <option value="employee">Behandler</option>
-                                    <option value="admin">Administrator</option>
-                                </select>
-                            </div>
-                            
-                            <button class="btn" onclick="addEmployee()">Mitarbeiter hinzufügen</button>
                         </div>
                         
                         <hr style="margin: 30px 0;">
@@ -1856,6 +1905,9 @@
         let reminders = [];
         let notificationInterval = null;
         let reminderIdCounter = 1;
+
+        // App version — update this date whenever a new release is pushed
+        const APP_BUILD_DATE = '2026-03-01';
 
         // Voice Recognition State
         let recognition = null;
@@ -2091,19 +2143,25 @@
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             }
 
-            // Only create default admin employee if no employees exist at all
-            // (allows real admin account to replace demo account)
-            const existingEmployees = localStorage.getItem('pzrEmployees');
-            if (!existingEmployees || JSON.parse(existingEmployees).length === 0) {
-                const employees = [{
+            // Ensure MA-001 master admin always exists with correct role
+            let existingEmployees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
+            const masterIdx = existingEmployees.findIndex(e => e.employeeId === 'MA-001' || e.id === 'MA-001');
+            if (masterIdx === -1) {
+                // First time: create master admin
+                existingEmployees.unshift({
                     id: 'MA-001',
                     employeeId: 'MA-001',
                     password: 'admin',
-                    name: 'Administrator',
-                    role: 'admin'
-                }];
-                localStorage.setItem('pzrEmployees', JSON.stringify(employees));
+                    name: 'Master Administrator',
+                    role: 'masterAdmin',
+                    practiceId: 'master'
+                });
+            } else if (existingEmployees[masterIdx].role !== 'masterAdmin') {
+                // Migration: upgrade existing MA-001 to masterAdmin
+                existingEmployees[masterIdx].role = 'masterAdmin';
+                existingEmployees[masterIdx].practiceId = 'master';
             }
+            localStorage.setItem('pzrEmployees', JSON.stringify(existingEmployees));
         }
 
         // Load data from localStorage
@@ -2236,6 +2294,9 @@
                 loadPendingCancellations(); // Load pending cancellations
                 loadEmployees(); // Load employees list
             }
+
+            // Check for a newer release and show update banner if one exists
+            checkForAppUpdate();
         }
 
         // Logout
@@ -2248,51 +2309,6 @@
             document.getElementById('patientPin').value = '';
             document.getElementById('employeeId').value = '';
             document.getElementById('employeePassword').value = '';
-        }
-
-        // First-run setup: show admin creation screen
-        function showFirstRunSetup() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('setupScreen').style.display = 'block';
-        }
-
-        // First-run setup: save admin account and start the app
-        function saveFirstRunSetup() {
-            const name = document.getElementById('setupName').value.trim();
-            const id = document.getElementById('setupId').value.trim();
-            const pw = document.getElementById('setupPassword').value.trim();
-            const pw2 = document.getElementById('setupPasswordConfirm').value.trim();
-
-            if (!name || !id || !pw || !pw2) {
-                alert('Bitte alle Felder ausfüllen.');
-                return;
-            }
-            if (pw.length < 6) {
-                alert('Passwort muss mindestens 6 Zeichen haben.');
-                return;
-            }
-            if (pw !== pw2) {
-                alert('Die Passwörter stimmen nicht überein.');
-                return;
-            }
-
-            const adminAccount = {
-                id: 'admin_' + Date.now(),
-                employeeId: id,
-                name: name,
-                password: pw,
-                role: 'admin',
-                createdAt: new Date().toISOString()
-            };
-            saveToStorage('pzrEmployees', [adminAccount]);
-            localStorage.setItem('pzrSetupComplete', 'true');
-
-            // Hide setup, show login
-            document.getElementById('setupScreen').style.display = 'none';
-            document.getElementById('loginScreen').classList.remove('hidden');
-            selectRole('employee');
-            document.getElementById('employeeId').value = id;
-            alert(`✅ Administrator-Konto erstellt!\n\nIhre Behandler-ID: ${id}\nBitte jetzt mit Ihrem Passwort anmelden.`);
         }
 
         // Load patient dashboard
@@ -3741,7 +3757,7 @@
         }
         
         function generateId() {
-            return 'pat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            return 'pat_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
         }
 
         function registerPatient(event) {
@@ -4561,6 +4577,20 @@
                     serverInfo.style.display = 'block';
                 }
                 localStorage.setItem('backendActive', 'true');
+
+                // Propagate backendUrl to all employees of the same practice
+                if (serverUrl && currentUser && currentUser.practiceId) {
+                    localStorage.setItem('pzrBackendConnectUrl', serverUrl);
+                    const employees = getFromStorage('pzrEmployees') || [];
+                    let changed = false;
+                    employees.forEach(emp => {
+                        if (emp.practiceId === currentUser.practiceId && emp.role !== 'masterAdmin') {
+                            emp.backendUrl = serverUrl;
+                            changed = true;
+                        }
+                    });
+                    if (changed) saveToStorage('pzrEmployees', employees);
+                }
             } else {
                 dot.style.background = '#ccc';
                 label.textContent = 'Inaktiv';
@@ -4635,7 +4665,6 @@
                 pzrRecommendations: getFromStorage('pzrRecommendations') || [],
                 pzrDocuments: getFromStorage('pzrDocuments') || [],
                 registrations: getFromStorage('registrations') || [],
-                pzrSetupComplete: localStorage.getItem('pzrSetupComplete') || '',
                 exportDate: new Date().toISOString()
             };
             
@@ -4674,7 +4703,6 @@
                             if (data.pzrDocuments) saveToStorage('pzrDocuments', data.pzrDocuments);
                             else if (data.documents) saveToStorage('pzrDocuments', data.documents);
                             if (data.registrations) saveToStorage('registrations', data.registrations);
-                            if (data.pzrSetupComplete) localStorage.setItem('pzrSetupComplete', data.pzrSetupComplete);
                             
                             alert('Daten wurden erfolgreich importiert!');
                             location.reload();
@@ -4689,10 +4717,16 @@
         }
 
         function addEmployee() {
+            // Only masterAdmin and admin may add employees
+            if (!currentUser || (currentUser.role !== 'masterAdmin' && currentUser.role !== 'admin')) {
+                alert('Sie haben keine Berechtigung, Benutzer hinzuzufügen.');
+                return;
+            }
+
             const employeeId = document.getElementById('newEmployeeId').value.trim();
             const displayName = document.getElementById('newEmployeeDisplayName').value.trim();
             const password = document.getElementById('newEmployeePassword').value.trim();
-            const role = document.getElementById('newEmployeeRole').value;
+            const roleSelect = document.getElementById('newEmployeeRole').value;
             
             if (!employeeId || !displayName || !password) {
                 alert('Bitte füllen Sie alle Felder aus!');
@@ -4703,28 +4737,45 @@
                 alert('Das Passwort muss mindestens 6 Zeichen lang sein!');
                 return;
             }
+
+            // Role restriction: only masterAdmin may create admin accounts (enforced here)
+            const role = (currentUser.role === 'masterAdmin') ? roleSelect : 'employee';
             
             const employees = getFromStorage('pzrEmployees') || [];
             
             // Check if ID already exists
             if (employees.some(emp => emp.employeeId === employeeId || emp.username === employeeId)) {
-                alert('Diese Behandler-ID existiert bereits!');
+                alert('Diese Login-ID existiert bereits!');
                 return;
             }
 
-            // Auto-assign backend URL if one is configured
-            const backendUrl = localStorage.getItem('pzrBackendConnectUrl') || null;
+            // Determine practiceId for the new account
+            let newPracticeId;
+            if (role === 'admin') {
+                // masterAdmin creates a new practice: unique practiceId with random component
+                newPracticeId = 'praxis_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+            } else {
+                // admin creates employee in their own practice
+                newPracticeId = currentUser.practiceId || ('praxis_' + currentUser.id);
+            }
+
+            // Auto-assign backend URL: employees get their practice's current backend URL
+            const backendUrl = (role === 'employee')
+                ? (localStorage.getItem('pzrBackendConnectUrl') || null)
+                : null;
             
-            employees.push({
-                id: 'emp_' + Date.now(),
+            const newAccount = {
+                id: 'emp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11),
                 employeeId: employeeId,
                 name: displayName,
                 password: password,
                 role: role,
+                practiceId: newPracticeId,
                 backendUrl: backendUrl,
+                createdBy: currentUser.employeeId || currentUser.id,
                 createdAt: new Date().toISOString()
-            });
-            
+            };
+            employees.push(newAccount);
             saveToStorage('pzrEmployees', employees);
             
             document.getElementById('newEmployeeId').value = '';
@@ -4733,33 +4784,77 @@
             document.getElementById('newEmployeeRole').value = 'employee';
             
             loadEmployees();
-            const backendNote = backendUrl ? `\nBackend-Adresse automatisch zugewiesen: ${backendUrl}` : '';
-            alert(`Mitarbeiter "${displayName}" (ID: ${employeeId}) wurde erfolgreich hinzugefügt!${backendNote}`);
+
+            let msg = '';
+            if (role === 'admin') {
+                msg = `✅ Praxis-Administrator "${displayName}" (ID: ${employeeId}) wurde erstellt.\n\nPraxis-ID: ${newPracticeId}\nDieser Administrator kann nun eigene Mitarbeiter und Patienten verwalten.`;
+            } else {
+                msg = `✅ Mitarbeiter "${displayName}" (ID: ${employeeId}) wurde hinzugefügt.`;
+                if (backendUrl) msg += `\nBackend-Adresse automatisch zugewiesen: ${backendUrl}`;
+            }
+            alert(msg);
         }
 
         function loadEmployees() {
-            const employees = getFromStorage('pzrEmployees') || [];
+            const allEmployees = getFromStorage('pzrEmployees') || [];
             const container = document.getElementById('employeesList');
             
+            // Scope: masterAdmin sees all; admin sees only own practice
+            const isMaster = currentUser && currentUser.role === 'masterAdmin';
+            const isAdmin  = currentUser && currentUser.role === 'admin';
+            
+            // Update heading and role select visibility
+            const heading = document.getElementById('addEmployeeHeading');
+            const roleGroup = document.getElementById('roleSelectGroup');
+            if (heading) {
+                heading.textContent = isMaster ? 'Neue Praxis / Administrator anlegen' : 'Neuen Mitarbeiter hinzufügen';
+            }
+            if (roleGroup) {
+                roleGroup.style.display = isMaster ? 'block' : 'none';
+            }
+
+            let employees;
+            if (isMaster) {
+                employees = allEmployees; // sees everyone
+            } else if (isAdmin) {
+                employees = allEmployees.filter(e =>
+                    e.practiceId === currentUser.practiceId || e.createdBy === (currentUser.employeeId || currentUser.id)
+                );
+            } else {
+                // Regular employee: only see themselves
+                employees = allEmployees.filter(e => e.employeeId === (currentUser.employeeId || currentUser.id));
+            }
+
+            if (!container) return;
+            
             if (employees.length === 0) {
-                container.innerHTML = '<p style="color: #999;">Keine Mitarbeiter vorhanden.</p>';
+                container.innerHTML = '<p style="color: #999;">Noch keine Einträge.</p>';
                 return;
             }
             
             let html = '<div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #f9f9f9;">';
-            html += '<h4 style="margin-top: 0;">Mitarbeiter-Liste</h4>';
+            html += '<h4 style="margin-top: 0;">Benutzer-Liste</h4>';
             html += '<ul style="list-style: none; padding: 0; margin: 0;">';
             
             employees.forEach(emp => {
-                const roleLabel = emp.role === 'admin' ? '👑 Administrator' : '👤 Behandler';
+                let roleLabel;
+                if (emp.role === 'masterAdmin')     roleLabel = '⭐ Master-Admin';
+                else if (emp.role === 'admin')      roleLabel = '👑 Praxis-Admin';
+                else                                roleLabel = '👤 Behandler';
                 const displayId = emp.employeeId || emp.username || emp.id;
                 const displayName = emp.name || displayId;
                 const backendBadge = emp.backendUrl
                     ? `<span style="font-size:11px; background:#e8f5e9; color:#2e7d32; border-radius:4px; padding:2px 6px; margin-left:6px;">🔗 Backend</span>`
                     : '';
+                const practiceBadge = (isMaster && emp.practiceId && emp.practiceId !== 'master')
+                    ? `<span style="font-size:11px; background:#e3f2fd; color:#1565c0; border-radius:4px; padding:2px 6px; margin-left:6px;">🏥 ${emp.practiceId}</span>`
+                    : '';
+                // Allow deletion: masterAdmin can delete any non-master; admin can delete own employees (not other admins)
+                const canDelete = (isMaster && emp.role !== 'masterAdmin') ||
+                                  (isAdmin  && emp.role === 'employee' && emp.practiceId === currentUser.practiceId);
                 html += `<li style="padding: 10px 0; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                    <span><strong>${displayName}</strong> <small style="color:#888;">(${displayId})</small> – ${roleLabel}${backendBadge}</span>
-                    ${emp.role !== 'admin' ? `<button class="btn btn-delete" style="padding: 4px 10px; font-size: 12px;" onclick="deleteEmployee('${emp.id}')">Löschen</button>` : ''}
+                    <span><strong>${displayName}</strong> <small style="color:#888;">(${displayId})</small> – ${roleLabel}${backendBadge}${practiceBadge}</span>
+                    ${canDelete ? `<button class="btn btn-delete" style="padding: 4px 10px; font-size: 12px;" onclick="deleteEmployee('${emp.id}')">Löschen</button>` : ''}
                 </li>`;
             });
             
@@ -4768,46 +4863,75 @@
         }
 
         function deleteEmployee(id) {
-            if (!confirm('Möchten Sie diesen Mitarbeiter wirklich löschen?')) return;
+            if (!confirm('Möchten Sie diesen Benutzer wirklich löschen?')) return;
             
             let employees = getFromStorage('pzrEmployees') || [];
+            const target = employees.find(e => e.id === id);
+            if (!target) return;
+
+            // Permission check
+            const isMaster = currentUser && currentUser.role === 'masterAdmin';
+            const isAdmin  = currentUser && currentUser.role === 'admin';
+            if (target.role === 'masterAdmin') {
+                alert('Der Master-Administrator kann nicht gelöscht werden.');
+                return;
+            }
+            if (!isMaster && isAdmin && (target.practiceId !== currentUser.practiceId || target.role === 'admin')) {
+                alert('Sie dürfen nur Behandler Ihrer eigenen Praxis löschen.');
+                return;
+            }
+
             employees = employees.filter(emp => emp.id !== id);
             saveToStorage('pzrEmployees', employees);
             loadEmployees();
-            alert('Mitarbeiter wurde gelöscht.');
+            alert('Benutzer wurde gelöscht.');
         }
 
         // Download Desktop Installer
         function downloadDesktopInstaller() {
             const platform = detectPlatform();
-            const url = getInstallerURL(platform);
             const filename = getInstallerFilename(platform);
+            const RELEASE_API = 'https://api.github.com/repos/Existenzlos1997/claude-code/releases/tags/nightly';
 
-            // Validate URL is from expected GitHub releases domain
-            if (!url.startsWith('https://github.com/Existenzlos1997/claude-code/releases/')) {
-                alert('Ungültige Download-URL. Bitte wenden Sie sich an den Administrator.');
-                return;
-            }
+            const statusEl = document.getElementById('desktopDownloadStatus');
+            const buildNeeded = document.getElementById('desktopBuildNeeded');
+            if (statusEl) statusEl.textContent = '🔍 Prüfe verfügbare Version...';
+            if (buildNeeded) buildNeeded.style.display = 'none';
 
-            // Trigger download via hidden anchor (does not navigate away)
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            fetch(RELEASE_API, { headers: { Accept: 'application/vnd.github+json' } })
+                .then(r => r.ok ? r.json() : Promise.reject(new Error(`Release fetch failed: ${r.status}`)))
+                .then(release => {
+                    const asset = (release.assets || []).find(a => a.name === filename);
+                    if (!asset) return Promise.reject(new Error('Asset not found in nightly release'));
 
-            // Mark step 1 as done, reveal step 2
-            const step1 = document.getElementById('installerStep1');
-            const step2 = document.getElementById('installerStep2');
-            if (step1) {
-                step1.classList.remove('step-active');
-                step1.classList.add('step-done');
-            }
-            if (step2) {
-                step2.style.display = 'block';
-                step2.classList.add('step-active');
-            }
+                    if (statusEl) statusEl.textContent = '✅ Installer gefunden – Download startet...';
+
+                    // Validate URL is from expected GitHub domain
+                    const url = asset.browser_download_url;
+                    if (!url.startsWith('https://github.com/Existenzlos1997/claude-code/releases/')) {
+                        if (statusEl) statusEl.textContent = '';
+                        alert('Ungültige Download-URL.');
+                        return;
+                    }
+
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                    // Mark step 1 as done, reveal step 2
+                    const step1 = document.getElementById('installerStep1');
+                    const step2 = document.getElementById('installerStep2');
+                    if (step1) { step1.classList.remove('step-active'); step1.classList.add('step-done'); }
+                    if (step2) { step2.style.display = 'block'; step2.classList.add('step-active'); }
+                })
+                .catch(err => {
+                    console.warn('Desktop installer check failed:', err);
+                    if (statusEl) statusEl.textContent = '';
+                    if (buildNeeded) buildNeeded.style.display = 'block';
+                });
         }
 
         function launchInstaller() {
@@ -4835,26 +4959,26 @@
             const releaseBase = 'https://github.com/Existenzlos1997/claude-code/releases/download/';
             switch(platform) {
                 case 'windows':
-                    return releaseBase + 'v1.0.0/PZR-App-Setup-1.0.0.exe';
+                    return releaseBase + 'nightly/pzr-app-latest.exe';
                 case 'mac':
-                    return releaseBase + 'v1.0.0/PZR-App-1.0.0.dmg';
+                    return releaseBase + 'nightly/pzr-app-latest.dmg';
                 case 'linux':
-                    return releaseBase + 'v1.0.0/pzr-app_1.0.0_amd64.deb';
+                    return releaseBase + 'nightly/pzr-app-latest.deb';
                 case 'android':
                     // nightly tag is always updated on every branch push
                     return releaseBase + 'nightly/pzr-app-latest.apk';
                 default:
-                    return releaseBase + 'v1.0.0/PZR-App-Setup-1.0.0.exe';
+                    return releaseBase + 'nightly/pzr-app-latest.exe';
             }
         }
 
         function getInstallerFilename(platform) {
             switch(platform) {
-                case 'windows': return 'PZR-App-Setup-1.0.0.exe';
-                case 'mac': return 'PZR-App-1.0.0.dmg';
-                case 'linux': return 'pzr-app_1.0.0_amd64.deb';
+                case 'windows': return 'pzr-app-latest.exe';
+                case 'mac': return 'pzr-app-latest.dmg';
+                case 'linux': return 'pzr-app-latest.deb';
                 case 'android': return 'pzr-app-latest.apk';
-                default: return 'PZR-App-Setup-1.0.0.exe';
+                default: return 'pzr-app-latest.exe';
             }
         }
 
@@ -4900,6 +5024,62 @@
             window.open(getInstallerURL('android'), '_blank');
         }
 
+        // ─── In-app update check ───────────────────────────────────────────────
+        function checkForAppUpdate() {
+            const RELEASE_API = 'https://api.github.com/repos/Existenzlos1997/claude-code/releases/tags/nightly';
+            fetch(RELEASE_API, { headers: { Accept: 'application/vnd.github+json' } })
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(release => {
+                    const releaseDate = release.published_at ? release.published_at.substring(0, 10) : null;
+                    if (!releaseDate || releaseDate <= APP_BUILD_DATE) return; // no newer release
+
+                    // Determine best download link for this platform
+                    const platform = detectPlatform();
+                    let link = '#';
+                    let label = 'Jetzt aktualisieren';
+                    if (platform === 'android') {
+                        const apkAsset = (release.assets || []).find(a => a.name === 'pzr-app-latest.apk');
+                        link = apkAsset ? apkAsset.browser_download_url : getInstallerURL('android');
+                        label = '📱 APK herunterladen & installieren';
+                    } else if (platform === 'windows' || platform === 'mac' || platform === 'linux') {
+                        link = getInstallerURL(platform);
+                        label = '💻 Installer herunterladen';
+                    } else {
+                        // Browser / PWA — just reload to pick up new SW
+                        link = null;
+                        label = '🔄 Seite neu laden';
+                    }
+
+                    const banner = document.getElementById('updateBanner');
+                    const bannerText = document.getElementById('updateBannerText');
+                    const bannerLink = document.getElementById('updateBannerLink');
+                    if (!banner) return;
+
+                    bannerText.textContent = `🔄 Update verfügbar (${releaseDate}) – deine Version: ${APP_BUILD_DATE}`;
+                    if (link) {
+                        bannerLink.href = link;
+                        bannerLink.textContent = label;
+                        bannerLink.onclick = null;
+                    } else {
+                        bannerLink.href = '#';
+                        bannerLink.textContent = label;
+                        bannerLink.onclick = function(e) { e.preventDefault(); location.reload(); };
+                    }
+                    banner.style.display = 'block';
+                    // Push content down so banner doesn't overlap (use actual rendered height)
+                    document.querySelector('.container').style.marginTop = banner.offsetHeight + 'px';
+                })
+                .catch(() => {}); // silently fail — user is offline or API unreachable
+        }
+
+        function dismissUpdateBanner() {
+            const banner = document.getElementById('updateBanner');
+            if (banner) banner.style.display = 'none';
+            const container = document.querySelector('.container');
+            if (container) container.style.marginTop = '';
+        }
+        // ─── End update check ─────────────────────────────────────────────────
+
         // Initialize app
         // Initialize app on load
         window.onload = function() {
@@ -4910,11 +5090,6 @@
 
             // Initialize backend UI (Electron-aware)
             initBackendUI();
-
-            // First-run setup: show admin creation if setup not complete
-            if (!localStorage.getItem('pzrSetupComplete')) {
-                showFirstRunSetup();
-            }
 
             // Show detected platform in installer section
             const platformInfo = document.getElementById('installerPlatformInfo');
@@ -4944,7 +5119,7 @@
                 }
             }, 30000);
             
-            // PWA: Service Worker Registration
+            // PWA: Service Worker Registration + silent update detection
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.register('sw.js')
@@ -4954,6 +5129,19 @@
                         .catch(function(error) {
                             console.log('❌ Service Worker registration failed:', error);
                         });
+
+                    // When a new SW takes control → show reload toast
+                    let reloading = false;
+                    navigator.serviceWorker.addEventListener('controllerchange', function() {
+                        if (reloading) return;
+                        reloading = true;
+                        // Show a non-blocking toast instead of auto-reloading
+                        const toast = document.createElement('div');
+                        toast.className = 'sw-toast';
+                        toast.innerHTML = '✅ App wurde aktualisiert! ' +
+                            '<button onclick="location.reload()">Neu laden</button>';
+                        document.body.appendChild(toast);
+                    });
                 });
             }
             

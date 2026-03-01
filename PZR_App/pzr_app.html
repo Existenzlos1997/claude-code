@@ -1091,32 +1091,6 @@
             </div>
         </div>
 
-        <!-- First-Run Setup Screen -->
-        <div id="setupScreen" class="login-screen" style="display:none;">
-            <h1>🦷 PZR Assistent Pro</h1>
-            <p style="color:#667eea; font-weight:600;">Ersteinrichtung – Administrator-Konto anlegen</p>
-            <p style="font-size:14px; color:#555; margin: 15px 0;">Legen Sie Ihren persönlichen Administrator-Zugang an. Diese Zugangsdaten ersetzen den Standard-Login.</p>
-            <div class="form-group">
-                <label>Ihr Name</label>
-                <input type="text" id="setupName" placeholder="z.B. Dr. Müller">
-            </div>
-            <div class="form-group">
-                <label>Behandler-ID (Login-Name)</label>
-                <input type="text" id="setupId" placeholder="z.B. admin oder dr.mueller">
-            </div>
-            <div class="form-group">
-                <label>Passwort</label>
-                <input type="password" id="setupPassword" placeholder="Mindestens 6 Zeichen">
-            </div>
-            <div class="form-group">
-                <label>Passwort wiederholen</label>
-                <input type="password" id="setupPasswordConfirm" placeholder="Passwort wiederholen">
-            </div>
-            <button class="btn" onclick="saveFirstRunSetup()" style="width:100%;">
-                ✅ Administrator-Konto erstellen
-            </button>
-        </div>
-
         <!-- Registration Screen (hidden initially) -->
         <div id="registrationScreen" class="screen" style="display:none;">
             <div class="login-screen">
@@ -2335,51 +2309,6 @@
             document.getElementById('patientPin').value = '';
             document.getElementById('employeeId').value = '';
             document.getElementById('employeePassword').value = '';
-        }
-
-        // First-run setup: show admin creation screen
-        function showFirstRunSetup() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('setupScreen').style.display = 'block';
-        }
-
-        // First-run setup: save admin account and start the app
-        function saveFirstRunSetup() {
-            const name = document.getElementById('setupName').value.trim();
-            const id = document.getElementById('setupId').value.trim();
-            const pw = document.getElementById('setupPassword').value.trim();
-            const pw2 = document.getElementById('setupPasswordConfirm').value.trim();
-
-            if (!name || !id || !pw || !pw2) {
-                alert('Bitte alle Felder ausfüllen.');
-                return;
-            }
-            if (pw.length < 6) {
-                alert('Passwort muss mindestens 6 Zeichen haben.');
-                return;
-            }
-            if (pw !== pw2) {
-                alert('Die Passwörter stimmen nicht überein.');
-                return;
-            }
-
-            const adminAccount = {
-                id: 'admin_' + Date.now(),
-                employeeId: id,
-                name: name,
-                password: pw,
-                role: 'admin',
-                createdAt: new Date().toISOString()
-            };
-            saveToStorage('pzrEmployees', [adminAccount]);
-            localStorage.setItem('pzrSetupComplete', 'true');
-
-            // Hide setup, show login
-            document.getElementById('setupScreen').style.display = 'none';
-            document.getElementById('loginScreen').classList.remove('hidden');
-            selectRole('employee');
-            document.getElementById('employeeId').value = id;
-            alert(`✅ Administrator-Konto erstellt!\n\nIhre Behandler-ID: ${id}\nBitte jetzt mit Ihrem Passwort anmelden.`);
         }
 
         // Load patient dashboard
@@ -3828,7 +3757,7 @@
         }
         
         function generateId() {
-            return 'pat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            return 'pat_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
         }
 
         function registerPatient(event) {
@@ -4736,7 +4665,6 @@
                 pzrRecommendations: getFromStorage('pzrRecommendations') || [],
                 pzrDocuments: getFromStorage('pzrDocuments') || [],
                 registrations: getFromStorage('registrations') || [],
-                pzrSetupComplete: localStorage.getItem('pzrSetupComplete') || '',
                 exportDate: new Date().toISOString()
             };
             
@@ -4775,7 +4703,6 @@
                             if (data.pzrDocuments) saveToStorage('pzrDocuments', data.pzrDocuments);
                             else if (data.documents) saveToStorage('pzrDocuments', data.documents);
                             if (data.registrations) saveToStorage('registrations', data.registrations);
-                            if (data.pzrSetupComplete) localStorage.setItem('pzrSetupComplete', data.pzrSetupComplete);
                             
                             alert('Daten wurden erfolgreich importiert!');
                             location.reload();
@@ -4826,7 +4753,7 @@
             let newPracticeId;
             if (role === 'admin') {
                 // masterAdmin creates a new practice: unique practiceId with random component
-                newPracticeId = 'praxis_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                newPracticeId = 'praxis_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
             } else {
                 // admin creates employee in their own practice
                 newPracticeId = currentUser.practiceId || ('praxis_' + currentUser.id);
@@ -4838,7 +4765,7 @@
                 : null;
             
             const newAccount = {
-                id: 'emp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                id: 'emp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11),
                 employeeId: employeeId,
                 name: displayName,
                 password: password,
