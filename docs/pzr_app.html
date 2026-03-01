@@ -628,6 +628,66 @@
             display: none !important;
         }
 
+        /* Update Banner */
+        #updateBanner {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: linear-gradient(90deg, #1a73e8, #0d47a1);
+            color: #fff;
+            padding: 12px 20px;
+            z-index: 9999;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            font-size: 14px;
+        }
+        #updateBanner a, #updateBanner button {
+            background: #fff;
+            color: #1a73e8;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 14px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        #updateBanner .dismiss-btn {
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            font-weight: normal;
+            font-size: 18px;
+            padding: 2px 8px;
+        }
+
+        /* SW update toast (bottom of screen) */
+        .sw-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a73e8;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 9998;
+            font-size: 14px;
+            text-align: center;
+        }
+        .sw-toast button {
+            background: #fff;
+            color: #1a73e8;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         /* Patient Autocomplete Suggestions */
         #patientSuggestions,
         #appointmentPatientSuggestions {
@@ -974,6 +1034,13 @@
     </style>
 </head>
 <body>
+    <!-- Update Banner (shown when a newer release is available) -->
+    <div id="updateBanner">
+        <span id="updateBannerText">🔄 Neue Version verfügbar!</span>
+        <a id="updateBannerLink" href="#" target="_blank" rel="noopener">Jetzt aktualisieren</a>
+        <button class="dismiss-btn" onclick="dismissUpdateBanner()" title="Schließen">✕</button>
+    </div>
+
     <div class="container">
         <!-- Login Screen -->
         <div id="loginScreen" class="login-screen">
@@ -1859,6 +1926,9 @@
         let notificationInterval = null;
         let reminderIdCounter = 1;
 
+        // App version — update this date whenever a new release is pushed
+        const APP_BUILD_DATE = '2026-03-01';
+
         // Voice Recognition State
         let recognition = null;
         let currentRecordingField = null;
@@ -2244,6 +2314,9 @@
                 loadPendingCancellations(); // Load pending cancellations
                 loadEmployees(); // Load employees list
             }
+
+            // Check for a newer release and show update banner if one exists
+            checkForAppUpdate();
         }
 
         // Logout
@@ -5004,6 +5077,62 @@
             window.open(getInstallerURL('android'), '_blank');
         }
 
+        // ─── In-app update check ───────────────────────────────────────────────
+        function checkForAppUpdate() {
+            const RELEASE_API = 'https://api.github.com/repos/Existenzlos1997/claude-code/releases/tags/nightly';
+            fetch(RELEASE_API, { headers: { Accept: 'application/vnd.github+json' } })
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(release => {
+                    const releaseDate = release.published_at ? release.published_at.substring(0, 10) : null;
+                    if (!releaseDate || releaseDate <= APP_BUILD_DATE) return; // no newer release
+
+                    // Determine best download link for this platform
+                    const platform = detectPlatform();
+                    let link = '#';
+                    let label = 'Jetzt aktualisieren';
+                    if (platform === 'android') {
+                        const apkAsset = (release.assets || []).find(a => a.name === 'pzr-app-latest.apk');
+                        link = apkAsset ? apkAsset.browser_download_url : getInstallerURL('android');
+                        label = '📱 APK herunterladen & installieren';
+                    } else if (platform === 'windows' || platform === 'mac' || platform === 'linux') {
+                        link = getInstallerURL(platform);
+                        label = '💻 Installer herunterladen';
+                    } else {
+                        // Browser / PWA — just reload to pick up new SW
+                        link = null;
+                        label = '🔄 Seite neu laden';
+                    }
+
+                    const banner = document.getElementById('updateBanner');
+                    const bannerText = document.getElementById('updateBannerText');
+                    const bannerLink = document.getElementById('updateBannerLink');
+                    if (!banner) return;
+
+                    bannerText.textContent = `🔄 Update verfügbar (${releaseDate}) – deine Version: ${APP_BUILD_DATE}`;
+                    if (link) {
+                        bannerLink.href = link;
+                        bannerLink.textContent = label;
+                        bannerLink.onclick = null;
+                    } else {
+                        bannerLink.href = '#';
+                        bannerLink.textContent = label;
+                        bannerLink.onclick = function(e) { e.preventDefault(); location.reload(); };
+                    }
+                    banner.style.display = 'block';
+                    // Push content down so banner doesn't overlap (use actual rendered height)
+                    document.querySelector('.container').style.marginTop = banner.offsetHeight + 'px';
+                })
+                .catch(() => {}); // silently fail — user is offline or API unreachable
+        }
+
+        function dismissUpdateBanner() {
+            const banner = document.getElementById('updateBanner');
+            if (banner) banner.style.display = 'none';
+            const container = document.querySelector('.container');
+            if (container) container.style.marginTop = '';
+        }
+        // ─── End update check ─────────────────────────────────────────────────
+
         // Initialize app
         // Initialize app on load
         window.onload = function() {
@@ -5043,7 +5172,7 @@
                 }
             }, 30000);
             
-            // PWA: Service Worker Registration
+            // PWA: Service Worker Registration + silent update detection
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.register('sw.js')
@@ -5053,6 +5182,19 @@
                         .catch(function(error) {
                             console.log('❌ Service Worker registration failed:', error);
                         });
+
+                    // When a new SW takes control → show reload toast
+                    let reloading = false;
+                    navigator.serviceWorker.addEventListener('controllerchange', function() {
+                        if (reloading) return;
+                        reloading = true;
+                        // Show a non-blocking toast instead of auto-reloading
+                        const toast = document.createElement('div');
+                        toast.className = 'sw-toast';
+                        toast.innerHTML = '✅ App wurde aktualisiert! ' +
+                            '<button onclick="location.reload()">Neu laden</button>';
+                        document.body.appendChild(toast);
+                    });
                 });
             }
             
