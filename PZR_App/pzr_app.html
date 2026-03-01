@@ -1722,15 +1722,17 @@
                             <div id="installerStep2" class="installer-step" style="display:none;">
                                 <span class="step-badge" style="background:#43a047;">Schritt 2</span>
                                 <p style="margin: 0 0 12px 0; font-weight: 500;">Installer ausführen</p>
-                                <p style="font-size: 14px; color: #555; margin-bottom: 12px;">
-                                    Der Download hat gestartet. Öffnen Sie die heruntergeladene Datei in Ihrem Download-Ordner und folgen Sie dem Installations-Assistenten.
-                                </p>
-                                <button class="btn" onclick="launchInstaller()" style="background: linear-gradient(135deg, #43a047 0%, #1de9b6 100%);">
-                                    ▶️ Installer starten
+                                <div style="background:#e8f5e9;border-left:4px solid #43a047;border-radius:8px;padding:14px;margin-bottom:12px;">
+                                    <p style="margin:0 0 6px 0;font-size:14px;font-weight:500;color:#2e7d32;">✅ Download abgeschlossen!</p>
+                                    <p style="margin:0;font-size:13px;color:#555;">
+                                        1. Öffnen Sie Ihren <strong>Downloads-Ordner</strong><br>
+                                        2. Doppelklicken Sie auf <strong id="installerFilenameHint">pzr-app-latest.exe</strong><br>
+                                        3. Folgen Sie dem Installations-Assistenten
+                                    </p>
+                                </div>
+                                <button class="btn" onclick="downloadDesktopInstaller()" style="background:#eee;color:#333;border:1px solid #ccc;font-size:13px;padding:8px 16px;">
+                                    🔄 Erneut herunterladen
                                 </button>
-                                <p style="font-size: 12px; color: #888; margin-top: 8px;">
-                                    💡 Tipp: Die Datei befindet sich in Ihrem Downloads-Ordner.
-                                </p>
                             </div>
                         </div>
                         
@@ -1781,7 +1783,7 @@
                                     ▶️ APK öffnen / erneut herunterladen
                                 </button>
                                 <p style="font-size: 12px; color: #888; margin-top: 8px;">
-                                    💡 Tipp: Suchen Sie in Ihrem Download-Ordner nach <strong>pzr-app-1.0.0.apk</strong>.
+                                    💡 Tipp: Suchen Sie in Ihrem Download-Ordner nach <strong>pzr-app-latest.apk</strong>.
                                 </p>
                             </div>
                         </div>
@@ -4925,20 +4927,19 @@
                     const step1 = document.getElementById('installerStep1');
                     const step2 = document.getElementById('installerStep2');
                     if (step1) { step1.classList.remove('step-active'); step1.classList.add('step-done'); }
-                    if (step2) { step2.style.display = 'block'; step2.classList.add('step-active'); }
+                    if (step2) {
+                        step2.style.display = 'block';
+                        step2.classList.add('step-active');
+                        // Show the correct filename in the instruction
+                        const hint = document.getElementById('installerFilenameHint');
+                        if (hint) hint.textContent = filename;
+                    }
                 })
                 .catch(err => {
                     console.warn('Desktop installer check failed:', err);
                     if (statusEl) statusEl.textContent = '';
                     if (buildNeeded) buildNeeded.style.display = 'block';
                 });
-        }
-
-        function launchInstaller() {
-            // Open the installer URL in a new tab – browser will prompt to run/save
-            const platform = detectPlatform();
-            const url = getInstallerURL(platform);
-            window.open(url, '_blank');
         }
 
         function detectPlatform() {
