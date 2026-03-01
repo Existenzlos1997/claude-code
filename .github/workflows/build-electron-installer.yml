@@ -34,9 +34,21 @@ jobs:
       - name: Copy latest app HTML into Electron
         run: cp PZR_App/pzr_app.html PZR_App_Electron/app/pzr_app.html
 
+      - name: Set nightly version (branch builds only)
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        working-directory: PZR_App_Electron
+        shell: bash
+        run: |
+          DATE=$(date +%Y%m%d)
+          npm version 1.0.$DATE --no-git-tag-version
+
       - name: Install dependencies
         working-directory: PZR_App_Electron
         run: npm install
+
+      - name: Install Python setuptools (macOS - needed for sqlite3 build)
+        if: matrix.os == 'macos-latest'
+        run: pip3 install setuptools
 
       - name: Build Windows Installer
         if: matrix.os == 'windows-latest'
@@ -53,26 +65,32 @@ jobs:
         working-directory: PZR_App_Electron
         run: npm run build:linux
 
-      - name: Upload Windows Installer
+      - name: Upload Windows Installer + update metadata
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: PZR_App_Electron/dist/*.exe
+          path: |
+            PZR_App_Electron/dist/*.exe
+            PZR_App_Electron/dist/latest.yml
 
-      - name: Upload macOS Installer
+      - name: Upload macOS Installer + update metadata
         if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
           name: macos-installer
-          path: PZR_App_Electron/dist/*.dmg
+          path: |
+            PZR_App_Electron/dist/*.dmg
+            PZR_App_Electron/dist/latest-mac.yml
 
-      - name: Upload Linux Installer
+      - name: Upload Linux Installer + update metadata
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: linux-installer
-          path: PZR_App_Electron/dist/*.deb
+          path: |
+            PZR_App_Electron/dist/*.deb
+            PZR_App_Electron/dist/latest-linux.yml
 
   publish-nightly:
     name: Publish Nightly Release

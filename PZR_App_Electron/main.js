@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -35,7 +36,7 @@ function createWindow() {
             enableRemoteModule: true
         },
         autoHideMenuBar: false,
-        title: 'PZR App - Zahnärzte Burgau'
+        title: 'PZR Praxis Manager'
     });
 
     // Load the main HTML file
@@ -107,12 +108,12 @@ function createWindow() {
             label: 'Hilfe',
             submenu: [
                 {
-                    label: 'Über PZR App',
+                    label: 'Über PZR Praxis Manager',
                     click: () => {
                         dialog.showMessageBox(mainWindow, {
                             type: 'info',
-                            title: 'Über PZR App',
-                            message: 'PZR App - Zahnärzte Burgau\nVersion 1.0.0\n\nProfessionelle Zahnreinigung & Patientenverwaltung',
+                            title: 'Über PZR Praxis Manager',
+                            message: `PZR Praxis Manager\nVersion ${app.getVersion()}\n\nProfessionelle Praxis- und Patientenverwaltung`,
                             buttons: ['OK']
                         });
                     }
@@ -145,10 +146,16 @@ ipcMain.on('activate-backend', (event) => {
     }
 
     try {
-        // Start Node.js backend server
-        backendServer = spawn('node', [path.join(__dirname, 'server.js')], {
-            cwd: __dirname,
-            env: { ...process.env, PORT: '3000' }
+        // Resolve server.js path: unpacked from asar in production, or __dirname in dev
+        const serverPath = app.isPackaged
+            ? path.join(process.resourcesPath, 'app.asar.unpacked', 'server.js')
+            : path.join(__dirname, 'server.js');
+
+        // Use Electron's own Node runtime (process.execPath) with ELECTRON_RUN_AS_NODE=1
+        // This avoids needing a separate 'node' binary in PATH in packaged builds
+        backendServer = spawn(process.execPath, [serverPath], {
+            cwd: app.isPackaged ? path.join(process.resourcesPath, 'app.asar.unpacked') : __dirname,
+            env: { ...process.env, PORT: '3000', ELECTRON_RUN_AS_NODE: '1' }
         });
 
         backendServer.stdout.on('data', (data) => {
@@ -200,9 +207,43 @@ ipcMain.on('get-backend-status', (event) => {
     });
 });
 
+// Trigger update install from renderer
+ipcMain.on('install-update', () => {
+    autoUpdater.quitAndInstall();
+});
+
 // App lifecycle
 app.whenReady().then(() => {
     createWindow();
+
+    // Auto-update: check for new GitHub releases on startup
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.checkForUpdates().catch(err => {
+        console.log('Update check failed (no network or no release):', err.message);
+    });
+
+    autoUpdater.on('update-available', (info) => {
+        if (mainWindow) {
+            mainWindow.webContents.send('update-available', info.version);
+        }
+    });
+
+    autoUpdater.on('update-downloaded', () => {
+        if (mainWindow) {
+            mainWindow.webContents.send('update-downloaded');
+        }
+        dialog.showMessageBox(mainWindow, {
+            type: 'info',
+            title: 'Update bereit',
+            message: 'Das Update wurde heruntergeladen.\nKlicken Sie „Jetzt neu starten" zum Installieren.',
+            buttons: ['Jetzt neu starten', 'Später']
+        }).then(result => {
+            if (result.response === 0) {
+                autoUpdater.quitAndInstall();
+            }
+        }).catch(() => {});
+    });
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {

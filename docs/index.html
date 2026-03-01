@@ -4650,6 +4650,39 @@
             // Query current status
             ipcRenderer.send('get-backend-status');
 
+            // Helper: show the update banner with given text and optional link/action
+            function showUpdateBanner(text, linkText, linkAction) {
+                const banner = document.getElementById('updateBanner');
+                const bannerText = document.getElementById('updateBannerText');
+                const bannerLink = document.getElementById('updateBannerLink');
+                if (!banner) return;
+                bannerText.textContent = text;
+                if (linkText && linkAction) {
+                    bannerLink.textContent = linkText;
+                    bannerLink.href = '#';
+                    bannerLink.onclick = function(e) { e.preventDefault(); linkAction(); };
+                } else {
+                    bannerLink.textContent = '';
+                    bannerLink.onclick = null;
+                }
+                banner.style.display = 'block';
+                const container = document.querySelector('.container');
+                if (container) container.style.marginTop = banner.offsetHeight + 'px';
+            }
+
+            // Listen for auto-updater events from main process
+            ipcRenderer.on('update-available', (event, version) => {
+                showUpdateBanner(`🔄 Update v${version} wird heruntergeladen…`, null, null);
+            });
+
+            ipcRenderer.on('update-downloaded', () => {
+                showUpdateBanner(
+                    '✅ Update heruntergeladen – bereit zur Installation!',
+                    'Jetzt neu starten & installieren',
+                    () => ipcRenderer.send('install-update')
+                );
+            });
+
             // Pre-fill saved connect URL
             const savedUrl = localStorage.getItem('pzrBackendConnectUrl');
             if (savedUrl) {
