@@ -26,6 +26,12 @@
     "appId": "com.burgau.pzr-app",
     "productName": "PZR Praxis Manager",
     "artifactName": "pzr-app-latest.${ext}",
+    "npmRebuild": false,
+    "asarUnpack": [
+      "**/node_modules/sqlite3/lib/binding/**",
+      "**/node_modules/bindings/**",
+      "**/node_modules/file-uri-to-path/**"
+    ],
     "directories": {
       "output": "dist"
     },
@@ -43,7 +49,8 @@
     },
     "linux": {
       "target": "deb",
-      "category": "Office"
+      "category": "Office",
+      "maintainer": "Zahnärzte Burgau <info@zahnaerzte-burgau.de>"
     }
   }
 }

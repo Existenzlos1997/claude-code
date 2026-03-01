@@ -33,10 +33,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Python setuptools (macOS – needed for sqlite3 native rebuild)
-        if: matrix.os == 'macos-latest'
-        run: pip3 install setuptools
-
       - name: Copy latest app HTML into Electron
         run: cp PZR_App/pzr_app.html PZR_App_Electron/app/pzr_app.html
 
