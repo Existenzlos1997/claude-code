@@ -2282,7 +2282,7 @@
                 }
                 
                 // Check if anamnese was never filled
-                if (!patient.anamnese.lastUpdated) {
+                if (!patient.anamnese?.lastUpdated) {
                     alert('Bitte füllen Sie Ihre medizinische Anamnese aus.\n\nNach dem Login finden Sie das Formular im Tab "Anamnese".');
                 }
                 
