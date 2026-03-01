@@ -1015,12 +1015,6 @@
                 </div>
                 <button class="btn" onclick="loginEmployee()">Anmelden</button>
             </div>
-
-            <p style="margin-top: 20px; font-size: 12px; color: #999;">
-                Demo-Zugänge:<br>
-                Patient: PAT-12345 / PIN: 1234<br>
-                Behandler: MA-001 / Passwort: admin
-            </p>
             
             <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
                 <p style="color: #666; margin-bottom: 10px;">Noch kein Patient?</p>
@@ -1028,6 +1022,32 @@
                     📝 Jetzt registrieren
                 </button>
             </div>
+        </div>
+
+        <!-- First-Run Setup Screen -->
+        <div id="setupScreen" class="login-screen" style="display:none;">
+            <h1>🦷 PZR Assistent Pro</h1>
+            <p style="color:#667eea; font-weight:600;">Ersteinrichtung – Administrator-Konto anlegen</p>
+            <p style="font-size:14px; color:#555; margin: 15px 0;">Legen Sie Ihren persönlichen Administrator-Zugang an. Diese Zugangsdaten ersetzen den Standard-Login.</p>
+            <div class="form-group">
+                <label>Ihr Name</label>
+                <input type="text" id="setupName" placeholder="z.B. Dr. Müller">
+            </div>
+            <div class="form-group">
+                <label>Behandler-ID (Login-Name)</label>
+                <input type="text" id="setupId" placeholder="z.B. admin oder dr.mueller">
+            </div>
+            <div class="form-group">
+                <label>Passwort</label>
+                <input type="password" id="setupPassword" placeholder="Mindestens 6 Zeichen">
+            </div>
+            <div class="form-group">
+                <label>Passwort wiederholen</label>
+                <input type="password" id="setupPasswordConfirm" placeholder="Passwort wiederholen">
+            </div>
+            <button class="btn" onclick="saveFirstRunSetup()" style="width:100%;">
+                ✅ Administrator-Konto erstellen
+            </button>
         </div>
 
         <!-- Registration Screen (hidden initially) -->
@@ -1732,8 +1752,13 @@
                             <h4>Neuen Mitarbeiter hinzufügen</h4>
                             
                             <div class="form-group">
-                                <label for="newEmployeeUsername">Benutzername *</label>
-                                <input type="text" id="newEmployeeUsername" placeholder="z.B. dr.mueller">
+                                <label for="newEmployeeId">Behandler-ID (Login) *</label>
+                                <input type="text" id="newEmployeeId" placeholder="z.B. dr.mueller">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newEmployeeDisplayName">Anzeigename *</label>
+                                <input type="text" id="newEmployeeDisplayName" placeholder="z.B. Dr. Müller">
                             </div>
                             
                             <div class="form-group">
@@ -2010,7 +2035,7 @@
             CANCELLED: 'cancelled'
         };
 
-        // Initialize demo data
+        // Initialize demo data (only if nothing exists yet)
         function initDemoData() {
             const savedPatients = localStorage.getItem('pzrPatients');
             if (!savedPatients) {
@@ -2066,14 +2091,19 @@
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             }
 
-            // Create demo employee
-            const employees = [{
-                id: 'MA-001',
-                employeeId: 'MA-001',
-                password: 'admin',
-                name: 'Dr. Schmidt'
-            }];
-            localStorage.setItem('pzrEmployees', JSON.stringify(employees));
+            // Only create default admin employee if no employees exist at all
+            // (allows real admin account to replace demo account)
+            const existingEmployees = localStorage.getItem('pzrEmployees');
+            if (!existingEmployees || JSON.parse(existingEmployees).length === 0) {
+                const employees = [{
+                    id: 'MA-001',
+                    employeeId: 'MA-001',
+                    password: 'admin',
+                    name: 'Administrator',
+                    role: 'admin'
+                }];
+                localStorage.setItem('pzrEmployees', JSON.stringify(employees));
+            }
         }
 
         // Load data from localStorage
@@ -2165,11 +2195,19 @@
             }
 
             const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
-            const employee = employees.find(e => e.employeeId === employeeId && e.password === password);
+            // Support both employeeId field (new) and username field (legacy)
+            const employee = employees.find(e =>
+                (e.employeeId === employeeId || e.username === employeeId) &&
+                e.password === password
+            );
             
             if (employee) {
                 currentUser = employee;
                 currentRole = 'employee';
+                // Auto-connect to backend if employee has a backend URL assigned
+                if (employee.backendUrl) {
+                    localStorage.setItem('pzrBackendConnectUrl', employee.backendUrl);
+                }
                 showMainApp();
             } else {
                 alert('Ungültige Anmeldedaten.');
@@ -2210,6 +2248,51 @@
             document.getElementById('patientPin').value = '';
             document.getElementById('employeeId').value = '';
             document.getElementById('employeePassword').value = '';
+        }
+
+        // First-run setup: show admin creation screen
+        function showFirstRunSetup() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('setupScreen').style.display = 'block';
+        }
+
+        // First-run setup: save admin account and start the app
+        function saveFirstRunSetup() {
+            const name = document.getElementById('setupName').value.trim();
+            const id = document.getElementById('setupId').value.trim();
+            const pw = document.getElementById('setupPassword').value.trim();
+            const pw2 = document.getElementById('setupPasswordConfirm').value.trim();
+
+            if (!name || !id || !pw || !pw2) {
+                alert('Bitte alle Felder ausfüllen.');
+                return;
+            }
+            if (pw.length < 6) {
+                alert('Passwort muss mindestens 6 Zeichen haben.');
+                return;
+            }
+            if (pw !== pw2) {
+                alert('Die Passwörter stimmen nicht überein.');
+                return;
+            }
+
+            const adminAccount = {
+                id: 'admin_' + Date.now(),
+                employeeId: id,
+                name: name,
+                password: pw,
+                role: 'admin',
+                createdAt: new Date().toISOString()
+            };
+            saveToStorage('pzrEmployees', [adminAccount]);
+            localStorage.setItem('pzrSetupComplete', 'true');
+
+            // Hide setup, show login
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('loginScreen').classList.remove('hidden');
+            selectRole('employee');
+            document.getElementById('employeeId').value = id;
+            alert(`✅ Administrator-Konto erstellt!\n\nIhre Behandler-ID: ${id}\nBitte jetzt mit Ihrem Passwort anmelden.`);
         }
 
         // Load patient dashboard
@@ -4547,11 +4630,12 @@
         function exportData() {
             const data = {
                 pzrPatients: getFromStorage('pzrPatients') || [],
-                employees: getFromStorage('employees') || [],
-                appointments: getFromStorage('appointments') || [],
-                recommendations: getFromStorage('recommendations') || [],
-                documents: getFromStorage('documents') || [],
+                pzrEmployees: getFromStorage('pzrEmployees') || [],
+                pzrAppointments: getFromStorage('pzrAppointments') || [],
+                pzrRecommendations: getFromStorage('pzrRecommendations') || [],
+                pzrDocuments: getFromStorage('pzrDocuments') || [],
                 registrations: getFromStorage('registrations') || [],
+                pzrSetupComplete: localStorage.getItem('pzrSetupComplete') || '',
                 exportDate: new Date().toISOString()
             };
             
@@ -4580,11 +4664,17 @@
                         
                         if (confirm('Möchten Sie die importierten Daten wirklich übernehmen? Dies überschreibt alle aktuellen Daten!')) {
                             if (data.pzrPatients) saveToStorage('pzrPatients', data.pzrPatients);
-                            if (data.employees) saveToStorage('employees', data.employees);
-                            if (data.appointments) saveToStorage('appointments', data.appointments);
-                            if (data.recommendations) saveToStorage('recommendations', data.recommendations);
-                            if (data.documents) saveToStorage('documents', data.documents);
+                            // Support both old 'employees' key and new 'pzrEmployees' key
+                            if (data.pzrEmployees) saveToStorage('pzrEmployees', data.pzrEmployees);
+                            else if (data.employees) saveToStorage('pzrEmployees', data.employees);
+                            if (data.pzrAppointments) saveToStorage('pzrAppointments', data.pzrAppointments);
+                            else if (data.appointments) saveToStorage('pzrAppointments', data.appointments);
+                            if (data.pzrRecommendations) saveToStorage('pzrRecommendations', data.pzrRecommendations);
+                            else if (data.recommendations) saveToStorage('pzrRecommendations', data.recommendations);
+                            if (data.pzrDocuments) saveToStorage('pzrDocuments', data.pzrDocuments);
+                            else if (data.documents) saveToStorage('pzrDocuments', data.documents);
                             if (data.registrations) saveToStorage('registrations', data.registrations);
+                            if (data.pzrSetupComplete) localStorage.setItem('pzrSetupComplete', data.pzrSetupComplete);
                             
                             alert('Daten wurden erfolgreich importiert!');
                             location.reload();
@@ -4599,11 +4689,12 @@
         }
 
         function addEmployee() {
-            const username = document.getElementById('newEmployeeUsername').value.trim();
+            const employeeId = document.getElementById('newEmployeeId').value.trim();
+            const displayName = document.getElementById('newEmployeeDisplayName').value.trim();
             const password = document.getElementById('newEmployeePassword').value.trim();
             const role = document.getElementById('newEmployeeRole').value;
             
-            if (!username || !password) {
+            if (!employeeId || !displayName || !password) {
                 alert('Bitte füllen Sie alle Felder aus!');
                 return;
             }
@@ -4613,34 +4704,41 @@
                 return;
             }
             
-            const employees = getFromStorage('employees') || [];
+            const employees = getFromStorage('pzrEmployees') || [];
             
-            // Check if username already exists
-            if (employees.some(emp => emp.username === username)) {
-                alert('Dieser Benutzername existiert bereits!');
+            // Check if ID already exists
+            if (employees.some(emp => emp.employeeId === employeeId || emp.username === employeeId)) {
+                alert('Diese Behandler-ID existiert bereits!');
                 return;
             }
+
+            // Auto-assign backend URL if one is configured
+            const backendUrl = localStorage.getItem('pzrBackendConnectUrl') || null;
             
             employees.push({
-                id: generateId(),
-                username: username,
+                id: 'emp_' + Date.now(),
+                employeeId: employeeId,
+                name: displayName,
                 password: password,
                 role: role,
+                backendUrl: backendUrl,
                 createdAt: new Date().toISOString()
             });
             
-            saveToStorage('employees', employees);
+            saveToStorage('pzrEmployees', employees);
             
-            document.getElementById('newEmployeeUsername').value = '';
+            document.getElementById('newEmployeeId').value = '';
+            document.getElementById('newEmployeeDisplayName').value = '';
             document.getElementById('newEmployeePassword').value = '';
             document.getElementById('newEmployeeRole').value = 'employee';
             
             loadEmployees();
-            alert('Mitarbeiter wurde erfolgreich hinzugefügt!');
+            const backendNote = backendUrl ? `\nBackend-Adresse automatisch zugewiesen: ${backendUrl}` : '';
+            alert(`Mitarbeiter "${displayName}" (ID: ${employeeId}) wurde erfolgreich hinzugefügt!${backendNote}`);
         }
 
         function loadEmployees() {
-            const employees = getFromStorage('employees') || [];
+            const employees = getFromStorage('pzrEmployees') || [];
             const container = document.getElementById('employeesList');
             
             if (employees.length === 0) {
@@ -4654,9 +4752,14 @@
             
             employees.forEach(emp => {
                 const roleLabel = emp.role === 'admin' ? '👑 Administrator' : '👤 Behandler';
-                html += `<li style="padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <strong>${emp.username}</strong> - ${roleLabel}
-                    ${emp.role !== 'admin' ? '<button class="btn" style="float: right; padding: 5px 10px; font-size: 12px;" onclick="deleteEmployee(\'' + emp.id + '\')">Löschen</button>' : ''}
+                const displayId = emp.employeeId || emp.username || emp.id;
+                const displayName = emp.name || displayId;
+                const backendBadge = emp.backendUrl
+                    ? `<span style="font-size:11px; background:#e8f5e9; color:#2e7d32; border-radius:4px; padding:2px 6px; margin-left:6px;">🔗 Backend</span>`
+                    : '';
+                html += `<li style="padding: 10px 0; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                    <span><strong>${displayName}</strong> <small style="color:#888;">(${displayId})</small> – ${roleLabel}${backendBadge}</span>
+                    ${emp.role !== 'admin' ? `<button class="btn btn-delete" style="padding: 4px 10px; font-size: 12px;" onclick="deleteEmployee('${emp.id}')">Löschen</button>` : ''}
                 </li>`;
             });
             
@@ -4667,9 +4770,9 @@
         function deleteEmployee(id) {
             if (!confirm('Möchten Sie diesen Mitarbeiter wirklich löschen?')) return;
             
-            let employees = getFromStorage('employees') || [];
+            let employees = getFromStorage('pzrEmployees') || [];
             employees = employees.filter(emp => emp.id !== id);
-            saveToStorage('employees', employees);
+            saveToStorage('pzrEmployees', employees);
             loadEmployees();
             alert('Mitarbeiter wurde gelöscht.');
         }
@@ -4807,6 +4910,11 @@
 
             // Initialize backend UI (Electron-aware)
             initBackendUI();
+
+            // First-run setup: show admin creation if setup not complete
+            if (!localStorage.getItem('pzrSetupComplete')) {
+                showFirstRunSetup();
+            }
 
             // Show detected platform in installer section
             const platformInfo = document.getElementById('installerPlatformInfo');

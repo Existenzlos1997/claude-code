@@ -1,65 +1,50 @@
-// Service Worker für PZR App - Offline Funktionalität
-const CACHE_NAME = 'pzr-app-v1';
+// Service Worker für PZR App - pzr-app-1
+// Network-first: immer die neueste Version laden, kein Neuinstallieren nötig
+const CACHE_NAME = 'pzr-app-v2';
 const urlsToCache = [
   './pzr_app.html',
   './manifest.json'
 ];
 
-// Installation
+// Installation – sofort aktivieren (skipWaiting)
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Cache geöffnet');
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Aktivierung
+// Aktivierung – alte Caches sofort löschen, alle Clients übernehmen
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Alte Cache gelöscht:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys().then(cacheNames =>
+      Promise.all(
+        cacheNames
+          .filter(name => name !== CACHE_NAME)
+          .map(name => caches.delete(name))
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-// Fetch - Offline First Strategie
+// Fetch – Network First: frisch vom Server, Cache als Fallback
 self.addEventListener('fetch', event => {
+  // Nur GET-Requests cachen
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        // Cache Hit - return cached response
-        if (response) {
+        if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
-        // Clone request
-        const fetchRequest = event.request.clone();
-        
-        return fetch(fetchRequest).then(response => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          
-          // Clone response
-          const responseToCache = response.clone();
-          
-          caches.open(CACHE_NAME)
-            .then(cache => {
-              cache.put(event.request, responseToCache);
-            });
-          
-          return response;
+        // Frische Antwort in Cache schreiben
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, response.clone());
         });
+        return response;
       })
+      .catch(() => caches.match(event.request)) // Offline-Fallback
   );
 });
