@@ -25,6 +25,7 @@
   "build": {
     "appId": "com.burgau.pzr-app",
     "productName": "PZR Praxis Manager",
+    "artifactName": "pzr-app-latest.${ext}",
     "directories": {
       "output": "dist"
     },

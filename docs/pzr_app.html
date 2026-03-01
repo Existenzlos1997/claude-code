@@ -1736,6 +1736,12 @@
                                     ⬇️ Installer herunterladen
                                 </button>
                                 <p id="installerPlatformInfo"></p>
+                                <p id="desktopDownloadStatus" style="font-size:13px;margin-top:8px;"></p>
+                                <div id="desktopBuildNeeded" style="display:none;margin-top:12px;padding:12px;background:#fff3e0;border-radius:8px;border-left:4px solid #ff9800;">
+                                    <p style="margin:0 0 8px 0;font-size:13px;font-weight:500;color:#e65100;">⚙️ Installer noch nicht verfügbar</p>
+                                    <p style="margin:0 0 8px 0;font-size:12px;color:#666;">Der Desktop-Installer wird gerade gebaut. Bitte warten Sie einige Minuten und versuchen Sie es erneut.</p>
+                                    <a href="https://github.com/Existenzlos1997/claude-code/actions/workflows/build-electron-installer.yml" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:#1976d2;">▶ Build-Status auf GitHub prüfen</a>
+                                </div>
                             </div>
 
                             <!-- Step 2: Run Installer (hidden until download starts) -->
@@ -4957,34 +4963,48 @@
         // Download Desktop Installer
         function downloadDesktopInstaller() {
             const platform = detectPlatform();
-            const url = getInstallerURL(platform);
             const filename = getInstallerFilename(platform);
+            const RELEASE_API = 'https://api.github.com/repos/Existenzlos1997/claude-code/releases/tags/nightly';
 
-            // Validate URL is from expected GitHub releases domain
-            if (!url.startsWith('https://github.com/Existenzlos1997/claude-code/releases/')) {
-                alert('Ungültige Download-URL. Bitte wenden Sie sich an den Administrator.');
-                return;
-            }
+            const statusEl = document.getElementById('desktopDownloadStatus');
+            const buildNeeded = document.getElementById('desktopBuildNeeded');
+            if (statusEl) statusEl.textContent = '🔍 Prüfe verfügbare Version...';
+            if (buildNeeded) buildNeeded.style.display = 'none';
 
-            // Trigger download via hidden anchor (does not navigate away)
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            fetch(RELEASE_API, { headers: { Accept: 'application/vnd.github+json' } })
+                .then(r => r.ok ? r.json() : Promise.reject(new Error(`Release fetch failed: ${r.status}`)))
+                .then(release => {
+                    const asset = (release.assets || []).find(a => a.name === filename);
+                    if (!asset) return Promise.reject(new Error('Asset not found in nightly release'));
 
-            // Mark step 1 as done, reveal step 2
-            const step1 = document.getElementById('installerStep1');
-            const step2 = document.getElementById('installerStep2');
-            if (step1) {
-                step1.classList.remove('step-active');
-                step1.classList.add('step-done');
-            }
-            if (step2) {
-                step2.style.display = 'block';
-                step2.classList.add('step-active');
-            }
+                    if (statusEl) statusEl.textContent = '✅ Installer gefunden – Download startet...';
+
+                    // Validate URL is from expected GitHub domain
+                    const url = asset.browser_download_url;
+                    if (!url.startsWith('https://github.com/Existenzlos1997/claude-code/releases/')) {
+                        if (statusEl) statusEl.textContent = '';
+                        alert('Ungültige Download-URL.');
+                        return;
+                    }
+
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                    // Mark step 1 as done, reveal step 2
+                    const step1 = document.getElementById('installerStep1');
+                    const step2 = document.getElementById('installerStep2');
+                    if (step1) { step1.classList.remove('step-active'); step1.classList.add('step-done'); }
+                    if (step2) { step2.style.display = 'block'; step2.classList.add('step-active'); }
+                })
+                .catch(err => {
+                    console.warn('Desktop installer check failed:', err);
+                    if (statusEl) statusEl.textContent = '';
+                    if (buildNeeded) buildNeeded.style.display = 'block';
+                });
         }
 
         function launchInstaller() {
@@ -5012,26 +5032,26 @@
             const releaseBase = 'https://github.com/Existenzlos1997/claude-code/releases/download/';
             switch(platform) {
                 case 'windows':
-                    return releaseBase + 'v1.0.0/PZR-App-Setup-1.0.0.exe';
+                    return releaseBase + 'nightly/pzr-app-latest.exe';
                 case 'mac':
-                    return releaseBase + 'v1.0.0/PZR-App-1.0.0.dmg';
+                    return releaseBase + 'nightly/pzr-app-latest.dmg';
                 case 'linux':
-                    return releaseBase + 'v1.0.0/pzr-app_1.0.0_amd64.deb';
+                    return releaseBase + 'nightly/pzr-app-latest.deb';
                 case 'android':
                     // nightly tag is always updated on every branch push
                     return releaseBase + 'nightly/pzr-app-latest.apk';
                 default:
-                    return releaseBase + 'v1.0.0/PZR-App-Setup-1.0.0.exe';
+                    return releaseBase + 'nightly/pzr-app-latest.exe';
             }
         }
 
         function getInstallerFilename(platform) {
             switch(platform) {
-                case 'windows': return 'PZR-App-Setup-1.0.0.exe';
-                case 'mac': return 'PZR-App-1.0.0.dmg';
-                case 'linux': return 'pzr-app_1.0.0_amd64.deb';
+                case 'windows': return 'pzr-app-latest.exe';
+                case 'mac': return 'pzr-app-latest.dmg';
+                case 'linux': return 'pzr-app-latest.deb';
                 case 'android': return 'pzr-app-latest.apk';
-                default: return 'PZR-App-Setup-1.0.0.exe';
+                default: return 'pzr-app-latest.exe';
             }
         }
 
