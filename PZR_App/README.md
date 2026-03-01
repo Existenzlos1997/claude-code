@@ -1,18 +1,60 @@
 # PZR Assistent Pro - Installierbare Progressive Web App
 
+## 🌐 LIVE APP — Direkt im Browser öffnen!
+
+> **➡️ https://existenzlos1997.github.io/claude-code/**
+
+---
+
+### 🚀 Einmalige Einrichtung (1 Klick!)
+
+Die App-Dateien liegen bereits fertig im **`docs/`**-Ordner dieses Branches.  
+Du musst nur GitHub Pages einmalig auf diesen Ordner zeigen:
+
+1. Gehe zu: **https://github.com/Existenzlos1997/claude-code/settings/pages**
+2. Unter **Source** → wähle **"Deploy from a branch"**
+3. Branch: **`copilot/setup-installer-for-project`** / Ordner: **`/docs`**
+4. **Save** klicken ✅
+
+→ Nach ~1 Minute ist die App live unter **https://existenzlos1997.github.io/claude-code/** 🎉
+
+> Kein Workflow, kein Branch, kein Download nötig — die Dateien sind direkt im Repo.
+
+---
+
+### 🔐 Demo-Zugangsdaten
+
+| Rolle | Benutzername | Passwort |
+|-------|-------------|----------|
+| Behandler | `MA-001` | `admin` |
+| Patient | Patientennummer: `PAT-12345` | PIN: `1234` |
+
+---
+
+### 📲 Android APK testen
+
+1. App im Browser öffnen (URL oben)
+2. Als **Behandler** anmelden (MA-001 / admin)
+3. Tab **⚙️ Einstellungen** öffnen
+4. Abschnitt **"🤖 Android-App installieren"** → **"⬇️ Android APK herunterladen"** klicken
+5. APK auf Android-Gerät installieren (Einstellungen → Unbekannte Quellen erlauben)
+
+> **Android APK bauen:** **👉 https://github.com/Existenzlos1997/claude-code/actions/workflows/build-android-apk.yml** → "Run workflow" → nach ~5 Min unter [Nightly Release](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly) verfügbar
+
+---
+
 ## 📱 INSTALLIERBAR AUF ALLEN PLATTFORMEN!
 
 Die PZR App ist jetzt eine **Progressive Web App (PWA)** - installierbar wie eine native App auf Android, iOS und Desktop!
 
 ---
 
-## 🔗 Direkter Link
+## 🔗 App-Links
 
-```
-https://raw.githubusercontent.com/Existenzlos1997/claude-code/copilot/add-app-for-pzr-recommendations/PZR_App/pzr_app.html
-```
-
-> Nach Merge: `.../main/PZR_App/pzr_app.html`
+| Plattform | URL |
+|-----------|-----|
+| **Browser (Live)** | https://existenzlos1997.github.io/claude-code/ |
+| **Direktdatei** | https://existenzlos1997.github.io/claude-code/pzr_app.html |
 
 ---
 

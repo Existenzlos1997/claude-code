@@ -1,11 +1,26 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { spawn } = require('child_process');
 
 let mainWindow;
 let backendServer = null;
 let isBackendActive = false;
+
+/** Returns the best LAN IP of this machine so other PCs can connect */
+function getServerUrl() {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return `http://${iface.address}:3000`;
+            }
+        }
+    }
+    return 'http://localhost:3000';
+}
 
 // Create the main application window
 function createWindow() {
@@ -21,7 +36,7 @@ function createWindow() {
             enableRemoteModule: true
         },
         autoHideMenuBar: false,
-        title: 'PZR App - Zahnärzte Burgau'
+        title: 'PZR Praxis Manager'
     });
 
     // Load the main HTML file
@@ -93,12 +108,12 @@ function createWindow() {
             label: 'Hilfe',
             submenu: [
                 {
-                    label: 'Über PZR App',
+                    label: 'Über PZR Praxis Manager',
                     click: () => {
                         dialog.showMessageBox(mainWindow, {
                             type: 'info',
-                            title: 'Über PZR App',
-                            message: 'PZR App - Zahnärzte Burgau\nVersion 1.0.0\n\nProfessionelle Zahnreinigung & Patientenverwaltung',
+                            title: 'Über PZR Praxis Manager',
+                            message: `PZR Praxis Manager\nVersion ${app.getVersion()}\n\nProfessionelle Praxis- und Patientenverwaltung`,
                             buttons: ['OK']
                         });
                     }
@@ -126,15 +141,21 @@ function createWindow() {
 // Start backend server
 ipcMain.on('activate-backend', (event) => {
     if (backendServer) {
-        event.reply('backend-status', { active: true, message: 'Backend läuft bereits' });
+        event.reply('backend-status', { active: true, message: 'Backend läuft bereits', url: getServerUrl() });
         return;
     }
 
     try {
-        // Start Node.js backend server
-        backendServer = spawn('node', [path.join(__dirname, 'server.js')], {
-            cwd: __dirname,
-            env: { ...process.env, PORT: '3000' }
+        // Resolve server.js path: unpacked from asar in production, or __dirname in dev
+        const serverPath = app.isPackaged
+            ? path.join(process.resourcesPath, 'app.asar.unpacked', 'server.js')
+            : path.join(__dirname, 'server.js');
+
+        // Use Electron's own Node runtime (process.execPath) with ELECTRON_RUN_AS_NODE=1
+        // This avoids needing a separate 'node' binary in PATH in packaged builds
+        backendServer = spawn(process.execPath, [serverPath], {
+            cwd: app.isPackaged ? path.join(process.resourcesPath, 'app.asar.unpacked') : __dirname,
+            env: { ...process.env, PORT: '3000', ELECTRON_RUN_AS_NODE: '1' }
         });
 
         backendServer.stdout.on('data', (data) => {
@@ -155,11 +176,12 @@ ipcMain.on('activate-backend', (event) => {
         });
 
         isBackendActive = true;
+        const url = getServerUrl();
         event.reply('backend-status', { 
             active: true, 
             message: 'Backend erfolgreich gestartet',
             port: 3000,
-            url: 'http://localhost:3000'
+            url: url
         });
     } catch (error) {
         event.reply('backend-error', error.message);
@@ -180,13 +202,48 @@ ipcMain.on('deactivate-backend', (event) => {
 ipcMain.on('get-backend-status', (event) => {
     event.reply('backend-status', { 
         active: isBackendActive,
-        port: isBackendActive ? 3000 : null
+        port: isBackendActive ? 3000 : null,
+        url: isBackendActive ? getServerUrl() : null
     });
+});
+
+// Trigger update install from renderer
+ipcMain.on('install-update', () => {
+    autoUpdater.quitAndInstall();
 });
 
 // App lifecycle
 app.whenReady().then(() => {
     createWindow();
+
+    // Auto-update: check for new GitHub releases on startup
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.checkForUpdates().catch(err => {
+        console.log('Update check failed (no network or no release):', err.message);
+    });
+
+    autoUpdater.on('update-available', (info) => {
+        if (mainWindow) {
+            mainWindow.webContents.send('update-available', info.version);
+        }
+    });
+
+    autoUpdater.on('update-downloaded', () => {
+        if (mainWindow) {
+            mainWindow.webContents.send('update-downloaded');
+        }
+        dialog.showMessageBox(mainWindow, {
+            type: 'info',
+            title: 'Update bereit',
+            message: 'Das Update wurde heruntergeladen.\nKlicken Sie „Jetzt neu starten" zum Installieren.',
+            buttons: ['Jetzt neu starten', 'Später']
+        }).then(result => {
+            if (result.response === 0) {
+                autoUpdater.quitAndInstall();
+            }
+        }).catch(() => {});
+    });
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {

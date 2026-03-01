@@ -1,43 +1,82 @@
-# Claude Code
+# PZR Assistent Pro
 
-![](https://img.shields.io/badge/Node.js-18%2B-brightgreen?style=flat-square) [![npm]](https://www.npmjs.com/package/@anthropic-ai/claude-code)
+Praxis-Management-App für Zahnarztpraxen — läuft im Browser, als installierbare App auf Android/iOS und als Desktop-Anwendung (Windows/Mac/Linux).
 
-[npm]: https://img.shields.io/npm/v/@anthropic-ai/claude-code.svg?style=flat-square
+---
 
-Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows -- all through natural language commands. Use it in your terminal, IDE, or tag @claude on Github.
+## 🌐 Live-App (Browser)
 
-**Learn more in the [official documentation](https://docs.anthropic.com/en/docs/claude-code/overview)**.
+**➡️ https://existenzlos1997.github.io/claude-code/**
 
-<img src="./demo.gif" />
+Login: `MA-001` / `admin`
 
-## Get started
+---
 
-1. Install Claude Code:
+## 🚀 Neuen Installer bauen (nach Code-Änderungen)
 
-```sh
-npm install -g @anthropic-ai/claude-code
+Da Copilot-Bot Commits immer eine Genehmigung brauchen, gibt es zwei Wege:
+
+### Weg 1 — Workflow selbst starten (empfohlen, kein Approve nötig)
+1. Gehe zu: https://github.com/Existenzlos1997/claude-code/actions/workflows/build-electron-installer.yml
+2. Klicke **"Run workflow"** (grüner Button rechts)
+3. Branch `copilot/setup-installer-for-project` auswählen → **Run workflow**
+4. Nach ~5 Minuten: neuer Installer im [nightly Release](https://github.com/Existenzlos1997/claude-code/releases/tag/nightly)
+
+### Weg 2 — Bot-Run genehmigen
+1. Gehe zu: https://github.com/Existenzlos1997/claude-code/actions
+2. Letzten Run mit "Action required" anklicken → **Approve and run**
+
+### ⚠️ Einmalige Neu-Installation erforderlich
+Die aktuell installierte Version enthält **noch kein** Auto-Update.  
+Du musst **einmal** den neuen Installer ausführen — **kein Deinstallieren nötig**, einfach über die bestehende Installation drüber installieren.  
+**Danach:** Alle zukünftigen Updates passieren automatisch beim App-Start (Banner erscheint, 1 Klick → fertig).
+
+---
+
+## Plattformen & Installation
+
+| Plattform | Methode |
+|-----------|---------|
+| Browser | Direkt öffnen — kein Download nötig, Auto-Update durch Service Worker |
+| Android | APK aus Einstellungen → Downloaden & Installieren |
+| iOS | Einstellungen → "Zum Home-Bildschirm" (Safari) |
+| Windows | .exe Installer aus Einstellungen → Downloaden |
+| macOS | .dmg Installer aus Einstellungen → Downloaden |
+| Linux | .deb Paket aus Einstellungen → Downloaden |
+
+---
+
+## Rollen & Benutzer
+
+| Rolle | Erstellt von | Kann | Kann nicht |
+|-------|-------------|------|------------|
+| `masterAdmin` (MA-001) | — | Neue Praxis-Admins anlegen | — |
+| `admin` (Praxis) | masterAdmin | Eigene Mitarbeiter anlegen, Backend einrichten | Weitere Admins anlegen |
+| `employee` (Mitarbeiter) | Praxis-Admin | App nutzen | Konten anlegen |
+
+**Patienten-Vorregistrierung:** Jede Praxis hat einen einzigartigen Link (Einstellungen → "Registrierungslink").  
+Patienten öffnen diesen Link → registrieren sich → Praxis-Admin bestätigt.
+
+---
+
+## Struktur
+
+```
+PZR_App/          → Haupt-App (pzr_app.html + manifest.json + sw.js)
+PZR_App_Electron/ → Desktop-App (Electron + Node.js Backend + Auto-Updater)
+PZR_App_Android/  → Android-Wrapper (Capacitor)
+docs/             → GitHub Pages (Browser-App, identisch mit PZR_App/)
+.github/workflows/
+  deploy-pages.yml             → Deployed Browser-App bei jedem Push
+  build-electron-installer.yml → Baut Windows/Mac/Linux Installer (nightly)
+  build-android-apk.yml        → Baut Android APK (nightly)
 ```
 
-2. Navigate to your project directory and run `claude`.
+---
 
-## Reporting Bugs
+## GitHub Pages einrichten (einmalig)
 
-We welcome your feedback. Use the `/bug` command to report issues directly within Claude Code, or file a [GitHub issue](https://github.com/anthropics/claude-code/issues).
-
-## Connect on Discord
-
-Join the [Claude Developers Discord](https://anthropic.com/discord) to connect with other developers using Claude Code. Get help, share feedback, and discuss your projects with the community.
-
-## Data collection, usage, and retention
-
-When you use Claude Code, we collect feedback, which includes usage data (such as code acceptance or rejections), associated conversation data, and user feedback submitted via the `/bug` command.
-
-### How we use your data
-
-See our [data usage policies](https://docs.anthropic.com/en/docs/claude-code/data-usage).
-
-### Privacy safeguards
-
-We have implemented several safeguards to protect your data, including limited retention periods for sensitive information, restricted access to user session data, and clear policies against using feedback for model training.
-
-For full details, please review our [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) and [Privacy Policy](https://www.anthropic.com/legal/privacy).
+1. Gehe zu: https://github.com/Existenzlos1997/claude-code/settings/pages
+2. Source → "Deploy from a branch"
+3. Branch: `copilot/setup-installer-for-project` / Ordner: `/docs`
+4. Save

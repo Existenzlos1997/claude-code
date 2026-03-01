@@ -2,79 +2,131 @@ name: Build Electron Installers
 
 on:
   push:
+    branches:
+      - main
+      - copilot/setup-installer-for-project
     tags:
       - 'v*'
   workflow_dispatch:
+
+# Allow writing releases from any job in this workflow
+permissions:
+  contents: write
 
 jobs:
   build:
     name: Build Installers
     runs-on: ${{ matrix.os }}
-    
+
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
-      
+
+      - name: Copy latest app HTML into Electron
+        run: cp PZR_App/pzr_app.html PZR_App_Electron/app/pzr_app.html
+
+      - name: Set nightly version (branch builds only)
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        working-directory: PZR_App_Electron
+        shell: bash
+        run: |
+          DATE=$(date +%Y%m%d)
+          npm version 1.0.$DATE --no-git-tag-version
+
       - name: Install dependencies
         working-directory: PZR_App_Electron
         run: npm install
-      
+
+      - name: Install Python setuptools (macOS - needed for sqlite3 build)
+        if: matrix.os == 'macos-latest'
+        run: pip3 install setuptools
+
       - name: Build Windows Installer
         if: matrix.os == 'windows-latest'
         working-directory: PZR_App_Electron
         run: npm run build:win
-      
+
       - name: Build macOS Installer
         if: matrix.os == 'macos-latest'
         working-directory: PZR_App_Electron
         run: npm run build:mac
-      
+
       - name: Build Linux Installer
         if: matrix.os == 'ubuntu-latest'
         working-directory: PZR_App_Electron
         run: npm run build:linux
-      
-      - name: Upload Windows Installer
+
+      - name: Upload Windows Installer + update metadata
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: PZR_App_Electron/dist/*.exe
-      
-      - name: Upload macOS Installer
+          path: |
+            PZR_App_Electron/dist/*.exe
+            PZR_App_Electron/dist/latest.yml
+
+      - name: Upload macOS Installer + update metadata
         if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-installer
-          path: PZR_App_Electron/dist/*.dmg
-      
-      - name: Upload Linux Installer
+          path: |
+            PZR_App_Electron/dist/*.dmg
+            PZR_App_Electron/dist/latest-mac.yml
+
+      - name: Upload Linux Installer + update metadata
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-installer
-          path: PZR_App_Electron/dist/*.deb
-  
-  release:
-    name: Create Release
+          path: |
+            PZR_App_Electron/dist/*.deb
+            PZR_App_Electron/dist/latest-linux.yml
+
+  publish-nightly:
+    name: Publish Nightly Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Publish to nightly pre-release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: nightly
+          name: "Nightly Build"
+          body: "Automatischer Build vom Branch – immer aktuellste Version."
+          prerelease: true
+          files: |
+            windows-installer/*
+            macos-installer/*
+            linux-installer/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-release:
+    name: Create Versioned Release
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    
+
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
-      
-      - name: Create Release
+        uses: actions/download-artifact@v4
+
+      - name: Create versioned release
         uses: softprops/action-gh-release@v1
         with:
           files: |

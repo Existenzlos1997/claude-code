@@ -1,0 +1,113 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - copilot/setup-installer-for-project
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+# Allow writing releases from any job in this workflow
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Capacitor dependencies
+        working-directory: PZR_App_Android
+        run: npm install
+
+      - name: Prepare web assets
+        run: |
+          mkdir -p PZR_App_Android/www
+          cp PZR_App/pzr_app.html PZR_App_Android/www/index.html
+          cp PZR_App/manifest.json PZR_App_Android/www/manifest.json
+          cp PZR_App/sw.js PZR_App_Android/www/sw.js || true
+
+      - name: Add Android platform
+        working-directory: PZR_App_Android
+        run: npx cap add android
+
+      - name: Sync web assets to Android
+        working-directory: PZR_App_Android
+        run: npx cap sync android
+
+      - name: Make gradlew executable
+        working-directory: PZR_App_Android/android
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        working-directory: PZR_App_Android/android
+        run: ./gradlew assembleDebug
+
+      - name: Rename APK
+        run: |
+          APK_PATH=$(find PZR_App_Android/android/app/build/outputs/apk/debug -name "*.apk" | head -1)
+          if [ -z "$APK_PATH" ]; then
+            echo "❌ APK not found in build output!"
+            exit 1
+          fi
+          cp "$APK_PATH" pzr-app-latest.apk
+          echo "✅ APK ready: pzr-app-latest.apk"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: pzr-app-latest.apk
+
+  publish:
+    name: Publish APK to Release
+    needs: build-android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+
+      - name: Publish to nightly pre-release (branch builds)
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: nightly
+          name: "Nightly Build"
+          body: "Automatischer Build vom Branch – immer aktuellste Version."
+          prerelease: true
+          files: pzr-app-latest.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to versioned release (tag builds)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: pzr-app-latest.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
