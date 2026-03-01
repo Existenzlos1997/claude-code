@@ -1,4 +1,5 @@
 name: Build Electron Installers
+# Builds Windows (.exe), macOS (.dmg) and Linux (.deb) installers via electron-builder
 
 on:
   push:
