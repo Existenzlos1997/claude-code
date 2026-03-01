@@ -1063,13 +1063,27 @@
             <div id="patientLogin" class="hidden">
                 <div class="form-group">
                     <label for="patientNumber">Patientennummer</label>
-                    <input type="text" id="patientNumber" placeholder="z.B. PAT-12345">
+                    <input type="text" id="patientNumber" placeholder="z.B. PAT-12345" autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="patientPin">PIN</label>
-                    <input type="password" id="patientPin" placeholder="Ihre 4-stellige PIN">
+                    <input type="password" id="patientPin" placeholder="Ihre 4-stellige PIN" autocomplete="current-password" inputmode="numeric" maxlength="4">
                 </div>
                 <button class="btn" onclick="loginPatient()">Anmelden</button>
+                <div style="text-align:center; margin-top:12px;">
+                    <a href="#" onclick="showForgotPin(); return false;" style="color:#667eea; font-size:14px;">🔑 PIN vergessen?</a>
+                </div>
+            </div>
+
+            <div id="forgotPinSection" class="hidden">
+                <h3 style="margin-bottom:10px;">🔑 PIN zurücksetzen</h3>
+                <p style="color:#666; font-size:14px; margin-bottom:16px;">Geben Sie Ihre Patientennummer ein. Die Praxis bearbeitet Ihre Anfrage und teilt Ihnen eine neue PIN mit.</p>
+                <div class="form-group">
+                    <label for="forgotPinNumber">Patientennummer</label>
+                    <input type="text" id="forgotPinNumber" placeholder="z.B. PAT-12345">
+                </div>
+                <button class="btn" onclick="submitForgotPin()">Anfrage senden</button>
+                <button class="btn btn-secondary" onclick="hideForgotPin()" style="margin-top:8px;">← Zurück</button>
             </div>
 
             <div id="employeeLogin" class="hidden">
@@ -1405,6 +1419,12 @@
                     <div id="patientManagement" class="tab-content active">
                         <h2>Patientenverwaltung</h2>
                         
+                        <!-- PIN Reset Requests -->
+                        <div id="pinResetRequestsSection" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:14px; margin-bottom:16px;">
+                            <h4 style="margin:0 0 8px 0; color:#856404;">🔑 PIN-Zurücksetzen-Anfragen</h4>
+                            <div id="pinResetRequestsList"></div>
+                        </div>
+                        
                         <div class="form-group">
                             <input type="text" id="patientSearch" placeholder="Suche nach Patientennummer oder Name..." 
                                    onkeyup="searchPatients()">
@@ -1562,7 +1582,7 @@
 
                         <div class="form-group">
                             <label for="newPatientPin">PIN (4 Ziffern) *</label>
-                            <input type="password" id="newPatientPin" placeholder="1234" maxlength="4">
+                            <input type="password" id="newPatientPin" placeholder="1234" maxlength="4" autocomplete="new-password" inputmode="numeric">
                         </div>
 
                         <div class="form-group">
@@ -1934,6 +1954,11 @@
                     <input type="text" id="editPatientPhone">
                 </div>
 
+                <div class="form-group">
+                    <label for="editPatientPin">Neue PIN setzen (leer lassen = unverändert)</label>
+                    <input type="password" id="editPatientPin" placeholder="4-stellige Ziffern" maxlength="4" autocomplete="new-password" inputmode="numeric">
+                </div>
+
                 <div class="form-group voice-input-container">
                     <label for="editNotes">Weitere Bemerkungen</label>
                     <textarea id="editNotes"></textarea>
@@ -2247,6 +2272,7 @@
             document.getElementById('employeeRole').classList.remove('selected');
             document.getElementById('patientLogin').classList.add('hidden');
             document.getElementById('employeeLogin').classList.add('hidden');
+            document.getElementById('forgotPinSection').classList.add('hidden');
 
             if (role === 'patient') {
                 document.getElementById('patientRole').classList.add('selected');
@@ -2255,6 +2281,48 @@
                 document.getElementById('employeeRole').classList.add('selected');
                 document.getElementById('employeeLogin').classList.remove('hidden');
             }
+        }
+
+        function showForgotPin() {
+            document.getElementById('patientLogin').classList.add('hidden');
+            document.getElementById('forgotPinSection').classList.remove('hidden');
+        }
+
+        function hideForgotPin() {
+            document.getElementById('forgotPinSection').classList.add('hidden');
+            document.getElementById('forgotPinNumber').value = '';
+            document.getElementById('patientLogin').classList.remove('hidden');
+        }
+
+        function submitForgotPin() {
+            const patientNumber = document.getElementById('forgotPinNumber').value.trim();
+            if (!patientNumber) {
+                alert('Bitte Ihre Patientennummer eingeben.');
+                return;
+            }
+            const patients = getFromStorage('pzrPatients') || [];
+            const exists = patients.find(p => p.patientNumber === patientNumber || p.number === patientNumber);
+            if (!exists) {
+                alert('Patientennummer nicht gefunden. Bitte prüfen Sie Ihre Angabe oder wenden Sie sich an die Praxis.');
+                return;
+            }
+            const requests = getFromStorage('pzrPinResetRequests') || [];
+            const alreadyPending = requests.find(r => r.patientNumber === patientNumber && r.status === 'pending');
+            if (alreadyPending) {
+                alert('Es liegt bereits eine Anfrage für diese Patientennummer vor. Die Praxis wird sich melden.');
+                hideForgotPin();
+                return;
+            }
+            requests.push({
+                id: 'pinreset_' + Date.now(),
+                patientNumber,
+                patientName: exists.name || [exists.firstName, exists.lastName].filter(Boolean).join(' ') || 'Unbekannt',
+                requestedAt: new Date().toISOString(),
+                status: 'pending'
+            });
+            saveToStorage('pzrPinResetRequests', requests);
+            alert('✅ Anfrage gesendet!\n\nDie Praxis wird Ihre PIN zurücksetzen und Ihnen die neue PIN mitteilen.');
+            hideForgotPin();
         }
 
         // Login as patient
@@ -2635,17 +2703,56 @@
             
             if (activePatients.length === 0) {
                 container.innerHTML = '<p class="empty-state">Keine Patienten vorhanden.</p>';
+            } else {
+                container.innerHTML = activePatients.map(patient => `
+                    <div class="patient-card" onclick="openPatientDetails('${patient.id}')" style="cursor:pointer;padding:15px;border:1px solid #ddd;margin:10px 0;border-radius:5px;background:#f9f9f9;transition:background 0.3s;">
+                        <h4>👤 ${patient.firstName} ${patient.lastName}</h4>
+                        <p><strong>Nummer:</strong> ${patient.number}</p>
+                        <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                        <p><strong>Mobil:</strong> ${patient.mobile || '-'}</p>
+                    </div>
+                `).join('');
+            }
+            
+            loadPinResetRequests();
+        }
+
+        function loadPinResetRequests() {
+            const requests = getFromStorage('pzrPinResetRequests') || [];
+            const pending = requests.filter(r => r.status === 'pending');
+            const section = document.getElementById('pinResetRequestsSection');
+            const list = document.getElementById('pinResetRequestsList');
+            if (!section || !list) return;
+            if (pending.length === 0) {
+                section.style.display = 'none';
                 return;
             }
-
-            container.innerHTML = activePatients.map(patient => `
-                <div class="patient-card" onclick="openPatientDetails('${patient.id}')" style="cursor:pointer;padding:15px;border:1px solid #ddd;margin:10px 0;border-radius:5px;background:#f9f9f9;transition:background 0.3s;">
-                    <h4>👤 ${patient.firstName} ${patient.lastName}</h4>
-                    <p><strong>Nummer:</strong> ${patient.number}</p>
-                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                    <p><strong>Mobil:</strong> ${patient.mobile || '-'}</p>
+            section.style.display = 'block';
+            list.innerHTML = pending.map(r => `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #ffd666;">
+                    <span><strong>${r.patientName}</strong> (${r.patientNumber}) — ${new Date(r.requestedAt).toLocaleDateString('de-DE')}</span>
+                    <button class="btn" onclick="resetPatientPinFromRequest('${r.id}')" style="padding:6px 12px; font-size:13px; background:#e67e22;">PIN zurücksetzen</button>
                 </div>
             `).join('');
+        }
+
+        function resetPatientPinFromRequest(requestId) {
+            const requests = getFromStorage('pzrPinResetRequests') || [];
+            const req = requests.find(r => r.id === requestId);
+            if (!req) return;
+            const patients = getFromStorage('pzrPatients') || [];
+            const patient = patients.find(p => p.patientNumber === req.patientNumber || p.number === req.patientNumber);
+            if (!patient) {
+                alert('Patient nicht gefunden!');
+                return;
+            }
+            const newPin = String(1000 + (crypto.getRandomValues(new Uint16Array(1))[0] % 9000));
+            patient.pin = newPin;
+            saveToStorage('pzrPatients', patients);
+            req.status = 'done';
+            saveToStorage('pzrPinResetRequests', requests);
+            alert(`✅ PIN zurückgesetzt!\n\nPatient: ${patient.name || req.patientName}\nPatientennummer: ${req.patientNumber}\nNeue PIN: ${newPin}\n\nBitte die neue PIN dem Patienten mitteilen.`);
+            loadPinResetRequests();
         }
         
         // Open patient details/file
@@ -3505,6 +3612,16 @@
             patient.toolsUsage = document.getElementById('editToolsUsage').value.trim();
             patient.notes = document.getElementById('editNotes').value.trim();
 
+            const newPin = document.getElementById('editPatientPin').value.trim();
+            if (newPin) {
+                if (newPin.length !== 4 || !/^\d+$/.test(newPin)) {
+                    alert('PIN muss genau 4 Ziffern enthalten!');
+                    return;
+                }
+                patient.pin = newPin;
+            }
+            document.getElementById('editPatientPin').value = '';
+
             saveData();
             closeEditModal();
             loadPatientList();
@@ -3514,6 +3631,7 @@
         // Close edit modal
         function closeEditModal() {
             document.getElementById('editPatientModal').classList.remove('active');
+            document.getElementById('editPatientPin').value = '';
         }
 
         // Switch tabs
@@ -3926,7 +4044,7 @@
             patient.patientNumber = newNumber;
             
             // Generate PIN
-            patient.pin = String(Math.floor(1000 + Math.random() * 9000));
+            patient.pin = String(1000 + (crypto.getRandomValues(new Uint16Array(1))[0] % 9000));
             
             // Update status
             patient.status = 'active';
