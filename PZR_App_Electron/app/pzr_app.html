@@ -1095,11 +1095,18 @@
         <div id="registrationScreen" class="screen" style="display:none;">
             <div class="login-screen">
                 <h1>📝 Patient-Registrierung</h1>
-                <p>Zahnärzte Burgau</p>
-            
+                <p id="registrationPracticeName" style="font-weight:600; color:#006B9E;"></p>
+
+            <div id="practiceSelectBox" style="display:none; background:#fff3e0; border-left:4px solid #ff9800; padding:15px; margin:20px 0; border-radius:4px;">
+                <p style="margin:0 0 10px; font-size:14px; color:#e65100; font-weight:600;">Bitte wählen Sie Ihre Praxis:</p>
+                <select id="registrationPracticeSelect" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:15px;" onchange="onPracticeSelectChange()">
+                    <option value="">-- Praxis auswählen --</option>
+                </select>
+            </div>
+
             <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 4px;">
                 <p style="margin: 0; font-size: 14px; color: #1565c0;">
-                    Bitte füllen Sie das Formular aus. Nach Prüfung durch unsere Praxis erhalten Sie Ihre Zugangsdaten.
+                    Bitte füllen Sie das Formular aus. Nach Prüfung durch die Praxis erhalten Sie Ihre Zugangsdaten.
                 </p>
             </div>
             
@@ -1840,14 +1847,19 @@
                             <div id="addEmployeeForm">
                                 <h4 id="addEmployeeHeading">Neuen Mitarbeiter hinzufügen</h4>
                                 
+                                <div class="form-group" id="practiceNameGroup" style="display:none;">
+                                    <label for="newPracticeName">Praxisname *</label>
+                                    <input type="text" id="newPracticeName" placeholder="z.B. Zahnarztpraxis Müller">
+                                </div>
+
                                 <div class="form-group">
                                     <label for="newEmployeeId">Login-ID *</label>
-                                    <input type="text" id="newEmployeeId" placeholder="z.B. dr.mueller">
+                                    <input type="text" id="newEmployeeId" placeholder="z.B. praxis.mueller">
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="newEmployeeDisplayName">Anzeigename *</label>
-                                    <input type="text" id="newEmployeeDisplayName" placeholder="z.B. Dr. Müller">
+                                    <input type="text" id="newEmployeeDisplayName" placeholder="Name des Administrators">
                                 </div>
                                 
                                 <div class="form-group">
@@ -1867,6 +1879,18 @@
                             </div>
                         </div>
                         
+                        <hr style="margin: 30px 0;">
+
+                        <!-- Practice Registration Link -->
+                        <div class="settings-section" id="practiceRegLinkSection" style="display:none;">
+                            <h3>🔗 Registrierungslink für Patienten</h3>
+                            <p style="font-size:14px; color:#555; margin-bottom:12px;">Teilen Sie diesen Link mit Ihren Patienten, damit sie sich online vorregistrieren können. Der Link leitet sie direkt zur Vorregistrierung für Ihre Praxis.</p>
+                            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                <input type="text" id="practiceRegLink" readonly style="flex:1; min-width:200px; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:13px; background:#f5f5f5; color:#333;">
+                                <button class="btn" onclick="copyPracticeRegLink()" style="white-space:nowrap;">📋 Kopieren</button>
+                            </div>
+                        </div>
+
                         <hr style="margin: 30px 0;">
                         
                         <!-- Data Management -->
@@ -2132,34 +2156,7 @@
         function initDemoData() {
             const savedPatients = localStorage.getItem('pzrPatients');
             if (!savedPatients) {
-                // Create demo patient with medical history
-                patients = [{
-                    id: 'PAT-12345',
-                    patientNumber: 'PAT-12345',
-                    name: 'Max Mustermann',
-                    pin: '1234',
-                    email: 'max@example.com',
-                    phone: '+49 123 456789',
-                    recommendations: 'Besonderer Fokus auf die Zahnzwischenräume im Oberkiefer. Leichte Zahnfleischentzündung im Bereich der hinteren Backenzähne erkannt - bitte verstärkt pflegen.',
-                    brushingTechnique: 'Bass-Technik empfohlen: Zahnbürste im 45-Grad-Winkel ansetzen, kleine rüttelnde Bewegungen. Mindestens 3 Minuten putzen.',
-                    toolsUsage: 'Interdentalbürsten Größe 3 für Backenzähne, Größe 2 für Frontzähne. Elektrische Zahnbürste mit Drucksensor verwenden. Mundspülung 2x täglich.',
-                    notes: 'Nächster Termin in 6 Monaten. Bei Zahnfleischbluten bitte früher kommen.',
-                    created: new Date().toISOString(),
-                    // Medical History
-                    anamnese: {
-                        allergies: '',
-                        medications: '',
-                        bleedingTendency: false,
-                        heartDisease: false,
-                        diabetes: false,
-                        pregnancy: false,
-                        chronicConditions: '',
-                        previousSurgeries: '',
-                        smoker: false,
-                        alcoholConsumption: 'none',
-                        lastUpdated: null
-                    }
-                }];
+                patients = [];
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             } else {
                 patients = JSON.parse(savedPatients);
@@ -2319,6 +2316,17 @@
             initDemoData();
             
             document.getElementById('loginScreen').classList.add('hidden');
+
+            // Show practice registration link for practice admins
+            const regLinkSection = document.getElementById('practiceRegLinkSection');
+            const regLinkInput = document.getElementById('practiceRegLink');
+            if (regLinkSection && regLinkInput) {
+                const isAdmin = currentUser.role === 'admin';
+                regLinkSection.style.display = isAdmin ? '' : 'none';
+                if (isAdmin && currentUser.practiceId) {
+                    regLinkInput.value = window.location.href.split('?')[0] + '?practice=' + currentUser.practiceId;
+                }
+            }
             document.getElementById('mainApp').classList.remove('hidden');
 
             if (currentRole === 'patient') {
@@ -3787,9 +3795,50 @@
         }
 
         // Registration Functions
-        function showRegistration() {
+        function showRegistration(practiceIdOverride) {
+            const params = new URLSearchParams(window.location.search);
+            const practiceId = practiceIdOverride || params.get('practice');
+
+            const nameEl = document.getElementById('registrationPracticeName');
+            const selectBox = document.getElementById('practiceSelectBox');
+            const sel = document.getElementById('registrationPracticeSelect');
+
+            if (practiceId) {
+                // Direct link for a specific practice
+                const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
+                const admin = employees.find(e => e.practiceId === practiceId && e.role === 'admin');
+                if (nameEl) nameEl.textContent = admin ? admin.practiceName || admin.name : '';
+                if (selectBox) selectBox.style.display = 'none';
+            } else {
+                // No practice in URL → show selector populated with all practices
+                if (nameEl) nameEl.textContent = '';
+                const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
+                const admins = employees.filter(e => e.role === 'admin');
+                if (sel) {
+                    sel.innerHTML = '<option value="">-- Praxis auswählen --</option>';
+                    admins.forEach(a => {
+                        const opt = document.createElement('option');
+                        opt.value = a.practiceId;
+                        opt.textContent = a.practiceName || a.name || a.practiceId;
+                        sel.appendChild(opt);
+                    });
+                }
+                if (selectBox) selectBox.style.display = admins.length ? '' : 'none';
+            }
+
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('registrationScreen').style.display = 'block';
+        }
+
+        function onPracticeSelectChange() {
+            const sel = document.getElementById('registrationPracticeSelect');
+            const nameEl = document.getElementById('registrationPracticeName');
+            if (!sel || !nameEl) return;
+            const practiceId = sel.value;
+            if (!practiceId) { nameEl.textContent = ''; return; }
+            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
+            const admin = employees.find(e => e.practiceId === practiceId && e.role === 'admin');
+            nameEl.textContent = admin ? admin.practiceName || admin.name : '';
         }
 
         function showLogin() {
@@ -3827,6 +3876,20 @@
                 return;
             }
             
+            // Determine which practice this registration is for
+            const regPracticeId = (function() {
+                const params = new URLSearchParams(window.location.search);
+                const urlPractice = params.get('practice');
+                if (urlPractice) return urlPractice;
+                const sel = document.getElementById('registrationPracticeSelect');
+                return (sel && sel.value) ? sel.value : null;
+            })();
+
+            if (!regPracticeId) {
+                alert('Bitte wählen Sie zuerst eine Praxis aus.');
+                return;
+            }
+
             // Create pre-registered patient
             const newPatient = {
                 id: generateId(),
@@ -3841,6 +3904,7 @@
                 zip: zip,
                 city: city,
                 status: 'pre-registered',
+                practiceId: regPracticeId,
                 registeredAt: new Date().toISOString(),
                 pin: '' // Will be generated on approval
             };
@@ -4757,6 +4821,19 @@
             input.click();
         }
 
+        function copyPracticeRegLink() {
+            const input = document.getElementById('practiceRegLink');
+            if (!input || !input.value) return;
+            navigator.clipboard.writeText(input.value).then(function() {
+                alert('✅ Link in die Zwischenablage kopiert!');
+            }).catch(function() {
+                // Legacy fallback for older browsers
+                input.select();
+                document.execCommand('copy'); // eslint-disable-line -- legacy fallback only
+                alert('✅ Link kopiert!');
+            });
+        }
+
         function addEmployee() {
             // Only masterAdmin and admin may add employees
             if (!currentUser || (currentUser.role !== 'masterAdmin' && currentUser.role !== 'admin')) {
@@ -4781,6 +4858,15 @@
 
             // Role restriction: only masterAdmin may create admin accounts (enforced here)
             const role = (currentUser.role === 'masterAdmin') ? roleSelect : 'employee';
+
+            // practiceName required when creating an admin account
+            const practiceName = (role === 'admin')
+                ? (document.getElementById('newPracticeName').value.trim())
+                : '';
+            if (role === 'admin' && !practiceName) {
+                alert('Bitte geben Sie einen Praxisnamen ein!');
+                return;
+            }
             
             const employees = getFromStorage('pzrEmployees') || [];
             
@@ -4812,6 +4898,7 @@
                 password: password,
                 role: role,
                 practiceId: newPracticeId,
+                practiceName: (role === 'admin') ? practiceName : (currentUser.practiceName || ''),
                 backendUrl: backendUrl,
                 createdBy: currentUser.employeeId || currentUser.id,
                 createdAt: new Date().toISOString()
@@ -4819,6 +4906,7 @@
             employees.push(newAccount);
             saveToStorage('pzrEmployees', employees);
             
+            document.getElementById('newPracticeName').value = '';
             document.getElementById('newEmployeeId').value = '';
             document.getElementById('newEmployeeDisplayName').value = '';
             document.getElementById('newEmployeePassword').value = '';
@@ -4827,8 +4915,9 @@
             loadEmployees();
 
             let msg = '';
+            const regLink = window.location.href.split('?')[0] + '?practice=' + newPracticeId;
             if (role === 'admin') {
-                msg = `✅ Praxis-Administrator "${displayName}" (ID: ${employeeId}) wurde erstellt.\n\nPraxis-ID: ${newPracticeId}\nDieser Administrator kann nun eigene Mitarbeiter und Patienten verwalten.`;
+                msg = `✅ Praxis "${practiceName}" angelegt!\n\nLogin-ID: ${employeeId}\nPraxis-ID: ${newPracticeId}\n\n🔗 Registrierungslink für Patienten:\n${regLink}\n\n(Dieser Link leitet Patienten direkt zur Vorregistrierung für diese Praxis.)`;
             } else {
                 msg = `✅ Mitarbeiter "${displayName}" (ID: ${employeeId}) wurde hinzugefügt.`;
                 if (backendUrl) msg += `\nBackend-Adresse automatisch zugewiesen: ${backendUrl}`;
@@ -4847,8 +4936,10 @@
             // Update heading and role select visibility
             const heading = document.getElementById('addEmployeeHeading');
             const roleGroup = document.getElementById('roleSelectGroup');
+            const practiceNameGroup = document.getElementById('practiceNameGroup');
             if (heading) {
                 heading.textContent = isMaster ? 'Neue Praxis / Administrator anlegen' : 'Neuen Mitarbeiter hinzufügen';
+                if (practiceNameGroup) practiceNameGroup.style.display = isMaster ? '' : 'none';
             }
             if (roleGroup) {
                 roleGroup.style.display = isMaster ? 'block' : 'none';
@@ -4888,7 +4979,7 @@
                     ? `<span style="font-size:11px; background:#e8f5e9; color:#2e7d32; border-radius:4px; padding:2px 6px; margin-left:6px;">🔗 Backend</span>`
                     : '';
                 const practiceBadge = (isMaster && emp.practiceId && emp.practiceId !== 'master')
-                    ? `<span style="font-size:11px; background:#e3f2fd; color:#1565c0; border-radius:4px; padding:2px 6px; margin-left:6px;">🏥 ${emp.practiceId}</span>`
+                    ? `<span style="font-size:11px; background:#e3f2fd; color:#1565c0; border-radius:4px; padding:2px 6px; margin-left:6px;">🏥 ${emp.practiceName || emp.practiceId}</span>`
                     : '';
                 // Allow deletion: masterAdmin can delete any non-master; admin can delete own employees (not other admins)
                 const canDelete = (isMaster && emp.role !== 'masterAdmin') ||
@@ -5128,6 +5219,12 @@
         window.onload = function() {
             initDemoData();
             loadData();
+
+            // If URL has ?practice= param → open registration screen directly
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('practice')) {
+                showRegistration(urlParams.get('practice'));
+            }
             initSpeechRecognition();
             scheduleNotifications();
 
