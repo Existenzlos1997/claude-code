@@ -1632,7 +1632,7 @@
                         <h2>⚙️ Einstellungen</h2>
                         
                         <!-- Backend Configuration -->
-                        <div class="settings-section">
+                        <div id="backendConfigSection" class="settings-section">
                             <h3>🖥️ Backend-Konfiguration</h3>
                             <p id="backendIntroText">Stellen Sie ein, ob dieser PC der zentrale Server ist oder sich mit einem anderen Server verbindet.</p>
 
@@ -5152,31 +5152,28 @@
                 const labels = { ios: '🍎 iOS (Add to Home Screen)', windows: '🪟 Windows (.exe)', mac: '🍎 macOS (.dmg)', linux: '🐧 Linux (.deb)', android: '🤖 Android (.apk)' };
                 platformInfo.textContent = 'Erkanntes Betriebssystem: ' + (labels[platform] || platform);
 
-                // Show all installer sections; highlight the one matching the current platform
+                // Show only the installer section relevant to the current platform
                 const desktopSection = document.getElementById('desktopInstallerSection');
                 const androidSection = document.getElementById('androidInstallerSection');
                 const iosSection = document.getElementById('iosInstallerSection');
-                if (iosSection) iosSection.style.display = '';
-                if (desktopSection) desktopSection.style.display = '';
-                if (androidSection) androidSection.style.display = '';
+                const backendSection = document.getElementById('backendConfigSection');
 
-                // Highlight current platform section
+                // Hide all first, then reveal the matching one
+                if (iosSection) iosSection.style.display = 'none';
+                if (desktopSection) desktopSection.style.display = 'none';
+                if (androidSection) androidSection.style.display = 'none';
+
                 if (platform === 'ios') {
-                    if (iosSection) {
-                        iosSection.style.border = '2px solid #667eea';
-                        iosSection.style.boxShadow = '0 0 0 3px rgba(102,126,234,0.2)';
-                    }
+                    if (iosSection) iosSection.style.display = '';
+                    // Backend not relevant on iOS — hide that section
+                    if (backendSection) backendSection.style.display = 'none';
                 } else if (platform === 'android') {
-                    if (androidSection) {
-                        androidSection.style.borderColor = '#4CAF50';
-                        androidSection.style.boxShadow = '0 0 0 3px rgba(76,175,80,0.25)';
-                    }
+                    if (androidSection) androidSection.style.display = '';
+                    // Backend not relevant on Android — hide that section
+                    if (backendSection) backendSection.style.display = 'none';
                 } else {
-                    // Windows / Mac / Linux → highlight desktop installer
-                    if (desktopSection) {
-                        desktopSection.style.border = '2px solid #667eea';
-                        desktopSection.style.boxShadow = '0 0 0 3px rgba(102,126,234,0.2)';
-                    }
+                    // Windows / Mac / Linux (browser or Electron) → show desktop installer
+                    if (desktopSection) desktopSection.style.display = '';
                 }
             }
             
