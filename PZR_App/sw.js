@@ -1,6 +1,6 @@
 // Service Worker für PZR App - pzr-app-1
 // Network-first: immer die neueste Version laden, kein Neuinstallieren nötig
-const CACHE_NAME = 'pzr-app-v2';
+const CACHE_NAME = 'pzr-app-v3';
 const urlsToCache = [
   './pzr_app.html',
   './manifest.json'
