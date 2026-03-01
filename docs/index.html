@@ -1696,9 +1696,48 @@
                         </div>
                         
                         <hr style="margin: 30px 0;">
-                        
+
+                        <!-- iOS PWA Install (shown only on iOS) -->
+                        <div id="iosInstallerSection" class="settings-section" style="display:none; border:1px solid #e0e0e0; border-radius:12px; padding:20px; margin-bottom:20px;">
+                            <h3>🍎 App auf iPhone / iPad installieren</h3>
+                            <p>Auf iOS wird die PZR App als PWA (Web-App) installiert – direkt aus Safari, ohne App Store.</p>
+
+                            <div class="installer-step step-active">
+                                <span class="step-badge">Schritt 1</span>
+                                <p style="margin:0 0 8px 0; font-weight:500;">Safari öffnen</p>
+                                <p style="font-size:13px; color:#555; margin:0;">Öffnen Sie diese Seite in <strong>Safari</strong> (nicht Chrome oder Firefox).<br>
+                                Link: <strong>https://existenzlos1997.github.io/claude-code/</strong></p>
+                            </div>
+
+                            <div class="installer-step step-active" style="margin-top:14px;">
+                                <span class="step-badge">Schritt 2</span>
+                                <p style="margin:0 0 8px 0; font-weight:500;">Teilen-Menü öffnen</p>
+                                <p style="font-size:13px; color:#555; margin:0;">
+                                    Tippen Sie unten in der Safari-Menüleiste auf das <strong>Teilen-Symbol</strong> (Viereck mit Pfeil nach oben: <span style="font-size:18px;">📤</span>).
+                                </p>
+                            </div>
+
+                            <div class="installer-step step-active" style="margin-top:14px;">
+                                <span class="step-badge">Schritt 3</span>
+                                <p style="margin:0 0 8px 0; font-weight:500;">„Zum Home-Bildschirm" wählen</p>
+                                <p style="font-size:13px; color:#555; margin:0;">
+                                    Scrollen Sie im Teilen-Menü nach unten und tippen Sie auf<br>
+                                    <strong>„Zum Home-Bildschirm hinzufügen"</strong> → dann <strong>„Hinzufügen"</strong>.
+                                </p>
+                            </div>
+
+                            <div class="installer-step step-done" style="margin-top:14px; background:#e8f5e9;">
+                                <span class="step-badge" style="background:#43a047;">Fertig ✓</span>
+                                <p style="margin:0 0 6px 0; font-weight:500; color:#2e7d32;">App ist installiert!</p>
+                                <p style="font-size:13px; color:#555; margin:0;">
+                                    Das PZR-Icon erscheint jetzt auf Ihrem Home-Bildschirm.<br>
+                                    Die App funktioniert auch offline und aktualisiert sich automatisch.
+                                </p>
+                            </div>
+                        </div>
+
                         <!-- Desktop App Download -->
-                        <div class="settings-section">
+                        <div id="desktopInstallerSection" class="settings-section">
                             <h3>💾 Desktop-App installieren</h3>
                             <p>Installieren Sie die PZR Desktop-App für vollen Offline-Betrieb mit lokalem Backend-Server.</p>
 
@@ -4944,7 +4983,10 @@
 
         function detectPlatform() {
             const userAgent = navigator.userAgent.toLowerCase();
-            if (userAgent.indexOf('android') !== -1) {
+            // iOS must be checked before 'mac' — iOS UA contains "like mac os x"
+            if (/iphone|ipad|ipod/.test(userAgent)) {
+                return 'ios';
+            } else if (userAgent.indexOf('android') !== -1) {
                 return 'android';
             } else if (userAgent.indexOf('win') !== -1) {
                 return 'windows';
@@ -5092,20 +5134,34 @@
             // Initialize backend UI (Electron-aware)
             initBackendUI();
 
-            // Show detected platform in installer section
+            // Show detected platform in installer section + hide irrelevant platform sections
             const platformInfo = document.getElementById('installerPlatformInfo');
             if (platformInfo) {
                 const platform = detectPlatform();
-                const labels = { windows: '🪟 Windows (.exe)', mac: '🍎 macOS (.dmg)', linux: '🐧 Linux (.deb)', android: '🤖 Android (.apk)' };
+                const labels = { ios: '🍎 iOS (Add to Home Screen)', windows: '🪟 Windows (.exe)', mac: '🍎 macOS (.dmg)', linux: '🐧 Linux (.deb)', android: '🤖 Android (.apk)' };
                 platformInfo.textContent = 'Erkanntes Betriebssystem: ' + (labels[platform] || platform);
-            }
 
-            // Highlight Android section when opened on Android
-            if (detectPlatform() === 'android') {
+                // Show only the installer section relevant for this platform
+                const desktopSection = document.getElementById('desktopInstallerSection');
                 const androidSection = document.getElementById('androidInstallerSection');
-                if (androidSection) {
-                    androidSection.style.borderColor = '#4CAF50';
-                    androidSection.style.boxShadow = '0 0 0 3px rgba(76,175,80,0.25)';
+                const iosSection = document.getElementById('iosInstallerSection');
+                if (platform === 'ios') {
+                    if (iosSection) iosSection.style.display = '';
+                    if (desktopSection) desktopSection.style.display = 'none';
+                    if (androidSection) androidSection.style.display = 'none';
+                } else if (platform === 'android') {
+                    if (iosSection) iosSection.style.display = 'none';
+                    if (desktopSection) desktopSection.style.display = 'none';
+                    if (androidSection) {
+                        androidSection.style.display = '';
+                        androidSection.style.borderColor = '#4CAF50';
+                        androidSection.style.boxShadow = '0 0 0 3px rgba(76,175,80,0.25)';
+                    }
+                } else {
+                    // Windows / Mac / Linux → show desktop installer
+                    if (iosSection) iosSection.style.display = 'none';
+                    if (desktopSection) desktopSection.style.display = '';
+                    if (androidSection) androidSection.style.display = 'none';
                 }
             }
             
