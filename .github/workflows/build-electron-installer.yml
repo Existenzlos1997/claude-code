@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - copilot/setup-installer-for-project
+      - copilot/check-all-installers
     tags:
       - 'v*'
   workflow_dispatch:
@@ -19,6 +20,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
 
@@ -29,7 +31,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+
+      - name: Install Python setuptools (macOS – needed for sqlite3 native rebuild)
+        if: matrix.os == 'macos-latest'
+        run: pip3 install setuptools
 
       - name: Copy latest app HTML into Electron
         run: cp PZR_App/pzr_app.html PZR_App_Electron/app/pzr_app.html
