@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "PZR Praxis Management - Desktop App mit Backend-Server",
   "main": "main.js",
+  "homepage": "https://existenzlos1997.github.io/claude-code/",
   "author": "Zahnärzte Burgau",
   "license": "MIT",
   "scripts": {
@@ -26,6 +27,13 @@
     "appId": "com.burgau.pzr-app",
     "productName": "PZR Praxis Manager",
     "artifactName": "pzr-app-latest.${ext}",
+    "npmRebuild": false,
+    "asarUnpack": [
+      "server.js",
+      "**/node_modules/sqlite3/lib/binding/**",
+      "**/node_modules/bindings/**",
+      "**/node_modules/file-uri-to-path/**"
+    ],
     "directories": {
       "output": "dist"
     },
@@ -43,7 +51,8 @@
     },
     "linux": {
       "target": "deb",
-      "category": "Office"
+      "category": "Office",
+      "maintainer": "Zahnärzte Burgau <info@zahnaerzte-burgau.de>"
     }
   }
 }

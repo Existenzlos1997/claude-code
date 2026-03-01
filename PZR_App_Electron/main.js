@@ -145,10 +145,16 @@ ipcMain.on('activate-backend', (event) => {
     }
 
     try {
-        // Start Node.js backend server
-        backendServer = spawn('node', [path.join(__dirname, 'server.js')], {
-            cwd: __dirname,
-            env: { ...process.env, PORT: '3000' }
+        // Resolve server.js path: inside packaged app it is unpacked from asar
+        const serverScript = app.isPackaged
+            ? path.join(process.resourcesPath, 'app.asar.unpacked', 'server.js')
+            : path.join(__dirname, 'server.js');
+
+        // Use Electron's own Node.js runtime (ELECTRON_RUN_AS_NODE=1) so we
+        // don't depend on a separate `node` binary being installed.
+        backendServer = spawn(process.execPath, [serverScript], {
+            cwd: path.dirname(serverScript),
+            env: { ...process.env, PORT: '3000', ELECTRON_RUN_AS_NODE: '1' }
         });
 
         backendServer.stdout.on('data', (data) => {

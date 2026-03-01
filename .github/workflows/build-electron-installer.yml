@@ -1,10 +1,12 @@
 name: Build Electron Installers
+# Builds Windows (.exe), macOS (.dmg) and Linux (.deb) installers via electron-builder
 
 on:
   push:
     branches:
       - main
       - copilot/setup-installer-for-project
+      - copilot/check-all-installers
     tags:
       - 'v*'
   workflow_dispatch:
@@ -19,6 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
 
@@ -29,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Copy latest app HTML into Electron
         run: cp PZR_App/pzr_app.html PZR_App_Electron/app/pzr_app.html
