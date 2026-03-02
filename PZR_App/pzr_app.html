@@ -1639,6 +1639,10 @@
                                 <input type="file" id="documentFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
                             </div>
                             <div class="form-group">
+                                <label for="documentName">Dokumentname</label>
+                                <input type="text" id="documentName" placeholder="Name des Dokuments (optional, sonst Dateiname)">
+                            </div>
+                            <div class="form-group">
                                 <label for="documentCategory">Kategorie *</label>
                                 <select id="documentCategory">
                                     <option value="practice">Praxis-Dokument</option>
@@ -3614,6 +3618,7 @@
         function loadPatientsForDocuments() {
             const patients = getFromStorage('pzrPatients') || [];
             const select = document.getElementById('documentPatient');
+            if (!select) return;
             
             select.innerHTML = '<option value="">Bitte wählen...</option>';
             
@@ -3642,7 +3647,7 @@
             
             const reader = new FileReader();
             reader.onload = function(e) {
-                const document = {
+                const doc = {
                     id: generateId(),
                     name: document.getElementById('documentName').value.trim() || file.name,
                     fileName: file.name,
@@ -3650,14 +3655,14 @@
                     fileSize: file.size,
                     fileData: e.target.result, // Base64
                     category: document.getElementById('documentCategory').value,
-                    patientId: document.getElementById('documentPatient').value || null,
+                    patientId: document.getElementById('documentPatientNumber').value || null,
                     notes: document.getElementById('documentNotes').value.trim(),
                     uploadedBy: currentUser.id,
                     uploadedAt: new Date().toISOString()
                 };
                 
                 const documents = getFromStorage('pzrDocuments') || [];
-                documents.push(document);
+                documents.push(doc);
                 saveToStorage('pzrDocuments', documents);
                 
                 alert('✅ Dokument erfolgreich hochgeladen!');
@@ -5207,12 +5212,10 @@
 
                 if (platform === 'ios') {
                     if (iosSection) iosSection.style.display = '';
-                    // Backend not relevant on iOS — hide that section
-                    if (backendSection) backendSection.style.display = 'none';
+                    // Backend section remains visible — initBackendUI() shows the browser warning
                 } else if (platform === 'android') {
                     if (androidSection) androidSection.style.display = '';
-                    // Backend not relevant on Android — hide that section
-                    if (backendSection) backendSection.style.display = 'none';
+                    // Backend section remains visible — initBackendUI() shows the browser warning
                 } else {
                     // Windows / Mac / Linux (browser or Electron) → show desktop installer
                     if (desktopSection) desktopSection.style.display = '';
