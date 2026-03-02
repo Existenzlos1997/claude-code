@@ -201,14 +201,31 @@
             border-radius: 15px;
             padding: 5px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 4px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.4) transparent;
+        }
+
+        .tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .tabs::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.4);
+            border-radius: 2px;
         }
 
         .tab {
-            flex: 1;
-            min-width: 80px;
-            padding: 12px;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            padding: 10px 16px;
             text-align: center;
             background: transparent;
             border: none;
