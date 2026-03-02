@@ -37,6 +37,19 @@ jobs:
       - name: Copy latest app HTML into Electron
         run: cp PZR_App/pzr_app.html PZR_App_Electron/app/pzr_app.html
 
+      - name: Set build date in app HTML
+        shell: bash
+        run: |
+          node -e "
+            const fs = require('fs');
+            const file = 'PZR_App_Electron/app/pzr_app.html';
+            let c = fs.readFileSync(file, 'utf8');
+            const d = new Date().toISOString().substring(0, 10);
+            c = c.replace(/const APP_BUILD_DATE = '[0-9]{4}-[0-9]{2}-[0-9]{2}'/, \`const APP_BUILD_DATE = '\${d}'\`);
+            fs.writeFileSync(file, c);
+            console.log('APP_BUILD_DATE set to', d);
+          "
+
       - name: Install dependencies
         working-directory: PZR_App_Electron
         run: npm install
