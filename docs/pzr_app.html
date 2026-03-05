@@ -2174,15 +2174,88 @@
             }
         }
 
-        // Helper: Save to localStorage
+        // Helper: Save to localStorage AND sync to backend when connected
         function saveToStorage(key, data) {
             try {
                 localStorage.setItem(key, JSON.stringify(data));
+                // Async backend sync — fire & forget, never blocks the UI
+                const backendUrl = localStorage.getItem('pzrBackendConnectUrl');
+                if (backendUrl) {
+                    fetch(`${backendUrl}/api/storage/${encodeURIComponent(key)}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ value: data })
+                    }).catch(() => {}); // silently fail when offline
+                }
                 return true;
             } catch (e) {
                 console.error('Error saving to localStorage:', e);
                 return false;
             }
+        }
+
+        /**
+         * Pull ALL data from the backend into localStorage.
+         * Called once when connecting to a backend AND on every app start
+         * if a backend URL is already saved.
+         * Returns a Promise that resolves when done (or rejects on network error).
+         */
+        function syncFromBackend(backendUrl) {
+            return fetch(`${backendUrl}/api/storage`, { method: 'GET' })
+                .then(r => {
+                    if (!r.ok) throw new Error('sync failed');
+                    return r.json();
+                })
+                .then(allData => {
+                    // Write every key from the backend into localStorage (backend wins)
+                    Object.keys(allData).forEach(key => {
+                        try {
+                            localStorage.setItem(key, JSON.stringify(allData[key]));
+                        } catch (e) {}
+                    });
+                    console.log('[Sync] Pulled', Object.keys(allData).length, 'keys from backend');
+                });
+        }
+
+        /** WebSocket for live-sync: when another device saves data, reload it here */
+        let _backendWs = null;
+        let _wsRetryCount = 0;
+        const _wsMaxRetries = 10;
+        function connectBackendWebSocket(backendUrl) {
+            if (_backendWs) { try { _backendWs.close(); } catch (e) {} }
+            const wsUrl = backendUrl.replace(/^http/, 'ws');
+            try {
+                _backendWs = new WebSocket(wsUrl);
+                _backendWs.onopen = function() { _wsRetryCount = 0; }; // reset on success
+                _backendWs.onmessage = function(evt) {
+                    try {
+                        const msg = JSON.parse(evt.data);
+                        if (msg.type === 'storage-updated' && msg.key) {
+                            // Re-fetch just this key from backend
+                            const bUrl = localStorage.getItem('pzrBackendConnectUrl');
+                            if (!bUrl) return;
+                            fetch(`${bUrl}/api/storage/${encodeURIComponent(msg.key)}`)
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (data.value !== null && data.value !== undefined) {
+                                        localStorage.setItem(msg.key, JSON.stringify(data.value));
+                                    }
+                                })
+                                .catch(() => {});
+                        }
+                    } catch (e) {}
+                };
+                _backendWs.onclose = function() {
+                    if (_wsRetryCount >= _wsMaxRetries) return; // stop retrying
+                    _wsRetryCount++;
+                    // Exponential backoff: 2s, 4s, 8s … capped at 60s
+                    const delay = Math.min(2000 * Math.pow(2, _wsRetryCount - 1), 60000);
+                    setTimeout(() => {
+                        const bUrl = localStorage.getItem('pzrBackendConnectUrl');
+                        if (bUrl) connectBackendWebSocket(bUrl);
+                    }, delay);
+                };
+            } catch (e) {}
         }
 
         // Appointment status constants
@@ -2428,6 +2501,10 @@
                 // Auto-connect to backend if employee has a backend URL assigned
                 if (employee.backendUrl) {
                     localStorage.setItem('pzrBackendConnectUrl', employee.backendUrl);
+                    // Sync fresh data from backend before showing the app
+                    syncFromBackend(employee.backendUrl)
+                        .then(() => connectBackendWebSocket(employee.backendUrl))
+                        .catch(() => {});
                 }
                 showMainApp();
             } else {
@@ -4767,14 +4844,28 @@
         function checkBackendConnection(url, showAlert) {
             const statusEl = document.getElementById('backendConnectStatus');
             if (statusEl) statusEl.textContent = '⏳ Verbindung wird geprüft...';
+            const cleanUrl = url.replace(/\/$/, '');
 
-            fetch(url.replace(/\/$/, '') + '/api/health', { signal: AbortSignal.timeout(4000) })
+            fetch(cleanUrl + '/api/health', { signal: AbortSignal.timeout(4000) })
                 .then(r => r.json())
                 .then(data => {
                     if (data.status === 'ok') {
-                        if (statusEl) statusEl.textContent = '✅ Verbunden mit ' + url;
-                        localStorage.setItem('pzrBackendConnectUrl', url);
-                        if (showAlert) alert('✅ Erfolgreich verbunden!\nDaten werden über ' + url + ' synchronisiert.');
+                        localStorage.setItem('pzrBackendConnectUrl', cleanUrl);
+                        if (statusEl) statusEl.textContent = '⏳ Verbunden – synchronisiere Daten…';
+
+                        // Pull all data from backend into localStorage, then open WebSocket
+                        syncFromBackend(cleanUrl)
+                            .then(() => {
+                                connectBackendWebSocket(cleanUrl);
+                                if (statusEl) statusEl.textContent = '✅ Verbunden & synchronisiert: ' + cleanUrl;
+                                if (showAlert) alert('✅ Erfolgreich verbunden!\nAlle Daten wurden vom Backend geladen.\nServer: ' + cleanUrl);
+                            })
+                            .catch(() => {
+                                // Health OK but sync failed – still stay connected
+                                connectBackendWebSocket(cleanUrl);
+                                if (statusEl) statusEl.textContent = '✅ Verbunden (Sync teilweise fehlgeschlagen): ' + cleanUrl;
+                                if (showAlert) alert('✅ Verbunden mit ' + cleanUrl + '\n(Datensync konnte nicht abgeschlossen werden – bitte neu verbinden)');
+                            });
                     } else {
                         throw new Error('Unexpected response');
                     }
@@ -5237,6 +5328,19 @@
 
             // Initialize backend UI (Electron-aware)
             initBackendUI();
+
+            // Auto-sync from backend on startup if a URL is already saved
+            const savedBackendUrl = localStorage.getItem('pzrBackendConnectUrl');
+            if (savedBackendUrl) {
+                syncFromBackend(savedBackendUrl)
+                    .then(() => {
+                        connectBackendWebSocket(savedBackendUrl);
+                        console.log('[Startup] Backend sync complete');
+                    })
+                    .catch(() => {
+                        console.log('[Startup] Backend not reachable — using local data');
+                    });
+            }
 
             // Show detected platform in installer section + hide irrelevant platform sections
             const platformInfo = document.getElementById('installerPlatformInfo');

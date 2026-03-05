@@ -7,6 +7,25 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Simple in-process rate limiter (no extra npm package needed)
+function makeRateLimiter(windowMs, maxRequests) {
+    const hits = new Map();
+    return function(req, res, next) {
+        const ip = req.ip || req.connection.remoteAddress || 'unknown';
+        const now = Date.now();
+        const entry = hits.get(ip) || { count: 0, resetAt: now + windowMs };
+        if (now > entry.resetAt) { entry.count = 0; entry.resetAt = now + windowMs; }
+        entry.count++;
+        hits.set(ip, entry);
+        if (entry.count > maxRequests) {
+            return res.status(429).json({ error: 'Too many requests – bitte warte kurz.' });
+        }
+        next();
+    };
+}
+// Storage endpoints: max 200 requests per 60 s per IP (generous for sync)
+const storageRateLimit = makeRateLimiter(60 * 1000, 200);
+
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -137,6 +156,14 @@ function initDatabase() {
             password TEXT NOT NULL,
             role TEXT NOT NULL,
             createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+        )`,
+
+        // Generic key-value store: mirrors every localStorage key used by the app.
+        // This allows ANY device that connects to this backend to get a full sync.
+        `CREATE TABLE IF NOT EXISTS kv_store (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
             updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
         )`
     ];
@@ -322,6 +349,66 @@ app.post('/api/sync', (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ─── Generic key-value storage (mirrors localStorage) ─────────────────────
+// Rate-limit all /api/storage requests at the path level
+app.use('/api/storage', storageRateLimit);
+
+// GET /api/storage          → returns all keys as { key: value, ... }
+// GET /api/storage/:key     → returns single value
+// POST /api/storage/:key    → upserts a value; body: { value: <any> }
+// DELETE /api/storage/:key  → removes a key
+
+app.get('/api/storage', storageRateLimit, (req, res) => {
+    db.all('SELECT key, value FROM kv_store', (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        const result = {};
+        rows.forEach(r => {
+            try { result[r.key] = JSON.parse(r.value); } catch (e) {
+                console.error('kv_store parse error for key', r.key, e.message);
+                result[r.key] = r.value;
+            }
+        });
+        res.json(result);
+    });
+});
+
+app.get('/api/storage/:key', storageRateLimit, (req, res) => {
+    const key = decodeURIComponent(req.params.key);
+    db.get('SELECT value FROM kv_store WHERE key=?', [key], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!row) return res.json({ value: null });
+        try { res.json({ value: JSON.parse(row.value) }); } catch (e) {
+            console.error('kv_store parse error for key', key, e.message);
+            res.json({ value: row.value });
+        }
+    });
+});
+
+app.post('/api/storage/:key', storageRateLimit, (req, res) => {
+    const key = decodeURIComponent(req.params.key);
+    const value = JSON.stringify(req.body.value !== undefined ? req.body.value : req.body);
+    db.run(
+        'INSERT OR REPLACE INTO kv_store (key, value, updatedAt) VALUES (?, ?, CURRENT_TIMESTAMP)',
+        [key, value],
+        function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            // Notify all connected clients that this key changed
+            const msg = JSON.stringify({ type: 'storage-updated', key });
+            wss.clients.forEach(c => { if (c.readyState === WebSocket.OPEN) c.send(msg); });
+            res.json({ success: true });
+        }
+    );
+});
+
+app.delete('/api/storage/:key', storageRateLimit, (req, res) => {
+    const key = decodeURIComponent(req.params.key);
+    db.run('DELETE FROM kv_store WHERE key=?', [key], err => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+    });
+});
+// ───────────────────────────────────────────────────────────────────────────
 
 // Health check
 app.get('/api/health', (req, res) => {
