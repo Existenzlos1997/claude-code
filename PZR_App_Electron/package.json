@@ -18,7 +18,8 @@
     "ws": "^8.14.2",
     "sqlite3": "^5.1.6",
     "cors": "^2.8.5",
-    "electron-updater": "^6.3.9"
+    "electron-updater": "^6.3.9",
+    "localtunnel": "^2.0.2"
   },
   "devDependencies": {
     "electron": "^27.0.0",

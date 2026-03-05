@@ -15,6 +15,7 @@ try {
 let mainWindow;
 let backendServer = null;
 let isBackendActive = false;
+let activeTunnel = null;   // localtunnel instance
 
 /** Returns the best LAN IP of this machine so other PCs can connect */
 function getServerUrl() {
@@ -27,6 +28,77 @@ function getServerUrl() {
         }
     }
     return 'http://localhost:3000';
+}
+
+/**
+ * Normalise a name string to a safe localtunnel subdomain.
+ * e.g. "Dr. Müller & Partner" → "pzr-dr-muller-partner"
+ */
+function makeTunnelSubdomain(name) {
+    return 'pzr-' + (name || 'praxis')
+        .toLowerCase()
+        .replace(/[äáàâ]/g, 'a').replace(/[öóòô]/g, 'o').replace(/[üúùû]/g, 'u')
+        .replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .substring(0, 40);
+}
+
+/** Close the active tunnel and reset state (safe to call even if no tunnel exists) */
+function closeTunnel() {
+    if (activeTunnel) {
+        try { activeTunnel.close(); } catch (e) {}
+        activeTunnel = null;
+    }
+}
+
+/**
+ * Delay before starting the tunnel so the Express server has time to bind.
+ * localtunnel tries to connect immediately; 1 second is enough for server.js to start.
+ */
+const TUNNEL_START_DELAY_MS = 1000;
+
+/**
+ * Opens a localtunnel to port 3000.
+ * subdomain: slug derived from admin/practice name passed from renderer.
+ * Sends IPC events to the renderer window as the tunnel progresses.
+ */
+async function startTunnel(practiceSlug, senderWindow) {
+    // If tunnel already active, just re-send its URL to the renderer
+    if (activeTunnel) {
+        if (senderWindow && !senderWindow.isDestroyed()) {
+            senderWindow.webContents.send('tunnel-status', { active: true, url: activeTunnel.url });
+        }
+        return;
+    }
+    try {
+        const localtunnel = require('localtunnel');
+        const tunnel = await localtunnel({ port: 3000, subdomain: practiceSlug });
+        activeTunnel = tunnel;
+        const tunnelUrl = tunnel.url;
+        console.log(`🌍 Tunnel active: ${tunnelUrl}`);
+        if (senderWindow && !senderWindow.isDestroyed()) {
+            senderWindow.webContents.send('tunnel-status', { active: true, url: tunnelUrl });
+        }
+        tunnel.on('close', () => {
+            activeTunnel = null;
+            if (senderWindow && !senderWindow.isDestroyed()) {
+                senderWindow.webContents.send('tunnel-status', { active: false, url: null });
+            }
+        });
+        tunnel.on('error', (err) => {
+            console.error('Tunnel error:', err.message);
+            activeTunnel = null;
+            if (senderWindow && !senderWindow.isDestroyed()) {
+                senderWindow.webContents.send('tunnel-status', { active: false, url: null, error: err.message });
+            }
+        });
+    } catch (err) {
+        console.error('localtunnel failed:', err.message);
+        if (senderWindow && !senderWindow.isDestroyed()) {
+            senderWindow.webContents.send('tunnel-status', { active: false, url: null, error: err.message });
+        }
+    }
 }
 
 // Create the main application window
@@ -146,7 +218,8 @@ function createWindow() {
 }
 
 // Start backend server
-ipcMain.on('activate-backend', (event) => {
+// Accepts optional payload: { practiceName: string }
+ipcMain.on('activate-backend', (event, payload) => {
     if (backendServer) {
         event.reply('backend-status', { active: true, message: 'Backend läuft bereits', url: getServerUrl() });
         return;
@@ -179,24 +252,32 @@ ipcMain.on('activate-backend', (event) => {
             console.log(`Backend stopped with code ${code}`);
             backendServer = null;
             isBackendActive = false;
+            closeTunnel();
             event.reply('backend-stopped');
         });
 
         isBackendActive = true;
-        const url = getServerUrl();
+        const lanUrl = getServerUrl();
         event.reply('backend-status', { 
             active: true, 
             message: 'Backend erfolgreich gestartet',
             port: 3000,
-            url: url
+            url: lanUrl
         });
+
+        // Auto-start internet tunnel — wait for server to bind before connecting
+        const practiceName = (payload && payload.practiceName) ? payload.practiceName : 'praxis';
+        const slug = makeTunnelSubdomain(practiceName);
+        setTimeout(() => startTunnel(slug, mainWindow), TUNNEL_START_DELAY_MS);
+
     } catch (error) {
         event.reply('backend-error', error.message);
     }
 });
 
-// Stop backend server
+// Stop backend server + tunnel
 ipcMain.on('deactivate-backend', (event) => {
+    closeTunnel();
     if (backendServer) {
         backendServer.kill();
         backendServer = null;

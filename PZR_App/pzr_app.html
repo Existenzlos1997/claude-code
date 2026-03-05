@@ -1712,6 +1712,24 @@
                                         <p style="margin:0; font-size:16px; font-family:monospace; font-weight:bold;" id="backendServerAddress"></p>
                                         <p style="margin:8px 0 0; font-size:12px; color:#666;">Diese Adresse im Netzwerk/WLAN der Praxis eingeben.</p>
                                     </div>
+
+                                    <!-- Tunnel info: auto-shown when localtunnel is ready -->
+                                    <div id="backendTunnelInfo" style="display:none; margin-top:12px; background:#e3f2fd; border:1px solid #90caf9; border-radius:8px; padding:12px;">
+                                        <p style="margin:0 0 6px; font-weight:600; color:#1565c0;">🌍 Internet-Tunnel aktiv</p>
+                                        <p style="margin:0 0 5px; font-size:13px;">Patienten &amp; Mitarbeiter können sich von <strong>überall</strong> verbinden:</p>
+                                        <p style="margin:0 0 8px; font-size:16px; font-family:monospace; font-weight:bold; word-break:break-all;" id="backendTunnelUrl"></p>
+                                        <button class="btn" style="background:#1565c0; font-size:12px; padding:6px 12px;"
+                                            onclick="navigator.clipboard.writeText(document.getElementById('backendTunnelUrl').textContent).then(()=>alert('URL kopiert!'))">
+                                            📋 Kopieren
+                                        </button>
+                                        <p style="margin:8px 0 0; font-size:12px; color:#555;">Diese URL im Einstellungen-Feld „Mit Server verbinden" auf anderen Geräten eingeben.<br>
+                                        Der Tunnel bleibt aktiv solange diese App läuft.</p>
+                                    </div>
+
+                                    <!-- Shown for 8s when tunnel comes up for the first time -->
+                                    <div id="tunnelReadyAlert" style="display:none; margin-top:10px; background:#fff9c4; border:1px solid #f9a825; border-radius:8px; padding:10px; font-size:13px; color:#e65100;">
+                                        🎉 <strong>Internet-Zugang bereit!</strong> Kopieren Sie die blaue URL und teilen Sie sie mit Ihren Mitarbeitern und Patienten. Kein eigener Server nötig.
+                                    </div>
                                 </div>
 
                                 <div style="text-align:center; margin:15px 0; color:#aaa;">— oder —</div>
@@ -4730,6 +4748,33 @@
 
             ipcRenderer.on('backend-stopped', () => {
                 setBackendStatusUI(false, null);
+                // Clear tunnel info
+                const tunnelInfo = document.getElementById('backendTunnelInfo');
+                if (tunnelInfo) tunnelInfo.style.display = 'none';
+            });
+
+            // Tunnel status: show/update the public URL panel
+            ipcRenderer.on('tunnel-status', (event, status) => {
+                const tunnelInfo = document.getElementById('backendTunnelInfo');
+                const tunnelUrl  = document.getElementById('backendTunnelUrl');
+                if (!tunnelInfo || !tunnelUrl) return;
+                if (status.active && status.url) {
+                    tunnelUrl.textContent = status.url;
+                    tunnelInfo.style.display = 'block';
+                    // Auto-use tunnel URL as the backend connect URL
+                    localStorage.setItem('pzrBackendConnectUrl', status.url);
+                    // Propagate to employees
+                    setBackendStatusUI(true, status.url);
+                    // Show a one-time info message
+                    const infoBox = document.getElementById('tunnelReadyAlert');
+                    if (infoBox) {
+                        infoBox.style.display = 'block';
+                        setTimeout(() => { infoBox.style.display = 'none'; }, 8000);
+                    }
+                } else {
+                    tunnelInfo.style.display = 'none';
+                    if (status.error) console.warn('Tunnel error:', status.error);
+                }
             });
 
             // electron-updater events: show banner when update is ready to install
@@ -4798,6 +4843,16 @@
                     serverAddr.textContent = serverUrl;
                     serverInfo.style.display = 'block';
                 }
+                // Show a "tunnel pending" hint if tunnel info isn't visible yet
+                const tunnelInfo = document.getElementById('backendTunnelInfo');
+                const tunnelUrlEl = document.getElementById('backendTunnelUrl');
+                if (tunnelInfo && tunnelInfo.style.display === 'none') {
+                    // Only set the pending text if the real URL hasn't arrived yet
+                    if (tunnelUrlEl && !tunnelUrlEl.textContent.startsWith('https://')) {
+                        tunnelUrlEl.textContent = '⏳ Internet-Tunnel wird erstellt…';
+                    }
+                    tunnelInfo.style.display = 'block';
+                }
                 localStorage.setItem('backendActive', 'true');
 
                 // Propagate backendUrl to all employees of the same practice
@@ -4820,6 +4875,8 @@
                 if (activateBtn) activateBtn.style.display = 'inline-block';
                 if (deactivateBtn) deactivateBtn.style.display = 'none';
                 if (serverInfo) serverInfo.style.display = 'none';
+                const tunnelInfo = document.getElementById('backendTunnelInfo');
+                if (tunnelInfo) tunnelInfo.style.display = 'none';
                 localStorage.removeItem('backendActive');
             }
         }
@@ -4830,7 +4887,11 @@
                 return;
             }
             const { ipcRenderer } = window.require('electron');
-            ipcRenderer.send('activate-backend');
+            // Send practice name so main.js can name the tunnel accordingly
+            const practiceName = (currentUser && currentUser.name)
+                ? currentUser.name
+                : (localStorage.getItem('pzrPracticeName') || 'Praxis');
+            ipcRenderer.send('activate-backend', { practiceName });
         }
 
         function deactivateBackend() {
