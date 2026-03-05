@@ -4641,6 +4641,38 @@
                 setBackendStatusUI(false, null);
             });
 
+            // electron-updater events: show banner when update is ready to install
+            ipcRenderer.on('update-available', (event, info) => {
+                const banner = document.getElementById('updateBanner');
+                const bannerText = document.getElementById('updateBannerText');
+                const bannerLink = document.getElementById('updateBannerLink');
+                if (!banner) return;
+                bannerText.textContent = `🔄 Update wird heruntergeladen… (v${info.version || ''})`;
+                bannerLink.textContent = 'Bitte warten…';
+                bannerLink.onclick = null;
+                bannerLink.href = '#';
+                banner.style.display = 'block';
+                const c = document.querySelector('.container');
+                if (c) c.style.marginTop = banner.offsetHeight + 'px';
+            });
+
+            ipcRenderer.on('update-downloaded', (event, info) => {
+                const banner = document.getElementById('updateBanner');
+                const bannerText = document.getElementById('updateBannerText');
+                const bannerLink = document.getElementById('updateBannerLink');
+                if (!banner) return;
+                bannerText.textContent = `✅ Update bereit (v${info.version || ''}) – App wird nach Neustart aktualisiert.`;
+                bannerLink.href = '#';
+                bannerLink.textContent = '🔁 Jetzt neu starten & installieren';
+                bannerLink.onclick = function(e) {
+                    e.preventDefault();
+                    ipcRenderer.send('install-update');
+                };
+                banner.style.display = 'block';
+                const c = document.querySelector('.container');
+                if (c) c.style.marginTop = banner.offsetHeight + 'px';
+            });
+
             // Query current status
             ipcRenderer.send('get-backend-status');
 

@@ -4,6 +4,14 @@ const fs = require('fs');
 const os = require('os');
 const { spawn } = require('child_process');
 
+// electron-updater is only available in packaged builds
+let autoUpdater = null;
+try {
+    autoUpdater = require('electron-updater').autoUpdater;
+} catch (e) {
+    // not installed or running in dev mode without it
+}
+
 let mainWindow;
 let backendServer = null;
 let isBackendActive = false;
@@ -206,9 +214,42 @@ ipcMain.on('get-backend-status', (event) => {
     });
 });
 
+// Install downloaded update and restart
+ipcMain.on('install-update', () => {
+    if (autoUpdater) {
+        autoUpdater.quitAndInstall();
+    }
+});
+
 // App lifecycle
 app.whenReady().then(() => {
     createWindow();
+
+    // --- Auto-updater (only in packaged app) ---
+    if (app.isPackaged && autoUpdater) {
+        autoUpdater.autoDownload = true;
+        autoUpdater.autoInstallOnAppQuit = true;
+
+        autoUpdater.on('update-available', (info) => {
+            if (mainWindow) mainWindow.webContents.send('update-available', info);
+        });
+
+        autoUpdater.on('update-downloaded', (info) => {
+            if (mainWindow) mainWindow.webContents.send('update-downloaded', info);
+        });
+
+        autoUpdater.on('error', (err) => {
+            console.error('Auto-updater error:', err.message);
+        });
+
+        // Check for updates ~5 seconds after launch
+        setTimeout(() => {
+            autoUpdater.checkForUpdatesAndNotify().catch(err => {
+                console.error('Update check failed:', err.message);
+            });
+        }, 5000);
+    }
+    // -------------------------------------------
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {

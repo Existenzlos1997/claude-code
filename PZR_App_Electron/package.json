@@ -21,7 +21,8 @@
   },
   "devDependencies": {
     "electron": "^27.0.0",
-    "electron-builder": "^24.6.4"
+    "electron-builder": "^24.6.4",
+    "electron-updater": "^6.3.9"
   },
   "build": {
     "appId": "com.burgau.pzr-app",
@@ -53,6 +54,12 @@
       "target": "deb",
       "category": "Office",
       "maintainer": "Zahnärzte Burgau <info@zahnaerzte-burgau.de>"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "Existenzlos1997",
+      "repo": "claude-code",
+      "releaseType": "prerelease"
     }
   }
 }

@@ -50,6 +50,18 @@ jobs:
             console.log('APP_BUILD_DATE set to', d);
           "
 
+      - name: Set nightly version in package.json
+        shell: bash
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('PZR_App_Electron/package.json', 'utf8'));
+            const d = new Date().toISOString().substring(0, 10).replace(/-/g, '');
+            pkg.version = '1.0.' + d;
+            fs.writeFileSync('PZR_App_Electron/package.json', JSON.stringify(pkg, null, 2));
+            console.log('Version set to', pkg.version);
+          "
+
       - name: Install dependencies
         working-directory: PZR_App_Electron
         run: npm install
