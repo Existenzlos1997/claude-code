@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - copilot/setup-installer-for-project
+      - copilot/check-all-installers
     paths:
       - 'PZR_App/pzr_app.html'
       - 'PZR_App/manifest.json'

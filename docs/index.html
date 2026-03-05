@@ -2786,7 +2786,14 @@
                 alert('Patient nicht gefunden!');
                 return;
             }
-            const newPin = String(1000 + (crypto.getRandomValues(new Uint16Array(1))[0] % 9000));
+            const newPin = (() => {
+                const range = 9000; // 1000–9999
+                const maxValid = 4294967296 - (4294967296 % range);
+                const buf = new Uint32Array(1);
+                let r;
+                do { crypto.getRandomValues(buf); r = buf[0]; } while (r >= maxValid);
+                return String(1000 + (r % range));
+            })();
             patient.pin = newPin;
             saveToStorage('pzrPatients', patients);
             req.status = 'done';
@@ -3971,7 +3978,14 @@
             patient.patientNumber = newNumber;
             
             // Generate PIN
-            patient.pin = String(1000 + (crypto.getRandomValues(new Uint16Array(1))[0] % 9000));
+            patient.pin = (() => {
+                const range = 9000; // 1000–9999
+                const maxValid = 4294967296 - (4294967296 % range);
+                const buf = new Uint32Array(1);
+                let r;
+                do { crypto.getRandomValues(buf); r = buf[0]; } while (r >= maxValid);
+                return String(1000 + (r % range));
+            })();
             
             // Update status
             patient.status = 'active';
@@ -4639,6 +4653,38 @@
 
             ipcRenderer.on('backend-stopped', () => {
                 setBackendStatusUI(false, null);
+            });
+
+            // electron-updater events: show banner when update is ready to install
+            ipcRenderer.on('update-available', (event, info) => {
+                const banner = document.getElementById('updateBanner');
+                const bannerText = document.getElementById('updateBannerText');
+                const bannerLink = document.getElementById('updateBannerLink');
+                if (!banner) return;
+                bannerText.textContent = `🔄 Update wird heruntergeladen… (v${info.version || ''})`;
+                bannerLink.textContent = 'Bitte warten…';
+                bannerLink.onclick = null;
+                bannerLink.href = '#';
+                banner.style.display = 'block';
+                const c = document.querySelector('.container');
+                if (c) c.style.marginTop = banner.offsetHeight + 'px';
+            });
+
+            ipcRenderer.on('update-downloaded', (event, info) => {
+                const banner = document.getElementById('updateBanner');
+                const bannerText = document.getElementById('updateBannerText');
+                const bannerLink = document.getElementById('updateBannerLink');
+                if (!banner) return;
+                bannerText.textContent = `✅ Update bereit (v${info.version || ''}) – App wird nach Neustart aktualisiert.`;
+                bannerLink.href = '#';
+                bannerLink.textContent = '🔁 Jetzt neu starten & installieren';
+                bannerLink.onclick = function(e) {
+                    e.preventDefault();
+                    ipcRenderer.send('install-update');
+                };
+                banner.style.display = 'block';
+                const c = document.querySelector('.container');
+                if (c) c.style.marginTop = banner.offsetHeight + 'px';
             });
 
             // Query current status

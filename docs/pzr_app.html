@@ -201,13 +201,31 @@
             border-radius: 15px;
             padding: 5px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            gap: 4px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.4) transparent;
+        }
+
+        .tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .tabs::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.4);
+            border-radius: 2px;
         }
 
         .tab {
-            flex: 1;
-            min-width: 80px;
-            padding: 12px;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            padding: 10px 16px;
             text-align: center;
             background: transparent;
             border: none;
@@ -1062,13 +1080,27 @@
             <div id="patientLogin" class="hidden">
                 <div class="form-group">
                     <label for="patientNumber">Patientennummer</label>
-                    <input type="text" id="patientNumber" placeholder="z.B. PAT-12345">
+                    <input type="text" id="patientNumber" placeholder="z.B. PAT-12345" autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="patientPin">PIN</label>
-                    <input type="password" id="patientPin" placeholder="Ihre 4-stellige PIN">
+                    <input type="password" id="patientPin" placeholder="Ihre 4-stellige PIN" autocomplete="current-password" inputmode="numeric" maxlength="4">
                 </div>
                 <button class="btn" onclick="loginPatient()">Anmelden</button>
+                <div style="text-align:center; margin-top:12px;">
+                    <a href="#" onclick="showForgotPin(); return false;" style="color:#667eea; font-size:14px;">🔑 PIN vergessen?</a>
+                </div>
+            </div>
+
+            <div id="forgotPinSection" class="hidden">
+                <h3 style="margin-bottom:10px;">🔑 PIN zurücksetzen</h3>
+                <p style="color:#666; font-size:14px; margin-bottom:16px;">Geben Sie Ihre Patientennummer ein. Die Praxis bearbeitet Ihre Anfrage und teilt Ihnen eine neue PIN mit.</p>
+                <div class="form-group">
+                    <label for="forgotPinNumber">Patientennummer</label>
+                    <input type="text" id="forgotPinNumber" placeholder="z.B. PAT-12345">
+                </div>
+                <button class="btn" onclick="submitForgotPin()">Anfrage senden</button>
+                <button class="btn btn-secondary" onclick="hideForgotPin()" style="margin-top:8px;">← Zurück</button>
             </div>
 
             <div id="employeeLogin" class="hidden">
@@ -1404,6 +1436,12 @@
                     <div id="patientManagement" class="tab-content active">
                         <h2>Patientenverwaltung</h2>
                         
+                        <!-- PIN Reset Requests -->
+                        <div id="pinResetRequestsSection" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:14px; margin-bottom:16px;">
+                            <h4 style="margin:0 0 8px 0; color:#856404;">🔑 PIN-Zurücksetzen-Anfragen</h4>
+                            <div id="pinResetRequestsList"></div>
+                        </div>
+                        
                         <div class="form-group">
                             <input type="text" id="patientSearch" placeholder="Suche nach Patientennummer oder Name..." 
                                    onkeyup="searchPatients()">
@@ -1561,7 +1599,7 @@
 
                         <div class="form-group">
                             <label for="newPatientPin">PIN (4 Ziffern) *</label>
-                            <input type="password" id="newPatientPin" placeholder="1234" maxlength="4">
+                            <input type="password" id="newPatientPin" placeholder="1234" maxlength="4" autocomplete="new-password" inputmode="numeric">
                         </div>
 
                         <div class="form-group">
@@ -1601,6 +1639,10 @@
                                 <input type="file" id="documentFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
                             </div>
                             <div class="form-group">
+                                <label for="documentName">Dokumentname</label>
+                                <input type="text" id="documentName" placeholder="Name des Dokuments (optional, sonst Dateiname)">
+                            </div>
+                            <div class="form-group">
                                 <label for="documentCategory">Kategorie *</label>
                                 <select id="documentCategory">
                                     <option value="practice">Praxis-Dokument</option>
@@ -1632,7 +1674,7 @@
                         <h2>⚙️ Einstellungen</h2>
                         
                         <!-- Backend Configuration -->
-                        <div class="settings-section">
+                        <div id="backendConfigSection" class="settings-section">
                             <h3>🖥️ Backend-Konfiguration</h3>
                             <p id="backendIntroText">Stellen Sie ein, ob dieser PC der zentrale Server ist oder sich mit einem anderen Server verbindet.</p>
 
@@ -1697,8 +1739,14 @@
                         
                         <hr style="margin: 30px 0;">
 
-                        <!-- iOS PWA Install (shown only on iOS) -->
-                        <div id="iosInstallerSection" class="settings-section" style="display:none; border:1px solid #e0e0e0; border-radius:12px; padding:20px; margin-bottom:20px;">
+                        <div class="settings-section" style="padding-bottom:8px;">
+                            <h3>📦 App installieren</h3>
+                            <p style="margin-bottom:6px;">Installateure für alle Betriebssysteme stehen zur Verfügung. Das erkannte Betriebssystem ist hervorgehoben.</p>
+                            <p id="installerPlatformInfo" style="font-size:13px;color:#555;margin:0;"></p>
+                        </div>
+
+                        <!-- iOS PWA Install -->
+                        <div id="iosInstallerSection" class="settings-section" style="border:1px solid #e0e0e0; border-radius:12px; padding:20px; margin-bottom:20px;">
                             <h3>🍎 App auf iPhone / iPad installieren</h3>
                             <p>Auf iOS wird die PZR App als PWA (Web-App) installiert – direkt aus Safari, ohne App Store.</p>
 
@@ -1738,8 +1786,14 @@
 
                         <!-- Desktop App Download -->
                         <div id="desktopInstallerSection" class="settings-section">
-                            <h3>💾 Desktop-App installieren</h3>
+                            <h3>💾 Desktop-App installieren (Windows / macOS / Linux)</h3>
                             <p>Installieren Sie die PZR Desktop-App für vollen Offline-Betrieb mit lokalem Backend-Server.</p>
+                            <div style="font-size:13px;color:#888;margin-bottom:14px;background:#f5f5f5;border-radius:8px;padding:10px 14px;">
+                                <strong>Hinweis bei Sicherheitswarnungen:</strong><br>
+                                🪟 <strong>Windows:</strong> Falls „Unbekannter Herausgeber" erscheint → „Weitere Informationen" → „Trotzdem ausführen" klicken.<br>
+                                🍎 <strong>macOS:</strong> Falls „Nicht verifizierter Entwickler" erscheint → Systemeinstellungen → Datenschutz &amp; Sicherheit → „Trotzdem öffnen" klicken.<br>
+                                🐧 <strong>Linux:</strong> Terminal: <code>sudo dpkg -i pzr-app-latest.deb</code> ausführen.
+                            </div>
 
                             <!-- Step 1: Download -->
                             <div id="installerStep1" class="installer-step step-active">
@@ -1748,7 +1802,6 @@
                                 <button class="btn" onclick="downloadDesktopInstaller()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                     ⬇️ Installer herunterladen
                                 </button>
-                                <p id="installerPlatformInfo"></p>
                                 <p id="desktopDownloadStatus" style="font-size:13px;margin-top:8px;"></p>
                                 <div id="desktopBuildNeeded" style="display:none;margin-top:12px;padding:12px;background:#fff3e0;border-radius:8px;border-left:4px solid #ff9800;">
                                     <p style="margin:0 0 8px 0;font-size:13px;font-weight:500;color:#e65100;">⚙️ Installer noch nicht verfügbar</p>
@@ -1814,15 +1867,21 @@
                             <!-- Step 2: Install APK -->
                             <div id="androidStep2" class="installer-step" style="display:none;">
                                 <span class="step-badge" style="background:#43a047;">Schritt 2</span>
-                                <p style="margin: 0 0 12px 0; font-weight: 500;">APK installieren</p>
-                                <p style="font-size: 14px; color: #555; margin-bottom: 12px;">
-                                    Der Download hat gestartet. Öffnen Sie die Datei in Ihrem Download-Ordner und tippen Sie auf "Installieren".
-                                </p>
+                                <p style="margin: 0 0 10px 0; font-weight: 500;">✅ Download fertig – jetzt installieren</p>
+                                <div style="background:#e8f5e9; border:1px solid #a5d6a7; border-radius:8px; padding:14px; margin-bottom:14px; font-size:14px; line-height:1.8;">
+                                    <strong>So installieren Sie die APK:</strong><br>
+                                    1️⃣ Ziehen Sie die <strong>Benachrichtigungsleiste</strong> herunter<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;→ Tippen Sie auf <strong>„pzr-app-latest.apk"</strong><br>
+                                    <em style="font-size:12px; color:#555;">ODER: Tippen Sie auf „Öffnen" in der Chrome-Leiste unten</em><br><br>
+                                    2️⃣ Falls gefragt: <strong>„Installation erlauben"</strong> antippen<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;→ Einstellungen → <em>Unbekannte Apps installieren</em> aktivieren<br><br>
+                                    3️⃣ Im Installations-Dialog auf <strong>„Installieren"</strong> tippen ✅
+                                </div>
                                 <button class="btn" onclick="launchAndroidAPK()" style="background: linear-gradient(135deg, #43a047 0%, #1de9b6 100%);">
-                                    ▶️ APK öffnen / erneut herunterladen
+                                    🔄 APK erneut herunterladen
                                 </button>
                                 <p style="font-size: 12px; color: #888; margin-top: 8px;">
-                                    💡 Tipp: Suchen Sie in Ihrem Download-Ordner nach <strong>pzr-app-latest.apk</strong>.
+                                    💡 Datei im Download-Ordner: <strong>pzr-app-latest.apk</strong>
                                 </p>
                             </div>
                         </div>
@@ -1920,6 +1979,11 @@
                 <div class="form-group">
                     <label for="editPatientPhone">Telefon</label>
                     <input type="text" id="editPatientPhone">
+                </div>
+
+                <div class="form-group">
+                    <label for="editPatientPin">Neue PIN setzen (leer lassen = unverändert)</label>
+                    <input type="password" id="editPatientPin" placeholder="4-stellige Ziffern" maxlength="4" autocomplete="new-password" inputmode="numeric">
                 </div>
 
                 <div class="form-group voice-input-container">
@@ -2135,8 +2199,12 @@
                 // Create demo patient with medical history
                 patients = [{
                     id: 'PAT-12345',
+                    number: 'PAT-12345',
                     patientNumber: 'PAT-12345',
                     name: 'Max Mustermann',
+                    firstName: 'Max',
+                    lastName: 'Mustermann',
+                    status: 'active',
                     pin: '1234',
                     email: 'max@example.com',
                     phone: '+49 123 456789',
@@ -2180,6 +2248,17 @@
                             lastUpdated: null
                         };
                     }
+                    // Ensure all patients have name + firstName/lastName + status + number
+                    if (!p.name && (p.firstName || p.lastName)) {
+                        p.name = `${p.firstName || ''} ${p.lastName || ''}`.trim();
+                    }
+                    if (p.name && !p.firstName) {
+                        const parts = p.name.split(' ');
+                        p.firstName = parts[0] || '';
+                        p.lastName = parts.slice(1).join(' ') || '';
+                    }
+                    if (!p.status) p.status = 'active';
+                    if (!p.number) p.number = p.patientNumber || p.id;
                 });
                 localStorage.setItem('pzrPatients', JSON.stringify(patients));
             }
@@ -2235,6 +2314,7 @@
             document.getElementById('employeeRole').classList.remove('selected');
             document.getElementById('patientLogin').classList.add('hidden');
             document.getElementById('employeeLogin').classList.add('hidden');
+            document.getElementById('forgotPinSection').classList.add('hidden');
 
             if (role === 'patient') {
                 document.getElementById('patientRole').classList.add('selected');
@@ -2243,6 +2323,48 @@
                 document.getElementById('employeeRole').classList.add('selected');
                 document.getElementById('employeeLogin').classList.remove('hidden');
             }
+        }
+
+        function showForgotPin() {
+            document.getElementById('patientLogin').classList.add('hidden');
+            document.getElementById('forgotPinSection').classList.remove('hidden');
+        }
+
+        function hideForgotPin() {
+            document.getElementById('forgotPinSection').classList.add('hidden');
+            document.getElementById('forgotPinNumber').value = '';
+            document.getElementById('patientLogin').classList.remove('hidden');
+        }
+
+        function submitForgotPin() {
+            const patientNumber = document.getElementById('forgotPinNumber').value.trim();
+            if (!patientNumber) {
+                alert('Bitte Ihre Patientennummer eingeben.');
+                return;
+            }
+            const patients = getFromStorage('pzrPatients') || [];
+            const exists = patients.find(p => p.patientNumber === patientNumber || p.number === patientNumber);
+            if (!exists) {
+                alert('Patientennummer nicht gefunden. Bitte prüfen Sie Ihre Angabe oder wenden Sie sich an die Praxis.');
+                return;
+            }
+            const requests = getFromStorage('pzrPinResetRequests') || [];
+            const alreadyPending = requests.find(r => r.patientNumber === patientNumber && r.status === 'pending');
+            if (alreadyPending) {
+                alert('Es liegt bereits eine Anfrage für diese Patientennummer vor. Die Praxis wird sich melden.');
+                hideForgotPin();
+                return;
+            }
+            requests.push({
+                id: 'pinreset_' + Date.now(),
+                patientNumber,
+                patientName: exists.name || [exists.firstName, exists.lastName].filter(Boolean).join(' ') || 'Unbekannt',
+                requestedAt: new Date().toISOString(),
+                status: 'pending'
+            });
+            saveToStorage('pzrPinResetRequests', requests);
+            alert('✅ Anfrage gesendet!\n\nDie Praxis wird Ihre PIN zurücksetzen und Ihnen die neue PIN mitteilen.');
+            hideForgotPin();
         }
 
         // Login as patient
@@ -2271,7 +2393,7 @@
                 }
                 
                 // Check if anamnese was never filled
-                if (!patient.anamnese.lastUpdated) {
+                if (!patient.anamnese?.lastUpdated) {
                     alert('Bitte füllen Sie Ihre medizinische Anamnese aus.\n\nNach dem Login finden Sie das Formular im Tab "Anamnese".');
                 }
                 
@@ -2610,11 +2732,6 @@
             }
         }
 
-        // Load employee dashboard
-        function loadEmployeeDashboard() {
-            loadPatientList();
-        }
-
         // Load patient list for employees
         function loadPatientList() {
             const container = document.getElementById('patientListContainer');
@@ -2623,17 +2740,66 @@
             
             if (activePatients.length === 0) {
                 container.innerHTML = '<p class="empty-state">Keine Patienten vorhanden.</p>';
+            } else {
+                container.innerHTML = activePatients.map(patient => {
+                    const displayName = patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'Unbekannt';
+                    const displayNumber = patient.number || patient.patientNumber || '-';
+                    return `
+                    <div class="patient-card" onclick="openPatientDetails('${patient.id}')" style="cursor:pointer;padding:15px;border:1px solid #ddd;margin:10px 0;border-radius:5px;background:#f9f9f9;transition:background 0.3s;">
+                        <h4>👤 ${displayName}</h4>
+                        <p><strong>Nummer:</strong> ${displayNumber}</p>
+                        <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
+                        <p><strong>Mobil:</strong> ${patient.mobile || patient.phone || '-'}</p>
+                    </div>`;
+                }).join('');
+            }
+            
+            loadPinResetRequests();
+        }
+
+        function loadPinResetRequests() {
+            const requests = getFromStorage('pzrPinResetRequests') || [];
+            const pending = requests.filter(r => r.status === 'pending');
+            const section = document.getElementById('pinResetRequestsSection');
+            const list = document.getElementById('pinResetRequestsList');
+            if (!section || !list) return;
+            if (pending.length === 0) {
+                section.style.display = 'none';
                 return;
             }
-
-            container.innerHTML = activePatients.map(patient => `
-                <div class="patient-card" onclick="openPatientDetails('${patient.id}')" style="cursor:pointer;padding:15px;border:1px solid #ddd;margin:10px 0;border-radius:5px;background:#f9f9f9;transition:background 0.3s;">
-                    <h4>👤 ${patient.firstName} ${patient.lastName}</h4>
-                    <p><strong>Nummer:</strong> ${patient.number}</p>
-                    <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                    <p><strong>Mobil:</strong> ${patient.mobile || '-'}</p>
+            section.style.display = 'block';
+            list.innerHTML = pending.map(r => `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #ffd666;">
+                    <span><strong>${r.patientName}</strong> (${r.patientNumber}) — ${new Date(r.requestedAt).toLocaleDateString('de-DE')}</span>
+                    <button class="btn" onclick="resetPatientPinFromRequest('${r.id}')" style="padding:6px 12px; font-size:13px; background:#e67e22;">PIN zurücksetzen</button>
                 </div>
             `).join('');
+        }
+
+        function resetPatientPinFromRequest(requestId) {
+            const requests = getFromStorage('pzrPinResetRequests') || [];
+            const req = requests.find(r => r.id === requestId);
+            if (!req) return;
+            const patients = getFromStorage('pzrPatients') || [];
+            const patient = patients.find(p => p.patientNumber === req.patientNumber || p.number === req.patientNumber);
+            if (!patient) {
+                alert('Patient nicht gefunden!');
+                return;
+            }
+            const newPin = (() => {
+                const range = 9000; // 1000–9999
+                const maxValid = 4294967296 - (4294967296 % range);
+                const buf = new Uint32Array(1);
+                let r;
+                do { crypto.getRandomValues(buf); r = buf[0]; } while (r >= maxValid);
+                return String(1000 + (r % range));
+            })();
+            patient.pin = newPin;
+            saveToStorage('pzrPatients', patients);
+            req.status = 'done';
+            saveToStorage('pzrPinResetRequests', requests);
+            alert(`✅ PIN zurückgesetzt!\n\nPatient: ${patient.name || req.patientName}\nPatientennummer: ${req.patientNumber}\nNeue PIN: ${newPin}\n\nBitte die neue PIN dem Patienten mitteilen.`);
+            loadPinResetRequests();
         }
         
         // Open patient details/file
@@ -2679,7 +2845,7 @@
             } else {
                 patientRecs.forEach(rec => {
                     html += `<div style="padding:10px;border-left:3px solid #00A8CC;margin:10px 0;background:#fff;">`;
-                    html += `<strong>${rec.type || 'PZR'}</strong> - ${rec.date}<br>`;
+                    html += `<strong>${rec.type === 'pzr' ? 'PZR' : rec.type || 'PZR'}</strong> - ${rec.createdAt ? new Date(rec.createdAt).toLocaleDateString('de-DE') : '-'}<br>`;
                     if (rec.customField1) html += `<p>${rec.customField1}</p>`;
                     if (rec.customField2) html += `<p>${rec.customField2}</p>`;
                     if (rec.customField3) html += `<p>${rec.customField3}</p>`;
@@ -2740,8 +2906,8 @@
             }
             
             const filtered = activePatients.filter(patient => {
-                const name = (patient.firstName + ' ' + patient.lastName).toLowerCase();
-                const number = (patient.number || '').toLowerCase();
+                const name = (patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`).toLowerCase();
+                const number = (patient.number || patient.patientNumber || '').toLowerCase();
                 const email = (patient.email || '').toLowerCase();
                 
                 return name.includes(searchTerm) || number.includes(searchTerm) || email.includes(searchTerm);
@@ -2753,14 +2919,17 @@
                 return;
             }
             
-            container.innerHTML = filtered.map(patient => `
+            container.innerHTML = filtered.map(patient => {
+                const displayName = patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'Unbekannt';
+                const displayNumber = patient.number || patient.patientNumber || '-';
+                return `
                 <div class="patient-card" onclick="openPatientDetails('${patient.id}')" style="cursor:pointer;padding:15px;border:1px solid #ddd;margin:10px 0;border-radius:5px;background:#f9f9f9;">
-                    <h4>👤 ${patient.firstName} ${patient.lastName}</h4>
-                    <p><strong>Nummer:</strong> ${patient.number}</p>
+                    <h4>👤 ${displayName}</h4>
+                    <p><strong>Nummer:</strong> ${displayNumber}</p>
                     <p><strong>E-Mail:</strong> ${patient.email || '-'}</p>
-                    <p><strong>Mobil:</strong> ${patient.mobile || '-'}</p>
-                </div>
-            `).join('');
+                    <p><strong>Mobil:</strong> ${patient.mobile || patient.phone || '-'}</p>
+                </div>`;
+            }).join('');
         }
 
         // AMPEL-SYSTEM: Berechnet Farbe basierend auf Tagen bis Termin
@@ -3031,23 +3200,6 @@
 
         // ===== BEHANDLUNGS-EMPFEHLUNGEN FÜR EXISTIERENDE PATIENTEN =====
         
-        // Patienten in Dropdown laden
-        function loadPatientsForRecommendations() {
-            const patients = getFromStorage('pzrPatients') || [];
-            const select = document.getElementById('recommendationPatientSelect');
-            
-            if (!select) return;
-            
-            select.innerHTML = '<option value="">-- Bitte Patient auswählen --</option>';
-            
-            patients.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.id;
-                option.textContent = `${p.patientNumber} - ${p.name}`;
-                select.appendChild(option);
-            });
-        }
-        
         // Info zum ausgewählten Patienten anzeigen
         function loadSelectedPatientInfo() {
             const patientId = document.getElementById('selectedPatientId').value;
@@ -3111,8 +3263,8 @@
             
             const patients = getFromStorage('pzrPatients') || [];
             const filtered = patients.filter(p => {
-                const number = (p.patientNumber || '').toLowerCase();
-                const name = (p.name || '').toLowerCase();
+                const number = (p.patientNumber || p.number || '').toLowerCase();
+                const name = (p.name || `${p.firstName || ''} ${p.lastName || ''}`).toLowerCase().trim();
                 return number.includes(searchTerm) || name.includes(searchTerm);
             });
             
@@ -3122,14 +3274,20 @@
                 return;
             }
             
-            suggestions.innerHTML = filtered.map(p => `
+            suggestions.innerHTML = filtered.map(p => {
+                const displayName = p.name || `${p.firstName || ''} ${p.lastName || ''}`.trim();
+                const displayNumber = p.patientNumber || p.number || '';
+                return `
                 <div style="padding: 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0;" 
                      onmouseover="this.style.background='#f0f9ff'" 
                      onmouseout="this.style.background='white'"
-                     onmousedown="selectPatientFromSuggestion('${p.id}', '${p.patientNumber}', '${p.name}')">
-                    <strong>${p.patientNumber}</strong> - ${p.name}
-                </div>
-            `).join('');
+                     data-pid="${p.id.replace(/"/g,'&quot;')}"
+                     data-pnum="${displayNumber.replace(/"/g,'&quot;')}"
+                     data-pname="${displayName.replace(/"/g,'&quot;')}"
+                     onmousedown="selectPatientFromSuggestion(this.dataset.pid, this.dataset.pnum, this.dataset.pname)">
+                    <strong>${displayNumber}</strong> - ${displayName}
+                </div>`;
+            }).join('');
             
             suggestions.style.display = 'block';
         }
@@ -3166,8 +3324,8 @@
             
             const patients = getFromStorage('pzrPatients') || [];
             const filtered = patients.filter(p => {
-                const number = (p.patientNumber || '').toLowerCase();
-                const name = (p.name || '').toLowerCase();
+                const number = (p.patientNumber || p.number || '').toLowerCase();
+                const name = (p.name || `${p.firstName || ''} ${p.lastName || ''}`).toLowerCase().trim();
                 return number.includes(searchTerm) || name.includes(searchTerm);
             });
             
@@ -3177,14 +3335,20 @@
                 return;
             }
             
-            suggestions.innerHTML = filtered.map(p => `
+            suggestions.innerHTML = filtered.map(p => {
+                const displayName = p.name || `${p.firstName || ''} ${p.lastName || ''}`.trim();
+                const displayNumber = p.patientNumber || p.number || '';
+                return `
                 <div style="padding: 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0;"
                      onmouseover="this.style.background='#f0f9ff'" 
                      onmouseout="this.style.background='white'"
-                     onmousedown="selectAppointmentPatient('${p.id}', '${p.patientNumber}', '${p.name}')">
-                    <strong>${p.patientNumber}</strong> - ${p.name}
-                </div>
-            `).join('');
+                     data-pid="${p.id.replace(/"/g,'&quot;')}"
+                     data-pnum="${displayNumber.replace(/"/g,'&quot;')}"
+                     data-pname="${displayName.replace(/"/g,'&quot;')}"
+                     onmousedown="selectAppointmentPatient(this.dataset.pid, this.dataset.pnum, this.dataset.pname)">
+                    <strong>${displayNumber}</strong> - ${displayName}
+                </div>`;
+            }).join('');
             
             suggestions.style.display = 'block';
         }
@@ -3249,9 +3413,9 @@
                 status: 'active'
             };
             
-            const recommendations = getFromStorage('patientRecommendations') || [];
+            const recommendations = getFromStorage('pzrRecommendations') || [];
             recommendations.push(recommendation);
-            saveToStorage('patientRecommendations', recommendations);
+            saveToStorage('pzrRecommendations', recommendations);
             
             alert(`✅ Empfehlung erfolgreich gespeichert!\n\nPatient: ${patient.name}\nTyp: ${type === 'pzr' ? 'PZR' : 'Implantation'}\n\nDer Patient kann die Empfehlung in seinem Dashboard einsehen.`);
             
@@ -3260,7 +3424,8 @@
             document.getElementById('customField2').value = '';
             document.getElementById('customField3').value = '';
             document.getElementById('recommendationType').value = '';
-            document.getElementById('recommendationPatientSelect').value = '';
+            document.getElementById('patientSearchInput').value = '';
+            document.getElementById('selectedPatientId').value = '';
             document.getElementById('selectedPatientInfo').style.display = 'none';
             document.getElementById('recommendationFields').style.display = 'none';
         }
@@ -3297,6 +3462,7 @@
                 id: 'pat_' + Date.now(),
                 number: number,
                 patientNumber: number,
+                name: name,
                 firstName,
                 lastName,
                 pin,
@@ -3346,120 +3512,6 @@
             loadPatientList();
         }
         
-        // Add new employee
-        function addNewEmployee() {
-            const number = document.getElementById('newEmployeeNumber').value.trim();
-            const name = document.getElementById('newEmployeeName').value.trim();
-            const role = document.getElementById('newEmployeeRole').value;
-            const pin = document.getElementById('newEmployeePin').value.trim();
-            
-            if (!number || !name || !role || !pin) {
-                alert('Bitte füllen Sie alle Felder aus.');
-                return;
-            }
-            
-            if (pin.length !== 4 || !/^\d+$/.test(pin)) {
-                alert('PIN muss genau 4 Ziffern enthalten.');
-                return;
-            }
-            
-            const employees = getFromStorage('pzrEmployees') || [];
-            
-            if (employees.find(e => e.number === number)) {
-                alert('Diese Mitarbeiternummer existiert bereits.');
-                return;
-            }
-            
-            const newEmployee = {
-                id: 'emp_' + Date.now(),
-                number,
-                name,
-                role,
-                pin,
-                created: new Date().toISOString()
-            };
-            
-            employees.push(newEmployee);
-            saveToStorage('pzrEmployees', employees);
-            
-            alert(`Behandler erfolgreich hinzugefügt!\n\nName: ${name}\nNummer: ${number}`);
-            
-            // Clear form
-            document.getElementById('newEmployeeNumber').value = '';
-            document.getElementById('newEmployeeName').value = '';
-            document.getElementById('newEmployeeRole').value = 'employee';
-            document.getElementById('newEmployeePin').value = '';
-        }
-        
-        // Export data
-        function exportData() {
-            const data = {
-                patients: getFromStorage('pzrPatients') || [],
-                employees: getFromStorage('pzrEmployees') || [],
-                appointments: getFromStorage('pzrAppointments') || [],
-                recommendations: getFromStorage('pzrRecommendations') || [],
-                documents: getFromStorage('pzrDocuments') || [],
-                exportDate: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `pzr_backup_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            alert('Daten erfolgreich exportiert!');
-        }
-        
-        // Import data
-        function importData() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        
-                        if (confirm('Möchten Sie die importierten Daten mit den vorhandenen zusammenführen?\n\nJa = Zusammenführen\nNein = Vorhandene ersetzen')) {
-                            // Merge
-                            const patients = getFromStorage('pzrPatients') || [];
-                            const employees = getFromStorage('pzrEmployees') || [];
-                            const appointments = getFromStorage('pzrAppointments') || [];
-                            const recommendations = getFromStorage('pzrRecommendations') || [];
-                            const documents = getFromStorage('pzrDocuments') || [];
-                            
-                            saveToStorage('pzrPatients', [...patients, ...(data.patients || [])]);
-                            saveToStorage('pzrEmployees', [...employees, ...(data.employees || [])]);
-                            saveToStorage('pzrAppointments', [...appointments, ...(data.appointments || [])]);
-                            saveToStorage('pzrRecommendations', [...recommendations, ...(data.recommendations || [])]);
-                            saveToStorage('pzrDocuments', [...documents, ...(data.documents || [])]);
-                        } else {
-                            // Replace
-                            saveToStorage('pzrPatients', data.patients || []);
-                            saveToStorage('pzrEmployees', data.employees || []);
-                            saveToStorage('pzrAppointments', data.appointments || []);
-                            saveToStorage('pzrRecommendations', data.recommendations || []);
-                            saveToStorage('pzrDocuments', data.documents || []);
-                        }
-                        
-                        alert('Daten erfolgreich importiert!');
-                        location.reload();
-                    } catch (error) {
-                        alert('Fehler beim Importieren: ' + error.message);
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
-
         // Edit patient
         function editPatient(patientId) {
             const patient = patients.find(p => p.id === patientId);
@@ -3493,6 +3545,16 @@
             patient.toolsUsage = document.getElementById('editToolsUsage').value.trim();
             patient.notes = document.getElementById('editNotes').value.trim();
 
+            const newPin = document.getElementById('editPatientPin').value.trim();
+            if (newPin) {
+                if (newPin.length !== 4 || !/^\d+$/.test(newPin)) {
+                    alert('PIN muss genau 4 Ziffern enthalten!');
+                    return;
+                }
+                patient.pin = newPin;
+            }
+            document.getElementById('editPatientPin').value = '';
+
             saveData();
             closeEditModal();
             loadPatientList();
@@ -3502,6 +3564,7 @@
         // Close edit modal
         function closeEditModal() {
             document.getElementById('editPatientModal').classList.remove('active');
+            document.getElementById('editPatientPin').value = '';
         }
 
         // Switch tabs
@@ -3562,6 +3625,7 @@
         function loadPatientsForDocuments() {
             const patients = getFromStorage('pzrPatients') || [];
             const select = document.getElementById('documentPatient');
+            if (!select) return;
             
             select.innerHTML = '<option value="">Bitte wählen...</option>';
             
@@ -3590,7 +3654,7 @@
             
             const reader = new FileReader();
             reader.onload = function(e) {
-                const document = {
+                const doc = {
                     id: generateId(),
                     name: document.getElementById('documentName').value.trim() || file.name,
                     fileName: file.name,
@@ -3598,14 +3662,14 @@
                     fileSize: file.size,
                     fileData: e.target.result, // Base64
                     category: document.getElementById('documentCategory').value,
-                    patientId: document.getElementById('documentPatient').value || null,
+                    patientId: document.getElementById('documentPatientNumber').value || null,
                     notes: document.getElementById('documentNotes').value.trim(),
                     uploadedBy: currentUser.id,
                     uploadedAt: new Date().toISOString()
                 };
                 
                 const documents = getFromStorage('pzrDocuments') || [];
-                documents.push(document);
+                documents.push(doc);
                 saveToStorage('pzrDocuments', documents);
                 
                 alert('✅ Dokument erfolgreich hochgeladen!');
@@ -3914,7 +3978,14 @@
             patient.patientNumber = newNumber;
             
             // Generate PIN
-            patient.pin = String(Math.floor(1000 + Math.random() * 9000));
+            patient.pin = (() => {
+                const range = 9000; // 1000–9999
+                const maxValid = 4294967296 - (4294967296 % range);
+                const buf = new Uint32Array(1);
+                let r;
+                do { crypto.getRandomValues(buf); r = buf[0]; } while (r >= maxValid);
+                return String(1000 + (r % range));
+            })();
             
             // Update status
             patient.status = 'active';
@@ -4010,7 +4081,7 @@
             } else {
                 patientRecs.forEach(rec => {
                     html += `<div class="recommendation-item" style="padding:10px;border-left:3px solid #00A8CC;margin:10px 0;background:#f0f8ff;">`;
-                    html += `<strong>${rec.type || 'PZR'}</strong> - ${rec.date}<br>`;
+                    html += `<strong>${rec.type === 'pzr' ? 'PZR' : rec.type || 'PZR'}</strong> - ${rec.createdAt ? new Date(rec.createdAt).toLocaleDateString('de-DE') : '-'}<br>`;
                     if (rec.customField1) html += `${rec.customField1}<br>`;
                     if (rec.customField2) html += `${rec.customField2}<br>`;
                     if (rec.customField3) html += `${rec.customField3}<br>`;
@@ -4328,7 +4399,8 @@
             loadEmployeeAppointmentsList();
             
             // Clear form
-            document.getElementById('appointmentPatient').value = '';
+            document.getElementById('appointmentPatientSearch').value = '';
+            document.getElementById('selectedAppointmentPatientId').value = '';
             document.getElementById('appointmentTitle').value = 'Professionelle Zahnreinigung';
             document.getElementById('appointmentDate').value = '';
             document.getElementById('appointmentTime').value = '';
@@ -4581,6 +4653,38 @@
 
             ipcRenderer.on('backend-stopped', () => {
                 setBackendStatusUI(false, null);
+            });
+
+            // electron-updater events: show banner when update is ready to install
+            ipcRenderer.on('update-available', (event, info) => {
+                const banner = document.getElementById('updateBanner');
+                const bannerText = document.getElementById('updateBannerText');
+                const bannerLink = document.getElementById('updateBannerLink');
+                if (!banner) return;
+                bannerText.textContent = `🔄 Update wird heruntergeladen… (v${info.version || ''})`;
+                bannerLink.textContent = 'Bitte warten…';
+                bannerLink.onclick = null;
+                bannerLink.href = '#';
+                banner.style.display = 'block';
+                const c = document.querySelector('.container');
+                if (c) c.style.marginTop = banner.offsetHeight + 'px';
+            });
+
+            ipcRenderer.on('update-downloaded', (event, info) => {
+                const banner = document.getElementById('updateBanner');
+                const bannerText = document.getElementById('updateBannerText');
+                const bannerLink = document.getElementById('updateBannerLink');
+                if (!banner) return;
+                bannerText.textContent = `✅ Update bereit (v${info.version || ''}) – App wird nach Neustart aktualisiert.`;
+                bannerLink.href = '#';
+                bannerLink.textContent = '🔁 Jetzt neu starten & installieren';
+                bannerLink.onclick = function(e) {
+                    e.preventDefault();
+                    ipcRenderer.send('install-update');
+                };
+                banner.style.display = 'block';
+                const c = document.querySelector('.container');
+                if (c) c.style.marginTop = banner.offsetHeight + 'px';
             });
 
             // Query current status
@@ -5141,27 +5245,26 @@
                 const labels = { ios: '🍎 iOS (Add to Home Screen)', windows: '🪟 Windows (.exe)', mac: '🍎 macOS (.dmg)', linux: '🐧 Linux (.deb)', android: '🤖 Android (.apk)' };
                 platformInfo.textContent = 'Erkanntes Betriebssystem: ' + (labels[platform] || platform);
 
-                // Show only the installer section relevant for this platform
+                // Show only the installer section relevant to the current platform
                 const desktopSection = document.getElementById('desktopInstallerSection');
                 const androidSection = document.getElementById('androidInstallerSection');
                 const iosSection = document.getElementById('iosInstallerSection');
+                const backendSection = document.getElementById('backendConfigSection');
+
+                // Hide all first, then reveal the matching one
+                if (iosSection) iosSection.style.display = 'none';
+                if (desktopSection) desktopSection.style.display = 'none';
+                if (androidSection) androidSection.style.display = 'none';
+
                 if (platform === 'ios') {
                     if (iosSection) iosSection.style.display = '';
-                    if (desktopSection) desktopSection.style.display = 'none';
-                    if (androidSection) androidSection.style.display = 'none';
+                    // Backend section remains visible — initBackendUI() shows the browser warning
                 } else if (platform === 'android') {
-                    if (iosSection) iosSection.style.display = 'none';
-                    if (desktopSection) desktopSection.style.display = 'none';
-                    if (androidSection) {
-                        androidSection.style.display = '';
-                        androidSection.style.borderColor = '#4CAF50';
-                        androidSection.style.boxShadow = '0 0 0 3px rgba(76,175,80,0.25)';
-                    }
+                    if (androidSection) androidSection.style.display = '';
+                    // Backend section remains visible — initBackendUI() shows the browser warning
                 } else {
-                    // Windows / Mac / Linux → show desktop installer
-                    if (iosSection) iosSection.style.display = 'none';
+                    // Windows / Mac / Linux (browser or Electron) → show desktop installer
                     if (desktopSection) desktopSection.style.display = '';
-                    if (androidSection) androidSection.style.display = 'none';
                 }
             }
             

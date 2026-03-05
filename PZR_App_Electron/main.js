@@ -218,6 +218,8 @@ ipcMain.on('get-backend-status', (event) => {
 ipcMain.on('install-update', () => {
     if (autoUpdater) {
         autoUpdater.quitAndInstall();
+    } else {
+        console.log('install-update: autoUpdater not available (dev mode or not packaged)');
     }
 });
 

@@ -52,6 +52,8 @@ jobs:
 
       - name: Set nightly version in package.json
         shell: bash
+        # Version format: 1.0.YYYYMMDD — patch number encodes the build date
+        # e.g. 1.0.20260305 → electron-updater sees 1.0.20260306 as newer
         run: |
           node -e "
             const fs = require('fs');
