@@ -70,7 +70,7 @@ jobs:
 
       - name: Install Python setuptools (macOS – required for sqlite3 node-gyp)
         if: matrix.os == 'macos-latest'
-        run: pip3 install setuptools
+        run: pip3 install setuptools --break-system-packages
 
       - name: Build Windows Installer
         if: matrix.os == 'windows-latest'
