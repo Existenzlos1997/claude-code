@@ -1,43 +1,58 @@
-# Claude Code
+# PZR App – Praxisverwaltung
 
-![](https://img.shields.io/badge/Node.js-18%2B-brightgreen?style=flat-square) [![npm]](https://www.npmjs.com/package/@anthropic-ai/claude-code)
+![GitHub Pages](https://img.shields.io/badge/Browser--App-live-brightgreen?style=flat-square)
+![Plattform](https://img.shields.io/badge/Plattform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android-blue?style=flat-square)
 
-[npm]: https://img.shields.io/npm/v/@anthropic-ai/claude-code.svg?style=flat-square
+---
 
-Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows -- all through natural language commands. Use it in your terminal, IDE, or tag @claude on Github.
+## 🌐 Browser-App (sofort testen – keine Installation nötig)
 
-**Learn more in the [official documentation](https://docs.anthropic.com/en/docs/claude-code/overview)**.
+> **[👉 https://existenzlos1997.github.io/claude-code/](https://existenzlos1997.github.io/claude-code/)**
 
-<img src="./demo.gif" />
+Die App läuft direkt im Browser. Einfach den Link öffnen und loslegen.
 
-## Get started
+---
 
-1. Install Claude Code:
+## 📥 Installer herunterladen
 
-```sh
-npm install -g @anthropic-ai/claude-code
+> **[👉 https://github.com/Existenzlos1997/claude-code/releases](https://github.com/Existenzlos1997/claude-code/releases)**
+
+Verfügbare Installer (neueste Version):
+
+| Plattform | Datei |
+|-----------|-------|
+| 🪟 Windows | `.exe` Setup-Installer |
+| 🍎 macOS | `.dmg` Disk Image |
+| 🐧 Linux | `.AppImage` |
+| 🤖 Android | `.apk` |
+
+---
+
+## 🔑 Standard-Login
+
+Beim ersten Start:
+- **Mitarbeiter-ID:** `MA-001`
+- **Passwort:** `admin`
+
+---
+
+## ✨ Features
+
+- 👥 Patienten- und Mitarbeiterverwaltung
+- 📅 Terminkalender
+- 💰 Abrechnung & Rechnungsstellung
+- 📊 CSV-Import/Export (kompatibel mit Evident, Z1, Charly, Dampsoft)
+- 🔄 Automatische Updates
+- 🌐 Mehrmandantenfähig (mehrere Praxen)
+- 📱 Funktioniert auf Desktop, Tablet und Smartphone
+
+---
+
+## 🏗️ Architektur
+
 ```
-
-2. Navigate to your project directory and run `claude`.
-
-## Reporting Bugs
-
-We welcome your feedback. Use the `/bug` command to report issues directly within Claude Code, or file a [GitHub issue](https://github.com/anthropics/claude-code/issues).
-
-## Connect on Discord
-
-Join the [Claude Developers Discord](https://anthropic.com/discord) to connect with other developers using Claude Code. Get help, share feedback, and discuss your projects with the community.
-
-## Data collection, usage, and retention
-
-When you use Claude Code, we collect feedback, which includes usage data (such as code acceptance or rejections), associated conversation data, and user feedback submitted via the `/bug` command.
-
-### How we use your data
-
-See our [data usage policies](https://docs.anthropic.com/en/docs/claude-code/data-usage).
-
-### Privacy safeguards
-
-We have implemented several safeguards to protect your data, including limited retention periods for sensitive information, restricted access to user session data, and clear policies against using feedback for model training.
-
-For full details, please review our [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) and [Privacy Policy](https://www.anthropic.com/legal/privacy).
+PZR_App/           → Browser-App (HTML/JS/CSS) + PWA
+PZR_App_Electron/  → Desktop-App (Electron + lokaler Backend-Server)
+PZR_App_Android/   → Android-App (Capacitor)
+docs/              → GitHub Pages Deployment
+```
