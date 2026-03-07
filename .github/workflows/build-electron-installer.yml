@@ -71,17 +71,17 @@ jobs:
       - name: Build Windows Installer
         if: matrix.os == 'windows-latest'
         working-directory: PZR_App_Electron
-        run: npm run build:win
+        run: npm run build:win -- --publish=never
 
       - name: Build macOS Installer
         if: matrix.os == 'macos-latest'
         working-directory: PZR_App_Electron
-        run: npm run build:mac
+        run: npm run build:mac -- --publish=never
 
       - name: Build Linux Installer
         if: matrix.os == 'ubuntu-latest'
         working-directory: PZR_App_Electron
-        run: npm run build:linux
+        run: npm run build:linux -- --publish=never
 
       - name: Upload Windows Installer
         if: matrix.os == 'windows-latest'
