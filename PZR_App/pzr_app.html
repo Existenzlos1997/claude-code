@@ -2008,10 +2008,31 @@
                         <!-- Data Management -->
                         <div class="settings-section">
                             <h3>💾 Daten-Verwaltung</h3>
-                            <p>Exportieren oder importieren Sie alle Praxis-Daten.</p>
+                            <p>Exportieren oder importieren Sie alle Praxis-Daten (PZR-Backup-Format).</p>
                             
                             <button class="btn" onclick="exportData()">📥 Daten exportieren</button>
                             <button class="btn" onclick="importData()" style="margin-left: 10px;">📤 Daten importieren</button>
+                        </div>
+
+                        <hr style="margin: 30px 0;">
+
+                        <!-- Integration Section -->
+                        <div class="settings-section" id="integrationSection">
+                            <h3>🔗 Integrationen – Evident / Z1 / Charly</h3>
+                            <p>Importieren Sie Patientendaten aus bestehenden Praxisverwaltungsprogrammen oder exportieren Sie Daten zurück. Unterstützte Formate: <strong>CSV</strong> (Evident, Z1, Charly, Dampsoft u. a.).</p>
+
+                            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+                                <button class="btn" onclick="importPatientsCSV()" title="Patienten aus Evident / Z1 / Charly CSV importieren">⬆️ Patienten aus CSV importieren</button>
+                                <button class="btn btn-secondary" onclick="exportPatientsCSV()" title="Patienten als CSV exportieren">⬇️ Patienten als CSV exportieren</button>
+                                <button class="btn btn-secondary" onclick="exportAppointmentsCSV()" title="Termine als CSV exportieren">⬇️ Termine als CSV exportieren</button>
+                            </div>
+
+                            <div style="margin-top:14px; background:#f0f4ff; border-radius:8px; padding:12px; font-size:13px; color:#444;">
+                                <strong>Hinweis zum CSV-Import:</strong><br>
+                                Die erste Zeile muss Spaltenüberschriften enthalten. Unterstützte Spaltennamen (Groß-/Kleinschreibung egal):<br>
+                                <code>ID / Patientennummer / Karteinummer</code>, <code>Vorname / Firstname</code>, <code>Nachname / Lastname / Name</code>, <code>Geburtsdatum / DOB / Birthday</code>, <code>E-Mail / Email</code>, <code>Telefon / Phone / Mobil</code>, <code>Adresse / Straße / Street</code>, <code>PLZ / ZIP</code>, <code>Ort / City</code><br><br>
+                                Bestehende Patienten mit gleicher Patientennummer werden aktualisiert, neue werden hinzugefügt.
+                            </div>
                         </div>
                     </div>
                     
@@ -5208,6 +5229,360 @@
                 reader.readAsText(file);
             };
             input.click();
+        }
+
+        // ── CSV Integration helpers (Evident / Z1 / Charly / Dampsoft) ──────────────
+
+        function csvParseRows(text) {
+            // Handles quoted fields, semicolon or comma separator
+            const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+            const sep = (lines[0] && lines[0].includes(';')) ? ';' : ',';
+            return lines.filter(l => l.trim()).map(line => {
+                const cols = [];
+                let cur = '', inQ = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (ch === '"') {
+                        if (inQ && line[i + 1] === '"') { cur += '"'; i++; } // escaped quote
+                        else { inQ = !inQ; }
+                    } else if (ch === sep && !inQ) {
+                        cols.push(cur.trim()); cur = '';
+                    } else {
+                        cur += ch;
+                    }
+                }
+                cols.push(cur.trim());
+                return cols;
+            });
+        }
+
+        function csvColIdx(headers, ...variants) {
+            const lh = headers.map(h => h.toLowerCase().replace(/\s/g,''));
+            for (const v of variants) {
+                const idx = lh.indexOf(v.toLowerCase().replace(/\s/g,''));
+                if (idx !== -1) return idx;
+            }
+            return -1;
+        }
+
+        function importPatientsCSV() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.txt';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const rows = csvParseRows(ev.target.result);
+                        if (rows.length < 2) { alert('CSV-Datei enthält keine Daten.'); return; }
+                        const headers = rows[0];
+
+                        const iId    = csvColIdx(headers, 'ID','Patientennummer','Karteinummer','PatID','Karte');
+                        const iFirst = csvColIdx(headers, 'Vorname','Firstname','First');
+                        const iLast  = csvColIdx(headers, 'Nachname','Lastname','Last','Name','Familienname');
+                        const iDob   = csvColIdx(headers, 'Geburtsdatum','DOB','Birthday','Geb.datum','Geb');
+                        const iEmail = csvColIdx(headers, 'E-Mail','Email','EMail','Mail');
+                        const iPhone = csvColIdx(headers, 'Telefon','Phone','Mobil','Handy','Tel','Telefonnummer');
+                        const iStr   = csvColIdx(headers, 'Adresse','Straße','Strasse','Street','Anschrift');
+                        const iPlz   = csvColIdx(headers, 'PLZ','ZIP','Postleitzahl');
+                        const iCity  = csvColIdx(headers, 'Ort','Stadt','City','Wohnort');
+
+                        let existingPatients = getFromStorage('pzrPatients') || [];
+                        let added = 0, updated = 0;
+                        const base = Date.now();
+
+                        for (let r = 1; r < rows.length; r++) {
+                            const row = rows[r];
+                            if (!row.length || row.every(c => !c)) continue;
+
+                            const firstName = iFirst >= 0 ? row[iFirst] || '' : '';
+                            const lastName  = iLast  >= 0 ? row[iLast]  || '' : '';
+                            const fullName  = [firstName, lastName].filter(Boolean).join(' ') || (row[0] || '');
+                            if (!fullName.trim()) continue;
+
+                            const extId   = iId >= 0 ? row[iId] || '' : '';
+                            const email   = iEmail >= 0 ? row[iEmail] || '' : '';
+                            const phone   = iPhone >= 0 ? row[iPhone] || '' : '';
+                            const dob     = iDob   >= 0 ? row[iDob]   || '' : '';
+                            const street  = iStr   >= 0 ? row[iStr]   || '' : '';
+                            const plz     = iPlz   >= 0 ? row[iPlz]   || '' : '';
+                            const city    = iCity  >= 0 ? row[iCity]  || '' : '';
+
+                            // Match by external ID (preferred) or email (fallback)
+                            let existIdx = -1;
+                            if (extId) existIdx = existingPatients.findIndex(p => p.number === extId || p.id === extId || p.patientNumber === extId);
+                            if (existIdx < 0 && email) existIdx = existingPatients.findIndex(p => p.email === email);
+
+                            const genId = extId || ('PAT-' + (base + r));
+                            const patObj = existIdx >= 0 ? { ...existingPatients[existIdx] } : {
+                                id: genId,
+                                patientNumber: genId,
+                                number: genId,
+                                status: 'active',
+                                pin: Math.floor(1000 + Math.random() * 9000).toString(),
+                                created: new Date().toISOString(),
+                                anamnese: { allergies:'', medications:'', bleedingTendency:false, heartDisease:false,
+                                    diabetes:false, pregnancy:false, chronicConditions:'', previousSurgeries:'',
+                                    smoker:false, alcoholConsumption:'none', lastUpdated:null }
+                            };
+
+                            patObj.name      = fullName;
+                            patObj.firstName = firstName;
+                            patObj.lastName  = lastName;
+                            if (email)  patObj.email  = email;
+                            if (phone)  patObj.phone  = phone;
+                            if (dob)    patObj.birthDate = dob;
+                            if (street) patObj.street = street;
+                            if (plz)    patObj.zip    = plz;
+                            if (city)   patObj.city   = city;
+                            if (extId)  { patObj.id = patObj.number = patObj.patientNumber = extId; }
+
+                            if (existIdx >= 0) { existingPatients[existIdx] = patObj; updated++; }
+                            else               { existingPatients.push(patObj); added++; }
+                        }
+
+                        saveToStorage('pzrPatients', existingPatients);
+                        alert(`CSV-Import abgeschlossen:\n✅ ${added} neue Patienten hinzugefügt\n🔄 ${updated} Patienten aktualisiert`);
+                        location.reload();
+                    } catch (err) {
+                        alert('Fehler beim CSV-Import: ' + err.message);
+                    }
+                };
+                reader.readAsText(file, 'UTF-8');
+            };
+            input.click();
+        }
+
+        function exportPatientsCSV() {
+            const patients = getFromStorage('pzrPatients') || [];
+            if (!patients.length) { alert('Keine Patienten vorhanden.'); return; }
+
+            const headers = ['Patientennummer','Vorname','Nachname','Geburtsdatum','E-Mail','Telefon','Straße','PLZ','Ort','Status'];
+            const rows = patients.map(p => {
+                const fn = p.firstName || '';
+                const ln = p.lastName  || '';
+                return [
+                    p.number || p.id || '',
+                    fn,
+                    ln,
+                    p.birthDate || '',
+                    p.email || '',
+                    p.phone || '',
+                    p.street || '',
+                    p.zip || '',
+                    p.city || '',
+                    p.status || 'active'
+                ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(';');
+            });
+
+            const csv = [headers.join(';'), ...rows].join('\r\n');
+            const bom = '\uFEFF'; // BOM for Excel UTF-8
+            const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pzr_patienten_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportAppointmentsCSV() {
+            const appointments = getFromStorage('pzrAppointments') || [];
+            const patients = getFromStorage('pzrPatients') || [];
+            if (!appointments.length) { alert('Keine Termine vorhanden.'); return; }
+
+            const patMap = {};
+            patients.forEach(p => { patMap[p.id] = p; });
+
+            const headers = ['Termin-ID','Datum','Uhrzeit','Dauer (Min)','Patientennummer','Patient','Behandlung','Status','Notizen'];
+            const rows = appointments.map(a => {
+                const pat = patMap[a.patientId] || {};
+                return [
+                    a.id || '',
+                    a.date || '',
+                    a.time || '',
+                    a.duration || '',
+                    pat.number || a.patientId || '',
+                    pat.name || a.patientName || '',
+                    a.treatment || a.type || '',
+                    a.status || '',
+                    (a.notes || '').replace(/\n/g, ' ')
+                ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(';');
+            });
+
+            const csv = [headers.join(';'), ...rows].join('\r\n');
+            const bom = '\uFEFF';
+            const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pzr_termine_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function csvColIdx(headers, ...variants) {
+            const lh = headers.map(h => h.toLowerCase().replace(/\s/g,''));
+            for (const v of variants) {
+                const idx = lh.indexOf(v.toLowerCase().replace(/\s/g,''));
+                if (idx !== -1) return idx;
+            }
+            return -1;
+        }
+
+        function importPatientsCSV() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.txt';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const rows = csvParseRows(ev.target.result);
+                        if (rows.length < 2) { alert('CSV-Datei enthält keine Daten.'); return; }
+                        const headers = rows[0];
+
+                        const iId    = csvColIdx(headers, 'ID','Patientennummer','Karteinummer','PatID','Karte');
+                        const iFirst = csvColIdx(headers, 'Vorname','Firstname','First');
+                        const iLast  = csvColIdx(headers, 'Nachname','Lastname','Last','Name','Familienname');
+                        const iDob   = csvColIdx(headers, 'Geburtsdatum','DOB','Birthday','Geb.datum','Geb');
+                        const iEmail = csvColIdx(headers, 'E-Mail','Email','EMail','Mail');
+                        const iPhone = csvColIdx(headers, 'Telefon','Phone','Mobil','Handy','Tel','Telefonnummer');
+                        const iStr   = csvColIdx(headers, 'Adresse','Straße','Strasse','Street','Anschrift');
+                        const iPlz   = csvColIdx(headers, 'PLZ','ZIP','Postleitzahl');
+                        const iCity  = csvColIdx(headers, 'Ort','Stadt','City','Wohnort');
+
+                        let existingPatients = getFromStorage('pzrPatients') || [];
+                        let added = 0, updated = 0;
+
+                        for (let r = 1; r < rows.length; r++) {
+                            const row = rows[r];
+                            if (!row.length || row.every(c => !c)) continue;
+
+                            const firstName = iFirst >= 0 ? row[iFirst] || '' : '';
+                            const lastName  = iLast  >= 0 ? row[iLast]  || '' : '';
+                            const fullName  = [firstName, lastName].filter(Boolean).join(' ') || (row[0] || '');
+                            if (!fullName.trim()) continue;
+
+                            const extId   = iId >= 0 ? row[iId] || '' : '';
+                            const email   = iEmail >= 0 ? row[iEmail] || '' : '';
+                            const phone   = iPhone >= 0 ? row[iPhone] || '' : '';
+                            const dob     = iDob   >= 0 ? row[iDob]   || '' : '';
+                            const street  = iStr   >= 0 ? row[iStr]   || '' : '';
+                            const plz     = iPlz   >= 0 ? row[iPlz]   || '' : '';
+                            const city    = iCity  >= 0 ? row[iCity]  || '' : '';
+
+                            // Match by external ID or email
+                            const existIdx = existingPatients.findIndex(p =>
+                                (extId && (p.number === extId || p.id === extId || p.patientNumber === extId)) ||
+                                (email && p.email === email)
+                            );
+
+                            const patObj = existIdx >= 0 ? { ...existingPatients[existIdx] } : {
+                                id: extId || ('PAT-' + Date.now() + '-' + r),
+                                patientNumber: extId || ('PAT-' + Date.now() + '-' + r),
+                                number: extId || ('PAT-' + Date.now() + '-' + r),
+                                status: 'active',
+                                pin: Math.floor(1000 + Math.random() * 9000).toString(),
+                                created: new Date().toISOString(),
+                                anamnese: { allergies:'', medications:'', bleedingTendency:false, heartDisease:false,
+                                    diabetes:false, pregnancy:false, chronicConditions:'', previousSurgeries:'',
+                                    smoker:false, alcoholConsumption:'none', lastUpdated:null }
+                            };
+
+                            patObj.name      = fullName;
+                            patObj.firstName = firstName;
+                            patObj.lastName  = lastName;
+                            if (email)  patObj.email  = email;
+                            if (phone)  patObj.phone  = phone;
+                            if (dob)    patObj.birthDate = dob;
+                            if (street) patObj.street = street;
+                            if (plz)    patObj.zip    = plz;
+                            if (city)   patObj.city   = city;
+                            if (extId)  patObj.number = patObj.patientNumber = patObj.id = extId;
+
+                            if (existIdx >= 0) { existingPatients[existIdx] = patObj; updated++; }
+                            else               { existingPatients.push(patObj); added++; }
+                        }
+
+                        saveToStorage('pzrPatients', existingPatients);
+                        alert(`CSV-Import abgeschlossen:\n✅ ${added} neue Patienten hinzugefügt\n🔄 ${updated} Patienten aktualisiert`);
+                        location.reload();
+                    } catch (err) {
+                        alert('Fehler beim CSV-Import: ' + err.message);
+                    }
+                };
+                reader.readAsText(file, 'UTF-8');
+            };
+            input.click();
+        }
+
+        function exportPatientsCSV() {
+            const patients = getFromStorage('pzrPatients') || [];
+            if (!patients.length) { alert('Keine Patienten vorhanden.'); return; }
+
+            const headers = ['Patientennummer','Vorname','Nachname','Geburtsdatum','E-Mail','Telefon','Straße','PLZ','Ort','Status'];
+            const rows = patients.map(p => [
+                p.number || p.id || '',
+                p.firstName || (p.name ? p.name.split(' ')[0] : '') || '',
+                p.lastName  || (p.name ? p.name.split(' ').slice(1).join(' ') : '') || '',
+                p.birthDate || '',
+                p.email || '',
+                p.phone || '',
+                p.street || '',
+                p.zip || '',
+                p.city || '',
+                p.status || 'active'
+            ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(';'));
+
+            const csv = [headers.join(';'), ...rows].join('\r\n');
+            const bom = '\uFEFF'; // BOM for Excel UTF-8
+            const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pzr_patienten_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportAppointmentsCSV() {
+            const appointments = getFromStorage('pzrAppointments') || [];
+            const patients = getFromStorage('pzrPatients') || [];
+            if (!appointments.length) { alert('Keine Termine vorhanden.'); return; }
+
+            const patMap = {};
+            patients.forEach(p => { patMap[p.id] = p; });
+
+            const headers = ['Termin-ID','Datum','Uhrzeit','Dauer (Min)','Patientennummer','Patient','Behandlung','Status','Notizen'];
+            const rows = appointments.map(a => {
+                const pat = patMap[a.patientId] || {};
+                return [
+                    a.id || '',
+                    a.date || '',
+                    a.time || '',
+                    a.duration || '',
+                    pat.number || a.patientId || '',
+                    pat.name || a.patientName || '',
+                    a.treatment || a.type || '',
+                    a.status || '',
+                    (a.notes || '').replace(/\n/g, ' ')
+                ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(';');
+            });
+
+            const csv = [headers.join(';'), ...rows].join('\r\n');
+            const bom = '\uFEFF';
+            const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pzr_termine_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function addEmployee() {
