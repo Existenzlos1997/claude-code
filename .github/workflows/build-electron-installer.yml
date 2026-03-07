@@ -68,6 +68,10 @@ jobs:
         working-directory: PZR_App_Electron
         run: npm install
 
+      - name: Install Python setuptools (macOS – required for sqlite3 node-gyp)
+        if: matrix.os == 'macos-latest'
+        run: pip3 install setuptools
+
       - name: Build Windows Installer
         if: matrix.os == 'windows-latest'
         working-directory: PZR_App_Electron
@@ -88,21 +92,27 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: PZR_App_Electron/dist/*.exe
+          path: |
+            PZR_App_Electron/dist/*.exe
+            PZR_App_Electron/dist/latest.yml
 
       - name: Upload macOS Installer
         if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
           name: macos-installer
-          path: PZR_App_Electron/dist/*.dmg
+          path: |
+            PZR_App_Electron/dist/*.dmg
+            PZR_App_Electron/dist/latest-mac.yml
 
       - name: Upload Linux Installer
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: linux-installer
-          path: PZR_App_Electron/dist/*.deb
+          path: |
+            PZR_App_Electron/dist/*.deb
+            PZR_App_Electron/dist/latest-linux.yml
 
   publish-nightly:
     name: Publish Nightly Release
