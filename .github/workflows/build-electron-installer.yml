@@ -130,12 +130,25 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
 
+      - name: Get current date
+        id: date
+        run: echo "BUILD_DATE=$(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_OUTPUT
+
       - name: Publish to nightly pre-release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: nightly
-          name: "Nightly Build"
-          body: "Automatischer Build vom Branch – immer aktuellste Version."
+          name: "Nightly Build (${{ steps.date.outputs.BUILD_DATE }})"
+          body: |
+            Automatischer Build vom Branch – immer aktuellste Version.
+            
+            🕐 **Zuletzt gebaut:** ${{ steps.date.outputs.BUILD_DATE }}
+            📦 **Branch:** ${{ github.ref_name }}
+            
+            Laden Sie den passenden Installer für Ihr Betriebssystem herunter:
+            - **Windows:** `pzr-app-setup-*.exe`
+            - **macOS:** `pzr-app-*.dmg`
+            - **Linux:** `pzr-app-*.deb`
           prerelease: true
           files: |
             windows-installer/*
