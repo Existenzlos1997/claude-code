@@ -1652,6 +1652,11 @@
                         <h2>Neuen Patienten anlegen</h2>
                         
                         <div class="form-group">
+                            <label for="newPatientNumber">Patientennummer *</label>
+                            <input type="text" id="newPatientNumber" placeholder="z.B. PAT-12346">
+                        </div>
+
+                        <div class="form-group">
                             <label for="newPatientName">Name *</label>
                             <input type="text" id="newPatientName" placeholder="Vor- und Nachname">
                         </div>
@@ -1659,6 +1664,11 @@
                         <div class="form-group">
                             <label for="newPatientPin">PIN (4 Ziffern) *</label>
                             <input type="password" id="newPatientPin" placeholder="1234" maxlength="4" autocomplete="new-password" inputmode="numeric">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPatientBirthdate">Geburtsdatum</label>
+                            <input type="date" id="newPatientBirthdate">
                         </div>
 
                         <div class="form-group">
@@ -1671,16 +1681,39 @@
                             <input type="text" id="newPatientPhone" placeholder="+49 123 456789">
                         </div>
 
-                        <h3>Persönliche Daten</h3>
-                        
                         <div class="form-group">
-                            <label for="newPatientNumber">Patientennummer *</label>
-                            <input type="text" id="newPatientNumber" placeholder="z.B. PAT-12346">
+                            <label for="newPatientMobile">Mobil</label>
+                            <input type="tel" id="newPatientMobile" placeholder="+49 176 12345678">
                         </div>
 
                         <div class="form-group">
-                            <label for="newPatientBirthdate">Geburtsdatum</label>
-                            <input type="date" id="newPatientBirthdate">
+                            <label for="newPatientStreet">Straße + Hausnummer</label>
+                            <input type="text" id="newPatientStreet" placeholder="Musterstraße 1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPatientZip">PLZ</label>
+                            <input type="text" id="newPatientZip" placeholder="12345">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPatientCity">Stadt</label>
+                            <input type="text" id="newPatientCity" placeholder="Musterstadt">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newAllergies">Allergien / Unverträglichkeiten</label>
+                            <input type="text" id="newAllergies" placeholder="z.B. Penicillin, Latex">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newMedications">Medikamente</label>
+                            <input type="text" id="newMedications" placeholder="z.B. Blutverdünner">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newMedicalHistory">Allgemeine Vorerkrankungen</label>
+                            <input type="text" id="newMedicalHistory" placeholder="z.B. Diabetes, Herzerkrankung">
                         </div>
 
                         <button class="btn" onclick="createNewPatient()">Patient anlegen</button>
@@ -1991,7 +2024,7 @@
                                     <input type="password" id="newEmployeePassword" placeholder="Mindestens 6 Zeichen">
                                 </div>
                                 
-                                <div class="form-group" id="roleSelectGroup">
+                                <div class="form-group" id="roleSelectGroup" style="display:none;">
                                     <label for="newEmployeeRole">Rolle *</label>
                                     <select id="newEmployeeRole">
                                         <option value="employee">Behandler</option>
@@ -2085,6 +2118,27 @@
                 </div>
 
                 <div class="form-group voice-input-container">
+                    <label for="editRecommendations">Behandlungsempfehlungen</label>
+                    <textarea id="editRecommendations" placeholder="z.B. Fokus auf Zahnzwischenräume..."></textarea>
+                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editRecommendations')" title="Spracheingabe">🎤</button>
+                    <div id="editRecommendations-status" class="voice-status"></div>
+                </div>
+
+                <div class="form-group voice-input-container">
+                    <label for="editBrushingTechnique">Putztechnik-Empfehlung</label>
+                    <textarea id="editBrushingTechnique" placeholder="z.B. Bass-Technik, 45°-Winkel..."></textarea>
+                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editBrushingTechnique')" title="Spracheingabe">🎤</button>
+                    <div id="editBrushingTechnique-status" class="voice-status"></div>
+                </div>
+
+                <div class="form-group voice-input-container">
+                    <label for="editToolsUsage">Hilfsmittel-Empfehlung</label>
+                    <textarea id="editToolsUsage" placeholder="z.B. Interdentalbürsten Größe 2..."></textarea>
+                    <button type="button" class="voice-btn" onclick="toggleVoiceInput('editToolsUsage')" title="Spracheingabe">🎤</button>
+                    <div id="editToolsUsage-status" class="voice-status"></div>
+                </div>
+
+                <div class="form-group voice-input-container">
                     <label for="editNotes">Weitere Bemerkungen</label>
                     <textarea id="editNotes"></textarea>
                     <button type="button" class="voice-btn" onclick="toggleVoiceInput('editNotes')" title="Spracheingabe">🎤</button>
@@ -2111,6 +2165,9 @@
 
         // App version — update this date whenever a new release is pushed
         const APP_BUILD_DATE = '2026-03-01';
+
+        // Master practice sentinel value – used where practiceId is not scoped to a specific practice
+        const MASTER_PRACTICE_ID = 'master';
 
         // Voice Recognition State
         let recognition = null;
@@ -2445,12 +2502,12 @@
                     password: 'admin',
                     name: 'Master Administrator',
                     role: 'masterAdmin',
-                    practiceId: 'master'
+                    practiceId: MASTER_PRACTICE_ID
                 });
             } else if (existingEmployees[masterIdx].role !== 'masterAdmin') {
                 // Migration: upgrade existing MA-001 to masterAdmin
                 existingEmployees[masterIdx].role = 'masterAdmin';
-                existingEmployees[masterIdx].practiceId = 'master';
+                existingEmployees[masterIdx].practiceId = MASTER_PRACTICE_ID;
             }
             localStorage.setItem('pzrEmployees', JSON.stringify(existingEmployees));
         }
@@ -2912,8 +2969,14 @@
         // Load patient list for employees
         function loadPatientList() {
             const container = document.getElementById('patientListContainer');
-            const patients = getFromStorage('pzrPatients') || [];
-            const activePatients = patients.filter(p => p.status === 'active');
+            const allPatients = getFromStorage('pzrPatients') || [];
+            // masterAdmin sees all; admin/employee see only their practice
+            const isMaster = currentUser && currentUser.role === 'masterAdmin';
+            const myPracticeId = currentUser?.practiceId;
+            const activePatients = allPatients.filter(p =>
+                p.status === 'active' &&
+                (isMaster || !myPracticeId || !p.practiceId || p.practiceId === myPracticeId)
+            );
             
             if (activePatients.length === 0) {
                 container.innerHTML = '<p class="empty-state">Keine Patienten vorhanden.</p>';
@@ -3074,8 +3137,13 @@
         function searchPatients() {
             const searchTerm = document.getElementById('patientSearch').value.toLowerCase().trim();
             
-            const patients = getFromStorage('pzrPatients') || [];
-            const activePatients = patients.filter(p => p.status === 'active');
+            const allPatients = getFromStorage('pzrPatients') || [];
+            const isMaster = currentUser && currentUser.role === 'masterAdmin';
+            const myPracticeId = currentUser?.practiceId;
+            const activePatients = allPatients.filter(p =>
+                p.status === 'active' &&
+                (isMaster || !myPracticeId || !p.practiceId || p.practiceId === myPracticeId)
+            );
             
             if (!searchTerm) {
                 loadPatientList();
@@ -3438,7 +3506,12 @@
                 return;
             }
             
-            const patients = getFromStorage('pzrPatients') || [];
+            const allPatients = getFromStorage('pzrPatients') || [];
+            const isMaster = currentUser && currentUser.role === 'masterAdmin';
+            const myPracticeId = currentUser?.practiceId;
+            const patients = allPatients.filter(p =>
+                isMaster || !myPracticeId || !p.practiceId || p.practiceId === myPracticeId
+            );
             const filtered = patients.filter(p => {
                 const number = (p.patientNumber || p.number || '').toLowerCase();
                 const name = (p.name || `${p.firstName || ''} ${p.lastName || ''}`).toLowerCase().trim();
@@ -3499,8 +3572,13 @@
                 return;
             }
             
-            const patients = getFromStorage('pzrPatients') || [];
-            const filtered = patients.filter(p => {
+            const allPatients = getFromStorage('pzrPatients') || [];
+            const isMaster = currentUser && currentUser.role === 'masterAdmin';
+            const myPracticeId = currentUser?.practiceId;
+            const practicePatients = allPatients.filter(p =>
+                isMaster || !myPracticeId || !p.practiceId || p.practiceId === myPracticeId
+            );
+            const filtered = practicePatients.filter(p => {
                 const number = (p.patientNumber || p.number || '').toLowerCase();
                 const name = (p.name || `${p.firstName || ''} ${p.lastName || ''}`).toLowerCase().trim();
                 return number.includes(searchTerm) || name.includes(searchTerm);
@@ -3644,6 +3722,7 @@
                 lastName,
                 pin,
                 status: 'active',
+                practiceId: currentUser?.practiceId || MASTER_PRACTICE_ID,
                 birthdate: document.getElementById('newPatientBirthdate')?.value || '',
                 email: document.getElementById('newPatientEmail')?.value || '',
                 phone: document.getElementById('newPatientPhone')?.value || '',
@@ -3685,6 +3764,16 @@
             document.getElementById('newPatientNumber').value = '';
             document.getElementById('newPatientName').value = '';
             document.getElementById('newPatientPin').value = '';
+            if (document.getElementById('newPatientBirthdate')) document.getElementById('newPatientBirthdate').value = '';
+            if (document.getElementById('newPatientEmail')) document.getElementById('newPatientEmail').value = '';
+            if (document.getElementById('newPatientPhone')) document.getElementById('newPatientPhone').value = '';
+            if (document.getElementById('newPatientMobile')) document.getElementById('newPatientMobile').value = '';
+            if (document.getElementById('newPatientStreet')) document.getElementById('newPatientStreet').value = '';
+            if (document.getElementById('newPatientZip')) document.getElementById('newPatientZip').value = '';
+            if (document.getElementById('newPatientCity')) document.getElementById('newPatientCity').value = '';
+            if (document.getElementById('newAllergies')) document.getElementById('newAllergies').value = '';
+            if (document.getElementById('newMedications')) document.getElementById('newMedications').value = '';
+            if (document.getElementById('newMedicalHistory')) document.getElementById('newMedicalHistory').value = '';
             
             loadPatientList();
         }
@@ -4068,6 +4157,12 @@
                 return;
             }
             
+            // Determine target practice from URL param or logged-in user
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetPracticeId = urlParams.get('practice') ||
+                (currentUser?.practiceId && currentUser.practiceId !== MASTER_PRACTICE_ID ? currentUser.practiceId : null) ||
+                MASTER_PRACTICE_ID;
+            
             // Create pre-registered patient
             const newPatient = {
                 id: generateId(),
@@ -4082,6 +4177,7 @@
                 zip: zip,
                 city: city,
                 status: 'pre-registered',
+                practiceId: targetPracticeId,
                 registeredAt: new Date().toISOString(),
                 pin: '' // Will be generated on approval
             };
@@ -4098,8 +4194,14 @@
 
         // Registration Management Functions
         function loadRegistrations() {
-            const patients = getFromStorage('pzrPatients') || [];
-            const pending = patients.filter(p => p.status === 'pre-registered');
+            const allPatients = getFromStorage('pzrPatients') || [];
+            const isMaster = currentUser && currentUser.role === 'masterAdmin';
+            const myPracticeId = currentUser?.practiceId;
+            // Filter by practice: admins only see their practice's registrations
+            const pending = allPatients.filter(p =>
+                p.status === 'pre-registered' &&
+                (isMaster || !myPracticeId || !p.practiceId || p.practiceId === myPracticeId)
+            );
             
             const container = document.getElementById('registrationsList');
             
@@ -4164,9 +4266,13 @@
                 return String(1000 + (r % range));
             })();
             
-            // Update status
+            // Update status and assign practiceId
             patient.status = 'active';
             patient.approvedAt = new Date().toISOString();
+            patient.approvedBy = currentUser?.employeeId || currentUser?.id;
+            if (!patient.practiceId && currentUser?.practiceId) {
+                patient.practiceId = currentUser.practiceId;
+            }
             
             saveToStorage('pzrPatients', patients);
             
@@ -4643,14 +4749,26 @@
         function loadEmployeeAppointmentsList() {
             const container = document.getElementById('employeeAppointmentsList');
             
-            if (appointments.length === 0) {
+            // Always read fresh data from storage + apply practice filter
+            const allApts = getFromStorage('pzrAppointments') || [];
+            const allPats = getFromStorage('pzrPatients') || [];
+            const isMaster = currentUser && currentUser.role === 'masterAdmin';
+            const myPracticeId = currentUser?.practiceId;
+            const filteredApts = isMaster ? allApts : allApts.filter(apt => {
+                const p = allPats.find(pat => pat.id === apt.patientId);
+                // Only show appointment if patient belongs to this practice
+                // (include if patient has no practiceId set for backwards compatibility)
+                return p && (!p.practiceId || !myPracticeId || p.practiceId === myPracticeId);
+            });
+
+            if (filteredApts.length === 0) {
                 container.innerHTML = '<p class="empty-state">Noch keine Termine vorhanden.</p>';
                 return;
             }
 
             const now = new Date();
-            container.innerHTML = appointments.map(apt => {
-                const patient = patients.find(p => p.id === apt.patientId);
+            container.innerHTML = filteredApts.map(apt => {
+                const patient = allPats.find(p => p.id === apt.patientId);
                 const appointmentDate = new Date(apt.date + ' ' + apt.time);
                 const isUpcoming = appointmentDate > now;
                 const isPast = appointmentDate < now;
@@ -4665,9 +4783,6 @@
                 } else {
                     badge = '<span class="badge past">Vergangen</span>';
                 }
-
-                // KEINE AMPEL FÜR BEHANDLER! 
-                // Behandler verwalten Termine, Patient sieht die Ampel
 
                 // Check for critical medical history
                 let warning = '';
@@ -4688,7 +4803,7 @@
                 return `
                     <div class="appointment-item">
                         <h4>${apt.title}${badge}</h4>
-                        <p>👤 Patient: ${patient ? patient.name + ' (' + patient.patientNumber + ')' : 'Unbekannt'}</p>
+                        <p>👤 Patient: ${patient ? patient.name + ' (' + (patient.patientNumber || patient.number) + ')' : 'Unbekannt'}</p>
                         <p>📅 ${formatDate(apt.date)} um ${apt.time} Uhr</p>
                         ${apt.location ? `<p>📍 ${apt.location}</p>` : ''}
                         ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
@@ -5553,7 +5668,7 @@
                 const backendBadge = emp.backendUrl
                     ? `<span style="font-size:11px; background:#e8f5e9; color:#2e7d32; border-radius:4px; padding:2px 6px; margin-left:6px;">🔗 Backend</span>`
                     : '';
-                const practiceBadge = (isMaster && emp.practiceId && emp.practiceId !== 'master')
+                const practiceBadge = (isMaster && emp.practiceId && emp.practiceId !== MASTER_PRACTICE_ID)
                     ? `<span style="font-size:11px; background:#e3f2fd; color:#1565c0; border-radius:4px; padding:2px 6px; margin-left:6px;">🏥 ${emp.practiceId}</span>`
                     : '';
                 // Allow deletion: masterAdmin can delete any non-master; admin can delete own employees (not other admins)
@@ -5739,7 +5854,22 @@
             fetch(RELEASE_API, { headers: { Accept: 'application/vnd.github+json' } })
                 .then(r => r.ok ? r.json() : Promise.reject())
                 .then(release => {
-                    const releaseDate = release.published_at ? release.published_at.substring(0, 10) : null;
+                    // Use the latest asset upload time — the nightly release's published_at
+                    // never changes after first creation, but assets are updated on every build.
+                    const assets = release.assets || [];
+                    let releaseDate = null;
+                    if (assets.length > 0) {
+                        // Find the most recently updated asset
+                        const latestTs = assets.reduce((max, a) => {
+                            const t = a.updated_at || a.created_at || '';
+                            return t > max ? t : max;
+                        }, '');
+                        if (latestTs) releaseDate = latestTs.substring(0, 10);
+                    }
+                    // Fall back to published_at if no assets yet
+                    if (!releaseDate) {
+                        releaseDate = release.published_at ? release.published_at.substring(0, 10) : null;
+                    }
                     if (!releaseDate || releaseDate <= APP_BUILD_DATE) return; // no newer release
 
                     // Determine best download link for this platform
@@ -5747,7 +5877,7 @@
                     let link = '#';
                     let label = 'Jetzt aktualisieren';
                     if (platform === 'android') {
-                        const apkAsset = (release.assets || []).find(a => a.name === 'pzr-app-latest.apk');
+                        const apkAsset = assets.find(a => a.name === 'pzr-app-latest.apk');
                         link = apkAsset ? apkAsset.browser_download_url : getInstallerURL('android');
                         label = '📱 APK herunterladen & installieren';
                     } else if (platform === 'windows' || platform === 'mac' || platform === 'linux') {
