@@ -2460,6 +2460,7 @@
             } else {
                 patients = JSON.parse(savedPatients);
                 // Ensure all patients have anamnese object
+                let patientsChanged = false;
                 patients.forEach(p => {
                     if (!p.anamnese) {
                         p.anamnese = {
@@ -2475,20 +2476,23 @@
                             alcoholConsumption: 'none',
                             lastUpdated: null
                         };
+                        patientsChanged = true;
                     }
                     // Ensure all patients have name + firstName/lastName + status + number
                     if (!p.name && (p.firstName || p.lastName)) {
                         p.name = `${p.firstName || ''} ${p.lastName || ''}`.trim();
+                        patientsChanged = true;
                     }
                     if (p.name && !p.firstName) {
                         const parts = p.name.split(' ');
                         p.firstName = parts[0] || '';
                         p.lastName = parts.slice(1).join(' ') || '';
+                        patientsChanged = true;
                     }
-                    if (!p.status) p.status = 'active';
-                    if (!p.number) p.number = p.patientNumber || p.id;
+                    if (!p.status) { p.status = 'active'; patientsChanged = true; }
+                    if (!p.number) { p.number = p.patientNumber || p.id; patientsChanged = true; }
                 });
-                localStorage.setItem('pzrPatients', JSON.stringify(patients));
+                if (patientsChanged) saveToStorage('pzrPatients', patients);
             }
 
             // Ensure MA-001 master admin always exists with correct role
@@ -2509,31 +2513,21 @@
                 existingEmployees[masterIdx].role = 'masterAdmin';
                 existingEmployees[masterIdx].practiceId = MASTER_PRACTICE_ID;
             }
-            localStorage.setItem('pzrEmployees', JSON.stringify(existingEmployees));
+            saveToStorage('pzrEmployees', existingEmployees);
         }
 
         // Load data from localStorage
         function loadData() {
-            const savedPatients = localStorage.getItem('pzrPatients');
-            const savedAppointments = localStorage.getItem('pzrAppointments');
-            const savedReminders = localStorage.getItem('pzrReminders');
-            
-            if (savedPatients) {
-                patients = JSON.parse(savedPatients);
-            }
-            if (savedAppointments) {
-                appointments = JSON.parse(savedAppointments);
-            }
-            if (savedReminders) {
-                reminders = JSON.parse(savedReminders);
-            }
+            patients     = getFromStorage('pzrPatients')     || patients     || [];
+            appointments = getFromStorage('pzrAppointments') || appointments || [];
+            reminders    = getFromStorage('pzrReminders')    || reminders    || [];
         }
 
         // Save data to localStorage
         function saveData() {
-            localStorage.setItem('pzrPatients', JSON.stringify(patients));
-            localStorage.setItem('pzrAppointments', JSON.stringify(appointments));
-            localStorage.setItem('pzrReminders', JSON.stringify(reminders));
+            saveToStorage('pzrPatients', patients);
+            saveToStorage('pzrAppointments', appointments);
+            saveToStorage('pzrReminders', reminders);
         }
 
         // Role selection
@@ -2643,7 +2637,7 @@
                 return;
             }
 
-            const employees = JSON.parse(localStorage.getItem('pzrEmployees') || '[]');
+            const employees = getFromStorage('pzrEmployees') || [];
             // Support both employeeId field (new) and username field (legacy)
             const employee = employees.find(e =>
                 (e.employeeId === employeeId || e.username === employeeId) &&
@@ -2761,6 +2755,7 @@
         function loadRecommendations() {
             const quickRec = document.getElementById('quickRecommendations');
             const practRec = document.getElementById('practitionerRecommendations');
+            if (!currentUser || !quickRec || !practRec) return;
             
             if (currentUser.recommendations) {
                 const recItems = currentUser.recommendations.split('.').filter(r => r.trim());
@@ -2792,6 +2787,7 @@
 
         // Load patient appointments
         function loadPatientAppointments() {
+            if (!currentUser) return;
             // Always read fresh from localStorage so status changes are reflected immediately
             const allApts = getFromStorage('pzrAppointments') || [];
             const patientAppointments = allApts.filter(a => a.patientId === currentUser.id);
@@ -3624,6 +3620,7 @@
         
         // Empfehlung für existierenden Patienten erstellen
         function createRecommendationForPatient() {
+            if (!currentUser) return;
             const patientId = document.getElementById('selectedPatientId').value;
             const type = document.getElementById('recommendationType').value;
             const field1 = document.getElementById('customField1').value.trim();
@@ -3780,8 +3777,10 @@
         
         // Edit patient
         function editPatient(patientId) {
-            const patient = patients.find(p => p.id === patientId);
+            const freshPatients = getFromStorage('pzrPatients') || [];
+            const patient = freshPatients.find(p => p.id === patientId);
             if (!patient) return;
+            patients = freshPatients; // keep global in sync
 
             document.getElementById('editPatientId').value = patient.id;
             document.getElementById('editPatientNumber').value = patient.patientNumber;
@@ -3799,7 +3798,9 @@
         // Save patient changes
         function savePatientChanges() {
             const patientId = document.getElementById('editPatientId').value;
-            const patient = patients.find(p => p.id === patientId);
+            // Always use fresh data to avoid stale global array
+            const freshPatients = getFromStorage('pzrPatients') || [];
+            const patient = freshPatients.find(p => p.id === patientId);
             
             if (!patient) return;
 
@@ -3821,7 +3822,8 @@
             }
             document.getElementById('editPatientPin').value = '';
 
-            saveData();
+            patients = freshPatients; // keep global in sync
+            saveToStorage('pzrPatients', freshPatients);
             closeEditModal();
             loadPatientList();
             alert('Änderungen gespeichert!');
@@ -3904,6 +3906,7 @@
         }
 
         function uploadDocument() {
+            if (!currentUser) return;
             const fileInput = document.getElementById('documentFile');
             const file = fileInput.files[0];
             
@@ -4415,6 +4418,7 @@
 
         // Update reminders list
         function updateRemindersList() {
+            if (!currentUser) return;
             const container = document.getElementById('remindersList');
             
             // PATIENTENSPEZIFISCH: Nur Termine für diesen Patienten laden
@@ -4568,13 +4572,17 @@
             currentUser.email = email;
             currentUser.phone = phone;
             
-            // Update in patients array
-            const index = patients.findIndex(p => p.id === currentUser.id);
+            // Update in fresh patients array to avoid stale global
+            const freshPatients = getFromStorage('pzrPatients') || [];
+            const index = freshPatients.findIndex(p => p.id === currentUser.id);
             if (index >= 0) {
-                patients[index] = currentUser;
+                // Merge: keep all fresh fields but apply the currentUser updates
+                freshPatients[index] = { ...freshPatients[index], ...currentUser };
+                currentUser = freshPatients[index];
             }
+            patients = freshPatients; // keep global in sync
             
-            saveData();
+            saveToStorage('pzrPatients', freshPatients);
             loadPatientDashboard();
             alert('Profil erfolgreich gespeichert!');
         }
@@ -4636,13 +4644,17 @@
             currentUser.anamnese.alcoholConsumption = document.getElementById('alcoholConsumption').value;
             currentUser.anamnese.lastUpdated = new Date().toISOString();
             
-            // Update in patients array
-            const index = patients.findIndex(p => p.id === currentUser.id);
+            // Update in fresh patients array to avoid stale global
+            const freshPatients = getFromStorage('pzrPatients') || [];
+            const index = freshPatients.findIndex(p => p.id === currentUser.id);
             if (index >= 0) {
-                patients[index] = currentUser;
+                // Merge: keep all fresh fields but apply the currentUser updates
+                freshPatients[index] = { ...freshPatients[index], ...currentUser };
+                currentUser = freshPatients[index];
             }
+            patients = freshPatients; // keep global in sync
             
-            saveData();
+            saveToStorage('pzrPatients', freshPatients);
             loadAnamneseData();
             alert('Anamnese erfolgreich gespeichert!');
         }
@@ -4660,6 +4672,13 @@
                 alert('Bitte wählen Sie einen Patienten, Datum und Uhrzeit aus.');
                 return;
             }
+
+            // Validate that the patient exists
+            const allPatients = getFromStorage('pzrPatients') || [];
+            if (!allPatients.find(p => p.id === patientId)) {
+                alert('❌ Patient nicht gefunden. Bitte erneut auswählen.');
+                return;
+            }
             
             const appointment = {
                 id: Date.now(),
@@ -4672,8 +4691,11 @@
                 created: new Date().toISOString()
             };
             
-            appointments.push(appointment);
-            appointments.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+            // Always read fresh data to avoid stale global array issues
+            const freshAppointments = getFromStorage('pzrAppointments') || [];
+            freshAppointments.push(appointment);
+            freshAppointments.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+            appointments = freshAppointments; // keep global in sync
             
             // Create reminders for the appointment
             createRemindersForAppointment(appointment);
@@ -4696,13 +4718,15 @@
         // Create reminders for appointment
         function createRemindersForAppointment(appointment) {
             const appointmentDate = new Date(appointment.date + ' ' + appointment.time);
+            // Always read fresh reminders to avoid stale global array issues
+            const freshReminders = getFromStorage('pzrReminders') || [];
             
             // 24h reminder
             if (document.getElementById('reminder24h') && document.getElementById('reminder24h').checked) {
                 const reminder24h = new Date(appointmentDate);
                 reminder24h.setHours(reminder24h.getHours() - 24);
                 
-                reminders.push({
+                freshReminders.push({
                     id: Date.now() + (reminderIdCounter++),
                     appointmentId: appointment.id,
                     patientId: appointment.patientId,
@@ -4717,7 +4741,7 @@
                 const reminder1h = new Date(appointmentDate);
                 reminder1h.setHours(reminder1h.getHours() - 1);
                 
-                reminders.push({
+                freshReminders.push({
                     id: Date.now() + (reminderIdCounter++),
                     appointmentId: appointment.id,
                     patientId: appointment.patientId,
@@ -4732,7 +4756,7 @@
                 const reminderAftercare = new Date(appointmentDate);
                 reminderAftercare.setMonth(reminderAftercare.getMonth() + 6);
                 
-                reminders.push({
+                freshReminders.push({
                     id: Date.now() + (reminderIdCounter++),
                     appointmentId: appointment.id,
                     patientId: appointment.patientId,
@@ -4742,6 +4766,7 @@
                 });
             }
 
+            reminders = freshReminders; // keep global in sync
             scheduleNotifications();
         }
 
@@ -4986,6 +5011,7 @@
 
         // Terminvorschlag erstellen
         function proposeNewAppointment(appointmentId) {
+            if (!currentUser) return;
             const appointments = getFromStorage('pzrAppointments') || [];
             const appointment = appointments.find(a => a.id === appointmentId);
             
@@ -5168,10 +5194,9 @@
 
             if (active) {
                 dot.style.background = '#4CAF50';
-                label.textContent = 'Backend aktiv auf diesem PC';
-                label.style.color = '#2e7d32';
-                activateBtn.style.display = 'none';
-                deactivateBtn.style.display = 'inline-block';
+                if (label) { label.textContent = 'Backend aktiv auf diesem PC'; label.style.color = '#2e7d32'; }
+                if (activateBtn) activateBtn.style.display = 'none';
+                if (deactivateBtn) deactivateBtn.style.display = 'inline-block';
                 if (serverUrl && serverInfo && serverAddr) {
                     serverAddr.textContent = serverUrl;
                     serverInfo.style.display = 'block';
@@ -5203,8 +5228,7 @@
                 }
             } else {
                 dot.style.background = '#ccc';
-                label.textContent = 'Inaktiv';
-                label.style.color = '#999';
+                if (label) { label.textContent = 'Inaktiv'; label.style.color = '#999'; }
                 if (activateBtn) activateBtn.style.display = 'inline-block';
                 if (deactivateBtn) deactivateBtn.style.display = 'none';
                 if (serverInfo) serverInfo.style.display = 'none';
@@ -5936,6 +5960,11 @@
                 syncFromBackend(savedBackendUrl)
                     .then(() => {
                         connectBackendWebSocket(savedBackendUrl);
+                        // Re-run initDemoData after sync so MA-001 is guaranteed to exist
+                        // even if the backend overwrote the local employees list
+                        initDemoData();
+                        // Refresh global arrays from the now-synced localStorage
+                        loadData();
                         console.log('[Startup] Backend sync complete');
                     })
                     .catch(() => {
