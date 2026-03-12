@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const crypto = require('crypto');
 const { spawn } = require('child_process');
 
 // electron-updater is only available in packaged builds
@@ -15,6 +16,7 @@ try {
 let mainWindow;
 let backendServer = null;
 let isBackendActive = false;
+let backendApiToken = null; // generated fresh each time the backend starts
 let activeTunnel = null;   // localtunnel instance
 
 /** Returns the best LAN IP of this machine so other PCs can connect */
@@ -111,8 +113,7 @@ function createWindow() {
         icon: path.join(__dirname, 'app', 'icon.png'),
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true
+            contextIsolation: false
         },
         autoHideMenuBar: false,
         title: 'PZR App - Zahnärzte Burgau'
@@ -231,16 +232,28 @@ ipcMain.on('activate-backend', (event, payload) => {
             ? path.join(process.resourcesPath, 'app.asar.unpacked', 'server.js')
             : path.join(__dirname, 'server.js');
 
+        // Generate a fresh API token for this backend session
+        backendApiToken = crypto.randomBytes(24).toString('hex');
+
         // Use Electron's own Node.js runtime (ELECTRON_RUN_AS_NODE=1) so we
         // don't depend on a separate `node` binary being installed.
         backendServer = spawn(process.execPath, [serverScript], {
             cwd: path.dirname(serverScript),
-            env: { ...process.env, PORT: '3000', ELECTRON_RUN_AS_NODE: '1' }
+            env: { ...process.env, PORT: '3000', ELECTRON_RUN_AS_NODE: '1', BACKEND_API_TOKEN: backendApiToken }
         });
 
         backendServer.stdout.on('data', (data) => {
-            console.log(`Backend: ${data}`);
-            event.reply('backend-log', data.toString());
+            const text = data.toString();
+            console.log(`Backend: ${text}`);
+            event.reply('backend-log', text);
+            // Forward API token to renderer so it can authenticate requests
+            const tokenMatch = text.match(/__API_TOKEN__:([a-f0-9]+)/);
+            if (tokenMatch) {
+                backendApiToken = tokenMatch[1];
+                if (mainWindow && !mainWindow.isDestroyed()) {
+                    mainWindow.webContents.send('backend-api-token', backendApiToken);
+                }
+            }
         });
 
         backendServer.stderr.on('data', (data) => {
@@ -293,6 +306,10 @@ ipcMain.on('get-backend-status', (event) => {
         port: isBackendActive ? 3000 : null,
         url: isBackendActive ? getServerUrl() : null
     });
+    // Re-send token if backend is active (renderer may have reloaded)
+    if (isBackendActive && backendApiToken) {
+        event.reply('backend-api-token', backendApiToken);
+    }
 });
 
 // Install downloaded update and restart

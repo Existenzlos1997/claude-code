@@ -2329,6 +2329,28 @@
             }
         }
 
+        // Helper: get Authorization header for backend requests
+        function getBackendAuthHeaders() {
+            const token = localStorage.getItem('pzrBackendApiToken');
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            return headers;
+        }
+
+        // Helper: strip token from URL and save it to localStorage
+        function extractAndStoreToken(url) {
+            try {
+                const u = new URL(url);
+                const t = u.searchParams.get('token');
+                if (t) {
+                    localStorage.setItem('pzrBackendApiToken', t);
+                    u.searchParams.delete('token');
+                    return u.toString();
+                }
+            } catch (e) {}
+            return url;
+        }
+
         // Helper: Save to localStorage AND sync to backend when connected
         function saveToStorage(key, data) {
             try {
@@ -2338,7 +2360,7 @@
                 if (backendUrl) {
                     fetch(`${backendUrl}/api/storage/${encodeURIComponent(key)}`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: getBackendAuthHeaders(),
                         body: JSON.stringify({ value: data })
                     }).catch(() => {}); // silently fail when offline
                 }
@@ -2356,7 +2378,10 @@
          * Returns a Promise that resolves when done (or rejects on network error).
          */
         function syncFromBackend(backendUrl) {
-            return fetch(`${backendUrl}/api/storage`, { method: 'GET' })
+            return fetch(`${backendUrl}/api/storage`, {
+                    method: 'GET',
+                    headers: getBackendAuthHeaders()
+                })
                 .then(r => {
                     if (!r.ok) throw new Error('sync failed');
                     return r.json();
@@ -2389,7 +2414,9 @@
                             // Re-fetch just this key from backend
                             const bUrl = localStorage.getItem('pzrBackendConnectUrl');
                             if (!bUrl) return;
-                            fetch(`${bUrl}/api/storage/${encodeURIComponent(msg.key)}`)
+                            fetch(`${bUrl}/api/storage/${encodeURIComponent(msg.key)}`, {
+                                headers: getBackendAuthHeaders()
+                            })
                                 .then(r => r.json())
                                 .then(data => {
                                     if (data.value !== null && data.value !== undefined) {
@@ -2649,10 +2676,11 @@
                 currentRole = 'employee';
                 // Auto-connect to backend if employee has a backend URL assigned
                 if (employee.backendUrl) {
-                    localStorage.setItem('pzrBackendConnectUrl', employee.backendUrl);
+                    const cleanBackendUrl = extractAndStoreToken(employee.backendUrl);
+                    localStorage.setItem('pzrBackendConnectUrl', cleanBackendUrl);
                     // Sync fresh data from backend before showing the app
-                    syncFromBackend(employee.backendUrl)
-                        .then(() => connectBackendWebSocket(employee.backendUrl))
+                    syncFromBackend(cleanBackendUrl)
+                        .then(() => connectBackendWebSocket(cleanBackendUrl))
                         .catch(() => {});
                 }
                 showMainApp();
@@ -2756,15 +2784,28 @@
             const quickRec = document.getElementById('quickRecommendations');
             const practRec = document.getElementById('practitionerRecommendations');
             if (!currentUser || !quickRec || !practRec) return;
-            
-            if (currentUser.recommendations) {
+
+            // Read from the shared recommendations store (set by employees)
+            const allRecs = getFromStorage('pzrRecommendations') || [];
+            const myRecs = allRecs.filter(r => r.patientId === currentUser.id && r.status === 'active');
+
+            if (myRecs.length > 0) {
+                const makeItem = (rec, short) => `
+                    <div class="recommendation-item">
+                        <strong>${rec.type === 'pzr' ? 'PZR' : 'Implantation'}:</strong>
+                        ${[rec.customField1, rec.customField2, rec.customField3].filter(Boolean).join(' | ')}
+                        <br><small>von ${rec.createdByName || 'Behandler'}</small>
+                    </div>`;
+                quickRec.innerHTML = myRecs.slice(0, 2).map(r => makeItem(r, true)).join('');
+                practRec.innerHTML = myRecs.map(r => makeItem(r, false)).join('');
+            } else if (currentUser.recommendations) {
+                // Legacy fallback: plain-text recommendations stored directly on the patient
                 const recItems = currentUser.recommendations.split('.').filter(r => r.trim());
                 quickRec.innerHTML = recItems.slice(0, 2).map(rec => `
                     <div class="recommendation-item">
                         <strong>Wichtig:</strong> ${rec.trim()}.
                     </div>
                 `).join('');
-                
                 practRec.innerHTML = recItems.map(rec => `
                     <div class="recommendation-item">
                         <strong>💡</strong> ${rec.trim()}.
@@ -2775,14 +2816,12 @@
                 practRec.innerHTML = '<p>Keine Empfehlungen vorhanden.</p>';
             }
 
-            document.getElementById('brushingTechnique').innerHTML = 
-                currentUser.brushingTechnique || '<p>Keine speziellen Anweisungen.</p>';
-            
-            document.getElementById('toolsUsage').innerHTML = 
-                currentUser.toolsUsage || '<p>Keine speziellen Hilfsmittel angegeben.</p>';
-            
-            document.getElementById('additionalNotes').innerHTML = 
-                currentUser.notes || '<p>Keine weiteren Bemerkungen.</p>';
+            const brushEl = document.getElementById('brushingTechnique');
+            const toolsEl = document.getElementById('toolsUsage');
+            const notesEl = document.getElementById('additionalNotes');
+            if (brushEl) brushEl.innerHTML = currentUser.brushingTechnique || '<p>Keine speziellen Anweisungen.</p>';
+            if (toolsEl) toolsEl.innerHTML = currentUser.toolsUsage || '<p>Keine speziellen Hilfsmittel angegeben.</p>';
+            if (notesEl) notesEl.innerHTML = currentUser.notes || '<p>Keine weiteren Bemerkungen.</p>';
         }
 
         // Load patient appointments
@@ -3279,7 +3318,7 @@
         // Behandler bestätigt Terminabsage
         function approveAppointmentCancellation(appointmentId) {
             const appointments = getFromStorage('pzrAppointments') || [];
-            const appointment = appointments.find(a => a.id == appointmentId);
+            const appointment = appointments.find(a => String(a.id) === String(appointmentId));
             
             if (!appointment) {
                 alert('❌ Termin nicht gefunden!');
@@ -3288,7 +3327,7 @@
             
             // Status auf CANCELLED setzen
             appointment.status = APPOINTMENT_STATUS.CANCELLED;
-            appointment.approvedBy = window.currentUserName || 'Behandler';
+            appointment.approvedBy = (currentUser && currentUser.name) ? currentUser.name : 'Behandler';
             appointment.approvedAt = new Date().toISOString();
             
             saveToStorage('pzrAppointments', appointments);
@@ -3303,7 +3342,7 @@
         // Behandler lehnt Terminabsage ab
         function rejectAppointmentCancellation(appointmentId) {
             const appointments = getFromStorage('pzrAppointments') || [];
-            const appointment = appointments.find(a => a.id == appointmentId);
+            const appointment = appointments.find(a => String(a.id) === String(appointmentId));
             
             if (!appointment) {
                 alert('❌ Termin nicht gefunden!');
@@ -4688,6 +4727,7 @@
                 time,
                 location,
                 notes,
+                status: APPOINTMENT_STATUS.ACTIVE,
                 created: new Date().toISOString()
             };
             
@@ -5168,6 +5208,11 @@
                 if (c) c.style.marginTop = banner.offsetHeight + 'px';
             });
 
+            // Receive API token from main process and persist it for authenticated requests
+            ipcRenderer.on('backend-api-token', (event, token) => {
+                if (token) localStorage.setItem('pzrBackendApiToken', token);
+            });
+
             // Query current status
             ipcRenderer.send('get-backend-status');
 
@@ -5213,14 +5258,17 @@
                 }
                 localStorage.setItem('backendActive', 'true');
 
-                // Propagate backendUrl to all employees of the same practice
+                // Propagate backendUrl (with token) to all employees of the same practice
                 if (serverUrl && currentUser && currentUser.practiceId) {
-                    localStorage.setItem('pzrBackendConnectUrl', serverUrl);
+                    const apiToken = localStorage.getItem('pzrBackendApiToken');
+                    // Build a token-embedded URL so connecting devices auto-authenticate
+                    const shareUrl = apiToken ? (serverUrl.split('?')[0] + '?token=' + apiToken) : serverUrl;
+                    localStorage.setItem('pzrBackendConnectUrl', shareUrl);
                     const employees = getFromStorage('pzrEmployees') || [];
                     let changed = false;
                     employees.forEach(emp => {
                         if (emp.practiceId === currentUser.practiceId && emp.role !== 'masterAdmin') {
-                            emp.backendUrl = serverUrl;
+                            emp.backendUrl = shareUrl;
                             changed = true;
                         }
                     });
@@ -5262,7 +5310,8 @@
         function checkBackendConnection(url, showAlert) {
             const statusEl = document.getElementById('backendConnectStatus');
             if (statusEl) statusEl.textContent = '⏳ Verbindung wird geprüft...';
-            const cleanUrl = url.replace(/\/$/, '');
+            // Extract and store API token if embedded in the URL
+            const cleanUrl = extractAndStoreToken(url.replace(/\/$/, ''));
 
             fetch(cleanUrl + '/api/health', { signal: AbortSignal.timeout(4000) })
                 .then(r => r.json())
@@ -5957,9 +6006,13 @@
             // Auto-sync from backend on startup if a URL is already saved
             const savedBackendUrl = localStorage.getItem('pzrBackendConnectUrl');
             if (savedBackendUrl) {
-                syncFromBackend(savedBackendUrl)
+                const cleanStartupUrl = extractAndStoreToken(savedBackendUrl);
+                if (cleanStartupUrl !== savedBackendUrl) {
+                    localStorage.setItem('pzrBackendConnectUrl', cleanStartupUrl);
+                }
+                syncFromBackend(cleanStartupUrl)
                     .then(() => {
-                        connectBackendWebSocket(savedBackendUrl);
+                        connectBackendWebSocket(cleanStartupUrl);
                         // Re-run initDemoData after sync so MA-001 is guaranteed to exist
                         // even if the backend overwrote the local employees list
                         initDemoData();

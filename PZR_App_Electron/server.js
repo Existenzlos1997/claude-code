@@ -3,13 +3,42 @@ const WebSocket = require('ws');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// API token — passed via BACKEND_API_TOKEN env var (set by main.js)
+// Falls back to a random token if not provided (e.g., standalone dev use)
+const API_TOKEN = process.env.BACKEND_API_TOKEN || crypto.randomBytes(24).toString('hex');
+// Print token to stdout so main.js can forward it to the renderer
+console.log(`__API_TOKEN__:${API_TOKEN}`);
+
+// Middleware: require Bearer token on all /api/* routes except /api/health
+function requireApiToken(req, res, next) {
+    if (req.path === '/api/health') return next();
+    const authHeader = req.headers['authorization'] || '';
+    const tokenFromHeader = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    // Also accept token from query string (?token=...) for URL-embedded auth
+    const tokenFromQuery = req.query.token || null;
+    const token = tokenFromHeader || tokenFromQuery;
+    if (!token || token !== API_TOKEN) {
+        return res.status(401).json({ error: 'Unauthorized – ungültiger API-Token.' });
+    }
+    next();
+}
+app.use('/api', requireApiToken);
+
 // Simple in-process rate limiter (no extra npm package needed)
 function makeRateLimiter(windowMs, maxRequests) {
     const hits = new Map();
+    // Periodically clean up expired entries to prevent memory leak
+    setInterval(() => {
+        const now = Date.now();
+        for (const [ip, entry] of hits) {
+            if (now > entry.resetAt) hits.delete(ip);
+        }
+    }, windowMs * 2);
     return function(req, res, next) {
         const ip = req.ip || req.connection.remoteAddress || 'unknown';
         const now = Date.now();
@@ -330,21 +359,43 @@ app.delete('/api/patients/:id', (req, res) => {
 // For brevity, showing pattern - full implementation would include all CRUD for each table
 
 // Sync endpoint for bulk updates
+// Accepts structured collections and upserts them into the kv_store
+// so that /api/storage consumers see consistent data.
 app.post('/api/sync', (req, res) => {
     const { patients, appointments, recommendations, documents, cancellations, registrations } = req.body;
-    
-    // Simple implementation - in production, would use transactions
+
+    const keyMap = {
+        pzrPatients: patients,
+        pzrAppointments: appointments,
+        pzrRecommendations: recommendations,
+        pzrDocuments: documents,
+        pzrCancellationRequests: cancellations,
+        pzrRegistrations: registrations
+    };
+
     try {
-        // Process each collection...
-        res.json({ success: true, message: 'Data synchronized' });
-        
-        // Broadcast sync event
-        const message = JSON.stringify({ type: 'data-sync', data: { timestamp: new Date().toISOString() } });
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
-        });
+        const upsertPromises = Object.entries(keyMap)
+            .filter(([, val]) => Array.isArray(val))
+            .map(([key, val]) => new Promise((resolve, reject) => {
+                const value = JSON.stringify(val);
+                db.run(
+                    'INSERT OR REPLACE INTO kv_store (key, value, updatedAt) VALUES (?, ?, CURRENT_TIMESTAMP)',
+                    [key, value],
+                    err => { if (err) reject(err); else resolve(); }
+                );
+            }));
+
+        Promise.all(upsertPromises)
+            .then(() => {
+                const message = JSON.stringify({ type: 'data-sync', data: { timestamp: new Date().toISOString() } });
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(message);
+                    }
+                });
+                res.json({ success: true, message: 'Data synchronized' });
+            })
+            .catch(err => res.status(500).json({ error: err.message }));
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
