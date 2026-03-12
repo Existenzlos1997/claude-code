@@ -10,7 +10,11 @@ const PORT = process.env.PORT || 3000;
 
 // API token — passed via BACKEND_API_TOKEN env var (set by main.js)
 // Falls back to a random token if not provided (e.g., standalone dev use)
-const API_TOKEN = process.env.BACKEND_API_TOKEN || crypto.randomBytes(24).toString('hex');
+const API_TOKEN = process.env.BACKEND_API_TOKEN || (() => {
+    const t = crypto.randomBytes(24).toString('hex');
+    console.warn('⚠️  BACKEND_API_TOKEN not set – using randomly generated token for this session.');
+    return t;
+})();
 // Print token to stdout so main.js can forward it to the renderer
 console.log(`__API_TOKEN__:${API_TOKEN}`);
 

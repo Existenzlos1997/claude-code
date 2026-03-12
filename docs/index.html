@@ -2790,14 +2790,15 @@
             const myRecs = allRecs.filter(r => r.patientId === currentUser.id && r.status === 'active');
 
             if (myRecs.length > 0) {
-                const makeItem = (rec, short) => `
+                const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
+                const makeItem = (rec) => `
                     <div class="recommendation-item">
                         <strong>${rec.type === 'pzr' ? 'PZR' : 'Implantation'}:</strong>
-                        ${[rec.customField1, rec.customField2, rec.customField3].filter(Boolean).join(' | ')}
-                        <br><small>von ${rec.createdByName || 'Behandler'}</small>
+                        ${[rec.customField1, rec.customField2, rec.customField3].filter(Boolean).map(esc).join(' | ')}
+                        <br><small>von ${esc(rec.createdByName) || 'Behandler'}</small>
                     </div>`;
-                quickRec.innerHTML = myRecs.slice(0, 2).map(r => makeItem(r, true)).join('');
-                practRec.innerHTML = myRecs.map(r => makeItem(r, false)).join('');
+                quickRec.innerHTML = myRecs.slice(0, 2).map(r => makeItem(r)).join('');
+                practRec.innerHTML = myRecs.map(r => makeItem(r)).join('');
             } else if (currentUser.recommendations) {
                 // Legacy fallback: plain-text recommendations stored directly on the patient
                 const recItems = currentUser.recommendations.split('.').filter(r => r.trim());
@@ -3119,11 +3120,12 @@
                 html += '<p>Keine Empfehlungen vorhanden.</p>';
             } else {
                 patientRecs.forEach(rec => {
+                    const escRec = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
                     html += `<div style="padding:10px;border-left:3px solid #00A8CC;margin:10px 0;background:#fff;">`;
-                    html += `<strong>${rec.type === 'pzr' ? 'PZR' : rec.type || 'PZR'}</strong> - ${rec.createdAt ? new Date(rec.createdAt).toLocaleDateString('de-DE') : '-'}<br>`;
-                    if (rec.customField1) html += `<p>${rec.customField1}</p>`;
-                    if (rec.customField2) html += `<p>${rec.customField2}</p>`;
-                    if (rec.customField3) html += `<p>${rec.customField3}</p>`;
+                    html += `<strong>${rec.type === 'pzr' ? 'PZR' : escRec(rec.type) || 'PZR'}</strong> - ${rec.createdAt ? new Date(rec.createdAt).toLocaleDateString('de-DE') : '-'}<br>`;
+                    if (rec.customField1) html += `<p>${escRec(rec.customField1)}</p>`;
+                    if (rec.customField2) html += `<p>${escRec(rec.customField2)}</p>`;
+                    if (rec.customField3) html += `<p>${escRec(rec.customField3)}</p>`;
                     html += `</div>`;
                 });
             }

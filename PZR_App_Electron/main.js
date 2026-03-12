@@ -247,7 +247,7 @@ ipcMain.on('activate-backend', (event, payload) => {
             console.log(`Backend: ${text}`);
             event.reply('backend-log', text);
             // Forward API token to renderer so it can authenticate requests
-            const tokenMatch = text.match(/__API_TOKEN__:([a-f0-9]+)/);
+            const tokenMatch = text.match(/__API_TOKEN__:([a-fA-F0-9]+)/);
             if (tokenMatch) {
                 backendApiToken = tokenMatch[1];
                 if (mainWindow && !mainWindow.isDestroyed()) {
