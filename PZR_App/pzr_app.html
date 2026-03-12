@@ -2067,6 +2067,25 @@
                                 Bestehende Patienten mit gleicher Patientennummer werden aktualisiert, neue werden hinzugefügt.
                             </div>
                         </div>
+
+                        <!-- Practice Link Sharing (admin only) -->
+                        <div class="settings-section" id="practiceLinkSection" style="display:none;">
+                            <h3>🔗 Praxis-Link für Mitarbeiter &amp; Patienten</h3>
+                            <p>Teilen Sie diesen Link mit Mitarbeitern und Patienten. Beim ersten Öffnen verbindet sich die App automatisch mit dem Praxis-Backend – ohne weitere Konfiguration.</p>
+                            <div style="margin-top:10px;">
+                                <button class="btn" onclick="generatePracticeLink()">🔄 Link generieren / aktualisieren</button>
+                            </div>
+                            <div id="practiceLinkBox" style="display:none; margin-top:12px; background:#e8f5e9; border:1px solid #a5d6a7; border-radius:8px; padding:12px;">
+                                <p style="margin:0 0 6px; font-weight:600; color:#2e7d32;">✅ Praxis-Link aktiv</p>
+                                <p style="margin:0 0 5px; font-size:13px; color:#333;">Diesen Link an Mitarbeiter &amp; Patienten weitergeben:</p>
+                                <p id="practiceLinkUrl" style="margin:0 0 8px; font-size:13px; font-family:monospace; word-break:break-all; background:#fff; padding:8px; border-radius:4px; border:1px solid #c8e6c9;"></p>
+                                <button class="btn" style="font-size:12px; padding:6px 14px;"
+                                    onclick="navigator.clipboard.writeText(document.getElementById('practiceLinkUrl').textContent).then(()=>alert('✅ Link kopiert!'))">
+                                    📋 Link kopieren
+                                </button>
+                            </div>
+                            <p style="margin-top:10px; font-size:12px; color:#666;">ℹ️ Der Link enthält die Backend-Adresse Ihrer Praxis. Mitarbeiter und Patienten müssen nichts manuell konfigurieren.</p>
+                        </div>
                     </div>
                     
                     
@@ -2665,6 +2684,27 @@
             }
 
             const employees = getFromStorage('pzrEmployees') || [];
+
+            // If no non-master employees exist locally and we have a backend URL,
+            // sync first so the employee record (created by the practice admin) is available
+            const savedUrl = localStorage.getItem('pzrBackendConnectUrl');
+            const hasLocalPracticeEmployees = employees.some(e => e.role !== 'masterAdmin');
+            if (!hasLocalPracticeEmployees && savedUrl) {
+                const cleanUrl = extractAndStoreToken(savedUrl);
+                syncFromBackend(cleanUrl)
+                    .then(() => {
+                        connectBackendWebSocket(cleanUrl);
+                        _doEmployeeLogin(employeeId, password);
+                    })
+                    .catch(() => _doEmployeeLogin(employeeId, password));
+                return;
+            }
+
+            _doEmployeeLogin(employeeId, password);
+        }
+
+        function _doEmployeeLogin(employeeId, password) {
+            const employees = getFromStorage('pzrEmployees') || [];
             // Support both employeeId field (new) and username field (legacy)
             const employee = employees.find(e =>
                 (e.employeeId === employeeId || e.username === employeeId) &&
@@ -2710,6 +2750,13 @@
                 loadRegistrations(); // Load pending registrations
                 loadPendingCancellations(); // Load pending cancellations
                 loadEmployees(); // Load employees list
+
+                // Show practice link section only for practice admins
+                const practiceLinkSec = document.getElementById('practiceLinkSection');
+                if (practiceLinkSec) {
+                    practiceLinkSec.style.display =
+                        (currentRole === 'employee' && currentUser.role === 'admin') ? '' : 'none';
+                }
             }
 
             // Check for a newer release and show update banner if one exists
@@ -4161,9 +4208,20 @@
         }
 
         // Registration Functions
+        /** Store the practice backend URL from the ?backend= URL param, if not already set. */
+        function _applyBackendParam() {
+            const p = new URLSearchParams(window.location.search);
+            const b = p.get('backend');
+            if (b && !localStorage.getItem('pzrBackendConnectUrl')) {
+                localStorage.setItem('pzrBackendConnectUrl', decodeURIComponent(b));
+            }
+        }
+
         function showRegistration() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('registrationScreen').style.display = 'block';
+            // If ?backend= is in the URL, persist it so the registration syncs to the correct backend
+            _applyBackendParam();
         }
 
         function showLogin() {
@@ -4206,6 +4264,9 @@
             const targetPracticeId = urlParams.get('practice') ||
                 (currentUser?.practiceId && currentUser.practiceId !== MASTER_PRACTICE_ID ? currentUser.practiceId : null) ||
                 MASTER_PRACTICE_ID;
+
+            // If the practice link contained a backend URL, persist it so saveToStorage routes to backend
+            _applyBackendParam();
             
             // Create pre-registered patient
             const newPatient = {
@@ -5276,6 +5337,8 @@
                     });
                     if (changed) saveToStorage('pzrEmployees', employees);
                 }
+                // Refresh the practice link display if it is currently open
+                updatePracticeLink();
             } else {
                 dot.style.background = '#ccc';
                 if (label) { label.textContent = 'Inaktiv'; label.style.color = '#999'; }
@@ -5286,6 +5349,33 @@
                 if (tunnelInfo) tunnelInfo.style.display = 'none';
                 localStorage.removeItem('backendActive');
             }
+        }
+
+        /** Generate and display a shareable practice link that embeds the backend URL */
+        function generatePracticeLink() {
+            const practiceId = currentUser && currentUser.practiceId;
+            if (!practiceId || practiceId === MASTER_PRACTICE_ID) {
+                alert('Diese Funktion steht nur Praxis-Administratoren zur Verfügung.');
+                return;
+            }
+            const backendUrl = localStorage.getItem('pzrBackendConnectUrl');
+            if (!backendUrl) {
+                alert('Bitte zuerst das Backend aktivieren oder verbinden, damit der Link die Backend-Adresse enthält.');
+                return;
+            }
+            const base = window.location.href.split('?')[0].replace(/\/$/, '');
+            const link = base + '?practice=' + encodeURIComponent(practiceId) + '&backend=' + encodeURIComponent(backendUrl);
+            const box = document.getElementById('practiceLinkBox');
+            const urlEl = document.getElementById('practiceLinkUrl');
+            if (urlEl) urlEl.textContent = link;
+            if (box) box.style.display = 'block';
+        }
+
+        /** Auto-refresh the practice link display when backend URL changes */
+        function updatePracticeLink() {
+            const box = document.getElementById('practiceLinkBox');
+            if (!box || box.style.display === 'none') return;
+            generatePracticeLink();
         }
 
         function activateBackend() {
@@ -6004,6 +6094,9 @@
 
             // Initialize backend UI (Electron-aware)
             initBackendUI();
+
+            // Bootstrap backend URL from ?backend= URL param (practice link)
+            _applyBackendParam();
 
             // Auto-sync from backend on startup if a URL is already saved
             const savedBackendUrl = localStorage.getItem('pzrBackendConnectUrl');
