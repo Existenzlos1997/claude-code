@@ -7,6 +7,27 @@
 
 ---
 
+## 🆕 NEW: Double-Slit Quantum Experiment Simulation
+
+**Hotspot Heatmap Visualization Now Available!**
+
+Compare standard quantum mechanics (Born rule) with MQG predictions in the classic double-slit experiment. Identify "hotspots" - detector positions where MQG theory predicts significant deviations from standard QM.
+
+**Statistical Results:**
+- Chi-squared: ~1343 (highly significant)
+- p-value: < 0.001
+- Hotspots identified: 30+ positions
+
+**Quick Start:**
+```bash
+cd MQG_Project
+python demo_double_slit.py
+```
+
+**Learn More:** See `DOUBLE_SLIT_EXPERIMENT.md` for full documentation.
+
+---
+
 ## 📱 NEU: phyphox Integration - Zuverlässige Datenerfassung!
 
 **Problem gelöst:** Browser-Sensoren funktionieren nicht zuverlässig? **Nutzen Sie phyphox!**
