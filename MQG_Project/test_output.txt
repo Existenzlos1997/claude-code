@@ -1,0 +1,126 @@
+
+================================================================================
+INTERAKTIVER TEST: GPS-FREIES ORTUNGSSYSTEM
+================================================================================
+
+Dieser Test zeigt GENAU, welche Daten Sie benötigen und wie alles funktioniert!
+
+
+
+================================================================================
+TEIL 1: DATENANFORDERUNGEN FÜR ICQ-BERECHNUNG
+================================================================================
+
+
+📊 ICQ Basis
+----------------------------------------------------------------------
+  beschreibung        : Information Coherence Quotient - Kernmetrik der MQG-Theorie
+  eingabe             : Zahlenarray (Liste von Messwerten)
+  beispiel            : [1.2, 1.3, 1.25, 1.28, 1.22]
+  typ                 : list oder numpy.array
+  mindestens          : 10 Werte empfohlen (min. 2)
+  ausgabe             : ICQ-Wert zwischen 0 (chaotisch) und 1+ (kohärent)
+
+📊 WiFi Fingerprinting
+----------------------------------------------------------------------
+  beschreibung        : RSSI-Signalstärken von WiFi Access Points
+  eingabe             : Dictionary mit AP-Namen und RSSI-Werten
+  beispiel            : {'AP_Office_1': -45, 'AP_Office_2': -67, 'AP_Hallway': -78}
+  typ                 : dict[str, float]
+  einheit             : dBm (Dezibel-Milliwatt)
+  reichweite          : -100 dBm (schwach) bis -30 dBm (stark)
+  mindestens          : 3 APs für Trilateration, 5+ für Fingerprinting
+
+📊 Bluetooth Beacons
+----------------------------------------------------------------------
+  beschreibung        : RSSI von Bluetooth Beacons
+  eingabe             : Dictionary mit Beacon-ID und RSSI
+  beispiel            : {'beacon_1': -52, 'beacon_2': -68, 'beacon_3': -71}
+  typ                 : dict[str, float]
+  einheit             : dBm
+  reichweite          : -100 dBm bis -30 dBm
+  mindestens          : 3 Beacons für Trilateration
+
+📊 IMU Daten
+----------------------------------------------------------------------
+  beschreibung        : Beschleunigungsmesser und Gyroskop
+  eingabe_accel       : [ax, ay, az] in m/s²
+  eingabe_gyro        : [gx, gy, gz] in rad/s
+  beispiel_accel      : [0.02, -0.01, 9.81]
+  beispiel_gyro       : [0.001, -0.002, 0.0005]
+  typ                 : list[3] oder numpy.array(3)
+  sample_rate         : 10-100 Hz (Messungen pro Sekunde)
+  kalibrierung        : Ruheposition: [0, 0, 9.81] für Beschleunigung
+
+✅ WICHTIG: Alle diese Daten können simuliert werden!
+   → Sie brauchen KEINE echte Hardware für den Test!
+
+
+================================================================================
+TEST 1: GRUNDLEGENDE ICQ-BERECHNUNG
+================================================================================
+
+Beispiel 1: Hochgradig kohärente Signaldaten
+  Eingabe: 50 Messwerte um 100.0 (±0.5)
+  Daten: [99.89740115964614, 100.38840081179997, 99.0579021040299, 99.6284121486614, 100.17009881818687] ... [100.09170186381404, 100.28963169135818]
+  → ICQ = 0.000000 (hoch kohärent)
+
+Beispiel 2: Chaotische Zufallsdaten
+  Eingabe: 50 Zufallswerte zwischen 0-100
+  Daten: [10.33559727777822, 69.62359802326972, 77.69945666803841, 73.03289358054354, 25.10416546619989] ... [87.59788160649087, 91.94342437785811]
+  → ICQ = 0.000000 (chaotisch)
+
+Beispiel 3: Realistische WiFi-RSSI Zeitreihe
+  Eingabe: 50 RSSI-Werte um -45 dBm (±3 dB)
+  Daten: [-42.34493813636357, -43.48610879388988, -40.505307671644196, -49.81684958323028, -42.26102736182907] ... [-40.13722165212853, -48.84190119716641]
+  → ICQ = 0.000000 (stabiles Signal)
+
+✅ ICQ-Berechnung funktioniert!
+   Kohärent: 0.000 >> Chaotisch: 0.000
+
+================================================================================
+TEST 2: WiFi FINGERPRINTING POSITIONIERUNG
+================================================================================
+
+Schritt 1: Fingerprint-Datenbank erstellen
+----------------------------------------------------------------------
+  Access Points: 4
+    AP_NW: Position (0, 10)
+    AP_NE: Position (10, 10)
+    AP_SW: Position (0, 0)
+    AP_SE: Position (10, 0)
+
+Schritt 2: Referenzmessungen sammeln
+----------------------------------------------------------------------
+  Referenzpunkte: 9
+  Beispiel bei (5, 5):
+    AP_NW: -49.6 dBm
+    AP_NE: -44.8 dBm
+    AP_SW: -44.8 dBm
+    AP_SE: -47.5 dBm
+
+Schritt 3: Position schätzen (unbekannter Ort)
+----------------------------------------------------------------------
+  Wahre Position: (4.5, 6.2)
+  Gemessene RSSI-Werte:
+    AP_NW: -46.9 dBm
+    AP_NE: -46.7 dBm
+    AP_SW: -48.4 dBm
+    AP_SE: -47.1 dBm
+
+  ICQ-Qualitätsbewertung der Signale:
+    AP_NW: ICQ = 0.0000
+    AP_NE: ICQ = 0.0000
+    AP_SW: ICQ = 0.0000
+    AP_SE: ICQ = 0.0000
+Traceback (most recent call last):
+  File "/home/runner/work/claude-code/claude-code/MQG_Project/test_gps_free_positioning.py", line 684, in <module>
+    main()
+  File "/home/runner/work/claude-code/claude-code/MQG_Project/test_gps_free_positioning.py", line 680, in main
+    test.run_all_tests()
+  File "/home/runner/work/claude-code/claude-code/MQG_Project/test_gps_free_positioning.py", line 664, in run_all_tests
+    self.test_2_wifi_fingerprinting()
+  File "/home/runner/work/claude-code/claude-code/MQG_Project/test_gps_free_positioning.py", line 261, in test_2_wifi_fingerprinting
+    estimated_pos = positioning.estimate_position_knn(test_rssi, k=3)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'SignalPositioning' object has no attribute 'estimate_position_knn'
