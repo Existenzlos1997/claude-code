@@ -1,0 +1,13 @@
+{
+  "name": "MQG Trading Bot",
+  "short_name": "MQG Bot",
+  "description": "Automatischer Krypto-Trading-Bot mit MQG-Informationsfeldanalyse",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
