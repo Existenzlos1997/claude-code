@@ -12,12 +12,22 @@ Compound-Reinvestment und einem als PWA installierbaren Smartphone-Dashboard.
 
 ## 🔗 Installationslinks
 
-| | Link |
-|---|---|
-| 🌐 **Installationsseite** | **https://existenzlos1997.github.io/claude-code/** |
-| 🐧 Linux / macOS | `curl -sSL https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/TradingBot/install.sh \| bash` |
-| 🪟 Windows (PowerShell) | Siehe [Installationsseite](https://existenzlos1997.github.io/claude-code/) |
-| 📂 Quellcode | [TradingBot/](https://github.com/Existenzlos1997/claude-code/tree/main/TradingBot) |
+### 🐧 Linux / macOS
+```bash
+curl -sSL https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/TradingBot/install.sh | bash
+```
+
+### 🪟 Windows (PowerShell)
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/TradingBot/install.bat" -OutFile "$env:TEMP\install.bat"; Start-Process cmd "/c $env:TEMP\install.bat" -Wait
+```
+
+### 📂 Quellcode direkt
+```bash
+git clone https://github.com/Existenzlos1997/claude-code.git
+cd claude-code/TradingBot
+pip install -r requirements.txt
+```
 
 ---
 
