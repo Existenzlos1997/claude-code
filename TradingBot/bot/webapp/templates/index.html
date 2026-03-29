@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MQG Trade Bot">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
+  <title>MQG Trading Bot</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --card: #161b22; --border: #30363d;
+      --green: #3fb950; --red: #f85149; --yellow: #d29922;
+      --blue: #58a6ff; --text: #c9d1d9; --muted: #8b949e;
+      --radius: 10px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace; min-height: 100dvh; }
+    header { background: var(--card); border-bottom: 1px solid var(--border); padding: 14px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; }
+    header h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: .5px; }
+    .badge { padding: 3px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+    .badge.running { background: #1a4731; color: var(--green); }
+    .badge.stopped { background: #3d1f1f; color: var(--red); }
+    main { padding: 14px; display: grid; gap: 12px; max-width: 600px; margin: 0 auto; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+    .card-title { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+    .metric { font-size: 1.7rem; font-weight: 700; }
+    .metric.pos { color: var(--green); }
+    .metric.neg { color: var(--red); }
+    .metric.neu { color: var(--blue); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .sm { font-size: 1rem; }
+    .label { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    th { color: var(--muted); font-weight: 500; text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); font-size: .72rem; text-transform: uppercase; }
+    td { padding: 7px 4px; border-bottom: 1px solid #21262d; }
+    .long { color: var(--green); } .short { color: var(--red); }
+    .signal-list { list-style: none; }
+    .signal-list li { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #21262d; font-size: .83rem; }
+    .signal-list li:last-child { border-bottom: none; }
+    .icq-bar { width: 100%; height: 6px; background: #21262d; border-radius: 3px; margin-top: 4px; overflow: hidden; }
+    .icq-fill { height: 100%; border-radius: 3px; transition: width .4s; }
+    .progress-wrap { margin-top: 10px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); margin-bottom: 4px; }
+    .progress-bar { width: 100%; height: 8px; background: #21262d; border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #1a4731, var(--green)); border-radius: 4px; transition: width .6s; }
+    .dd-bar { height: 8px; background: linear-gradient(90deg, #3d1f1f, var(--red)); border-radius: 4px; }
+    .install-hint { background: #1c2128; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; text-align: center; font-size: .82rem; color: var(--muted); }
+    .install-hint strong { color: var(--text); }
+    footer { text-align: center; color: var(--muted); font-size: .72rem; padding: 20px; }
+  </style>
+</head>
+<body>
+<header>
+  <span style="font-size:1.4rem">🤖</span>
+  <h1>MQG Trading Bot</h1>
+  <span class="badge stopped" id="statusBadge">Gestoppt</span>
+</header>
+
+<main>
+  <!-- Capital Overview -->
+  <div class="card">
+    <div class="card-title">Kapital</div>
+    <div class="metric pos" id="capital">100,00 €</div>
+    <div class="label">Peak: <span id="peak">100,00 €</span></div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Fortschritt bis 25.000 €</span>
+        <span id="goalPct">0 %</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="goalBar" style="width:0.4%"></div></div>
+    </div>
+  </div>
+
+  <!-- PnL + Drawdown -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Realisierter Gewinn</div>
+      <div class="metric sm pos" id="pnl">0,00 €</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Drawdown</div>
+      <div class="metric sm neg" id="drawdown">0,0 %</div>
+      <div class="icq-bar" style="margin-top:6px"><div class="dd-bar" id="ddBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Trades</div>
+      <div class="metric sm neu" id="totalTrades">0</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Win-Rate</div>
+      <div class="metric sm pos" id="winRate">0 %</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Offen</div>
+      <div class="metric sm neu" id="openTrades">0</div>
+    </div>
+  </div>
+
+  <!-- Open Positions -->
+  <div class="card">
+    <div class="card-title">Offene Positionen</div>
+    <table>
+      <thead><tr><th>Symbol</th><th>Dir</th><th>Entry</th><th>SL</th><th>TP</th></tr></thead>
+      <tbody id="posTable"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:14px">Keine offenen Positionen</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- MQG Signals -->
+  <div class="card">
+    <div class="card-title">Letzte MQG-Signale</div>
+    <ul class="signal-list" id="signalList">
+      <li><span style="color:var(--muted)">Warte auf Signale…</span></li>
+    </ul>
+  </div>
+
+  <!-- Recent Trades -->
+  <div class="card">
+    <div class="card-title">Letzte Trades</div>
+    <table>
+      <thead><tr><th>Symbol</th><th>Typ</th><th>PnL</th><th>Zeit</th></tr></thead>
+      <tbody id="tradesTable"><tr><td colspan="4" style="color:var(--muted);text-align:center;padding:14px">Noch keine Trades</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- Install PWA hint -->
+  <div class="install-hint" id="pwaHint" style="display:none">
+    📱 <strong>Als App installieren:</strong> Browser-Menü → "Zum Startbildschirm hinzufügen"
+  </div>
+</main>
+
+<footer>MQG Trading Bot • Sandbox-Modus • Kein Finanzrat</footer>
+
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script>
+const fmt = (n, d=2) => Number(n).toLocaleString('de-DE', {minimumFractionDigits:d, maximumFractionDigits:d});
+const fmtEur = n => fmt(n) + ' €';
+const GOAL = 25000;
+
+function updateUI(s) {
+  // Status badge
+  const badge = document.getElementById('statusBadge');
+  badge.textContent = s.bot_status || (s.bot_running ? 'Läuft' : 'Gestoppt');
+  badge.className = 'badge ' + (s.bot_running ? 'running' : 'stopped');
+
+  // Capital
+  const cap = s.capital_eur || 100;
+  document.getElementById('capital').textContent = fmtEur(cap);
+  document.getElementById('peak').textContent = fmtEur(s.peak_capital_eur || cap);
+
+  // Goal progress
+  const goalPct = Math.min(100, (cap / GOAL) * 100);
+  document.getElementById('goalPct').textContent = fmt(goalPct, 1) + ' %';
+  document.getElementById('goalBar').style.width = Math.max(0.4, goalPct) + '%';
+
+  // PnL
+  const pnl = s.realized_pnl_eur || 0;
+  const pnlEl = document.getElementById('pnl');
+  pnlEl.textContent = (pnl >= 0 ? '+' : '') + fmtEur(pnl);
+  pnlEl.className = 'metric sm ' + (pnl >= 0 ? 'pos' : 'neg');
+
+  // Drawdown
+  const dd = s.drawdown_pct || 0;
+  document.getElementById('drawdown').textContent = fmt(dd, 1) + ' %';
+  document.getElementById('ddBar').style.width = Math.min(100, dd) + '%';
+
+  // Stats
+  document.getElementById('totalTrades').textContent = s.total_trades || 0;
+  document.getElementById('winRate').textContent = fmt(s.win_rate_pct || 0, 1) + ' %';
+  document.getElementById('openTrades').textContent = s.open_trades || 0;
+
+  // Positions
+  const posTable = document.getElementById('posTable');
+  if (s.open_positions && s.open_positions.length) {
+    posTable.innerHTML = s.open_positions.map(p =>
+      `<tr>
+        <td>${p.symbol}</td>
+        <td class="${p.direction===1?'long':'short'}">${p.direction===1?'LONG':'SHORT'}</td>
+        <td>${fmt(p.entry_price,4)}</td>
+        <td class="short">${fmt(p.stop_loss,4)}</td>
+        <td class="long">${fmt(p.take_profit,4)}</td>
+      </tr>`
+    ).join('');
+  } else {
+    posTable.innerHTML = '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:14px">Keine offenen Positionen</td></tr>';
+  }
+
+  // Signals
+  const sigList = document.getElementById('signalList');
+  if (s.signals && s.signals.length) {
+    sigList.innerHTML = s.signals.slice(-5).reverse().map(sig => {
+      const col = sig.icq >= 0.65 ? 'var(--green)' : 'var(--yellow)';
+      const icqW = Math.round(sig.icq * 100);
+      return `<li>
+        <div>
+          <strong>${sig.symbol}</strong>
+          <span class="${sig.direction===1?'long':'short'}" style="margin-left:6px">${sig.direction===1?'▲ LONG':'▼ SHORT'}</span>
+          <div class="icq-bar"><div class="icq-fill" style="width:${icqW}%;background:${col}"></div></div>
+        </div>
+        <div style="text-align:right">
+          <div style="color:${col};font-weight:600">ICQ ${fmt(sig.icq,2)}</div>
+          <div class="label">${sig.time || ''}</div>
+        </div>
+      </li>`;
+    }).join('');
+  }
+
+  // Recent Trades
+  const tradesTable = document.getElementById('tradesTable');
+  if (s.recent_trades && s.recent_trades.length) {
+    tradesTable.innerHTML = s.recent_trades.slice(-10).reverse().map(t => {
+      const pnl = t.pnl || 0;
+      return `<tr>
+        <td>${t.symbol}</td>
+        <td>${t.reason || ''}</td>
+        <td class="${pnl>=0?'long':'short'}">${(pnl>=0?'+':'') + fmtEur(pnl)}</td>
+        <td style="color:var(--muted);font-size:.75rem">${t.time || ''}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+// Socket.IO
+const socket = io();
+socket.on('connect', () => { socket.emit('request_state'); });
+socket.on('state_update', updateUI);
+
+// PWA install hint
+if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
+  document.getElementById('pwaHint').style.display = 'block';
+}
+
+// Service Worker registrieren
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
