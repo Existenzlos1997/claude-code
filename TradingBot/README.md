@@ -12,6 +12,13 @@ Compound-Reinvestment und einem als PWA installierbaren Smartphone-Dashboard.
 
 ## 🔗 Installationslinks
 
+### 📱 Android (Termux)
+1. [Termux aus F-Droid installieren](https://f-droid.org/packages/com.termux/) *(empfohlen, nicht Google Play)*
+2. In Termux ausführen:
+```bash
+pkg install curl -y && curl -sSL https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/TradingBot/install_android.sh | bash
+```
+
 ### 🐧 Linux / macOS
 ```bash
 curl -sSL https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/TradingBot/install.sh | bash
