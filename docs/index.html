@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d1117">
+  <title>MQG Trading Bot – Installationsseite</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --card: #161b22; --border: #30363d;
+      --green: #3fb950; --red: #f85149; --yellow: #d29922;
+      --blue: #58a6ff; --text: #c9d1d9; --muted: #8b949e;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      width: 100%;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 20px;
+      text-align: center;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 800; }
+    header p  { color: var(--muted); margin-top: 4px; font-size: .9rem; }
+    main {
+      width: 100%;
+      max-width: 700px;
+      padding: 24px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .card h2 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+    .card p  { color: var(--muted); font-size: .88rem; line-height: 1.6; }
+
+    /* ── Code block ── */
+    .code-wrap {
+      background: #010409;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+    }
+    .code-wrap code {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: .82rem;
+      color: var(--green);
+      flex: 1;
+      white-space: nowrap;
+    }
+    .copy-btn {
+      background: #21262d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: .78rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .copy-btn:hover { background: #30363d; }
+    .copy-btn.ok { background: #1a4731; color: var(--green); }
+
+    /* ── Big install button ── */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: var(--green);
+      color: #0d1117;
+      font-weight: 700;
+      font-size: 1rem;
+      text-align: center;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 14px;
+      transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .85; }
+    .btn-secondary {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      color: var(--blue);
+      font-weight: 600;
+      font-size: .9rem;
+      text-align: center;
+      border: 1px solid var(--blue);
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 10px;
+      transition: background .15s;
+    }
+    .btn-secondary:hover { background: #0c1929; }
+
+    /* ── Platform tabs ── */
+    .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .tab {
+      padding: 7px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: .83rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .tab.active { background: var(--green); color: #0d1117; border-color: var(--green); font-weight: 700; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── Steps ── */
+    .steps { list-style: none; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #21262d;
+      font-size: .88rem;
+    }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before {
+      content: counter(step);
+      min-width: 26px;
+      height: 26px;
+      background: #1a4731;
+      color: var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .8rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Warning ── */
+    .warning {
+      background: #2d1f00;
+      border: 1px solid var(--yellow);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: .85rem;
+      color: var(--yellow);
+    }
+    .warning strong { display: block; margin-bottom: 4px; }
+
+    /* ── Badge ── */
+    .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .badge.green { background: #1a4731; color: var(--green); }
+    .badge.blue  { background: #0c1929; color: var(--blue); }
+    .badge.yellow{ background: #2d1f00; color: var(--yellow); }
+
+    footer {
+      color: var(--muted);
+      font-size: .75rem;
+      text-align: center;
+      padding: 20px;
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🤖 MQG Trading Bot</h1>
+  <p>Automatischer Krypto-Trading-Bot mit MQG-Informationsfeldanalyse</p>
+  <div class="badge-row" style="justify-content:center; margin-top:10px">
+    <span class="badge green">Python 3.10+</span>
+    <span class="badge blue">Kraken &amp; Binance</span>
+    <span class="badge blue">PWA Dashboard</span>
+    <span class="badge yellow">BaFin-konform</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── Schnellinstallation ── -->
+  <div class="card">
+    <h2>⚡ Schnellinstallation</h2>
+    <p>Wähle dein Betriebssystem und führe den Befehl in einem Terminal aus.</p>
+
+    <div class="tabs" style="margin-top:14px">
+      <button class="tab active" onclick="selectTab('linux')">🐧 Linux / macOS</button>
+      <button class="tab"        onclick="selectTab('win')">🪟 Windows</button>
+    </div>
+
+    <!-- Linux / macOS -->
+    <div class="tab-content active" id="tab-linux">
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:8px">
+        Terminal öffnen und folgendes einfügen:
+      </p>
+      <div class="code-wrap">
+        <code id="code-linux">curl -sSL https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/TradingBot/install.sh | bash</code>
+        <button class="copy-btn" onclick="copy('code-linux', this)">Kopieren</button>
+      </div>
+    </div>
+
+    <!-- Windows -->
+    <div class="tab-content" id="tab-win">
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:8px">
+        PowerShell als Administrator öffnen und folgendes einfügen:
+      </p>
+      <div class="code-wrap">
+        <code id="code-win">Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Existenzlos1997/claude-code/main/TradingBot/install.bat" -OutFile "$env:TEMP\install.bat"; Start-Process cmd "/c $env:TEMP\install.bat" -Wait</code>
+        <button class="copy-btn" onclick="copy('code-win', this)">Kopieren</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Manuelle Installation ── -->
+  <div class="card">
+    <h2>📥 Manuelle Installation (alternativ)</h2>
+    <ol class="steps">
+      <li>
+        <span>
+          <strong>Repository klonen</strong><br>
+          <div class="code-wrap" style="margin-top:6px">
+            <code id="code-git">git clone https://github.com/Existenzlos1997/claude-code.git &amp;&amp; cd claude-code/TradingBot</code>
+            <button class="copy-btn" onclick="copy('code-git', this)">Kopieren</button>
+          </div>
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Abhängigkeiten installieren</strong><br>
+          <div class="code-wrap" style="margin-top:6px">
+            <code id="code-pip">pip install -r requirements.txt</code>
+            <button class="copy-btn" onclick="copy('code-pip', this)">Kopieren</button>
+          </div>
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>API-Key eintragen</strong><br>
+          <span style="color:var(--muted)">config.json öffnen → api_key und api_secret von Kraken eintragen.</span>
+          <div class="code-wrap" style="margin-top:6px">
+            <code id="code-cfg">nano config.json</code>
+            <button class="copy-btn" onclick="copy('code-cfg', this)">Kopieren</button>
+          </div>
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Bot starten</strong><br>
+          <div class="code-wrap" style="margin-top:6px">
+            <code id="code-start">python main.py</code>
+            <button class="copy-btn" onclick="copy('code-start', this)">Kopieren</button>
+          </div>
+        </span>
+      </li>
+    </ol>
+
+    <a href="https://github.com/Existenzlos1997/claude-code/tree/main/TradingBot" class="btn-secondary" target="_blank">
+      📂 Quellcode auf GitHub ansehen
+    </a>
+  </div>
+
+  <!-- ── Smartphone App ── -->
+  <div class="card">
+    <h2>📱 Smartphone-App installieren (PWA)</h2>
+    <p>Das Dashboard des Bots ist als Progressive Web App auf jedem Smartphone installierbar –
+       ganz ohne App Store!</p>
+    <ol class="steps" style="margin-top:12px">
+      <li><span>Bot auf einem PC/Server starten: <code style="color:var(--green)">python main.py</code></span></li>
+      <li><span>Im Smartphone-Browser öffnen: <strong>http://IP-ADRESSE:5050</strong></span></li>
+      <li><span>Android: Menü (⋮) → <strong>"App installieren"</strong> oder "Zum Startbildschirm hinzufügen"</span></li>
+      <li><span>iOS (Safari): Teilen-Symbol → <strong>"Zum Home-Bildschirm"</strong></span></li>
+    </ol>
+  </div>
+
+  <!-- ── Broker ── -->
+  <div class="card">
+    <h2>🏦 Empfohlene Broker (Deutschland-konform)</h2>
+    <div style="overflow-x:auto; margin-top:8px">
+      <table style="width:100%; border-collapse:collapse; font-size:.82rem">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:8px 4px;text-align:left;color:var(--muted)">Broker</th>
+            <th style="padding:8px 4px;text-align:left;color:var(--muted)">Gebühren</th>
+            <th style="padding:8px 4px;text-align:left;color:var(--muted)">BaFin</th>
+            <th style="padding:8px 4px;text-align:left;color:var(--muted)">API</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #21262d">
+            <td style="padding:8px 4px"><strong>Kraken</strong> ⭐</td>
+            <td style="padding:8px 4px;color:var(--green)">0,16 % Maker</td>
+            <td style="padding:8px 4px"><span class="badge green" style="font-size:.7rem">✔ Ja</span></td>
+            <td style="padding:8px 4px"><span class="badge blue" style="font-size:.7rem">REST + WS</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #21262d">
+            <td style="padding:8px 4px"><strong>Binance</strong></td>
+            <td style="padding:8px 4px;color:var(--green)">0,10 %</td>
+            <td style="padding:8px 4px"><span class="badge yellow" style="font-size:.7rem">EU-VASP</span></td>
+            <td style="padding:8px 4px"><span class="badge blue" style="font-size:.7rem">REST + WS</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:10px">
+      → <a href="https://github.com/Existenzlos1997/claude-code/blob/main/TradingBot/BROKER_GUIDE.md" style="color:var(--blue)" target="_blank">
+        Vollständiger Broker-Guide (inkl. Steuerhinweise)
+      </a>
+    </p>
+  </div>
+
+  <!-- ── Warnung ── -->
+  <div class="warning">
+    <strong>⚠️ Wichtige Hinweise</strong>
+    Der Bot läuft standardmäßig im <strong>Sandbox-Modus</strong> (kein echtes Geld).
+    Teste mindestens 2 Wochen bevor du auf Live-Trading umstellst.
+    Automatisierter Handel birgt erhebliche Verlustrisiken.
+    Dies ist kein Finanzrat. Deutsche Steuerpflicht für Gewinne beachten.
+  </div>
+
+</main>
+
+<footer>
+  MQG Trading Bot &nbsp;·&nbsp;
+  <a href="https://github.com/Existenzlos1997/claude-code/tree/main/TradingBot" target="_blank">GitHub</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/Existenzlos1997/claude-code/blob/main/TradingBot/README.md" target="_blank">Dokumentation</a>
+  &nbsp;·&nbsp; Kein Finanzrat
+</footer>
+
+<script>
+function selectTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function copy(codeId, btn) {
+  const text = document.getElementById(codeId).textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✔ Kopiert';
+    btn.classList.add('ok');
+    setTimeout(() => {
+      btn.textContent = 'Kopieren';
+      btn.classList.remove('ok');
+    }, 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✔ Kopiert';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Kopieren'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>
