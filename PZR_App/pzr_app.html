@@ -2645,10 +2645,41 @@
                 return;
             }
 
+            // If no local patients exist but a backend URL is saved, sync first so the
+            // patient record (created by the practice admin) is available here too.
+            const savedUrl = localStorage.getItem('pzrBackendConnectUrl');
+            const hasLocalPatients = (getFromStorage('pzrPatients') || []).some(p => p.status === 'active');
+            if (!hasLocalPatients && savedUrl) {
+                const cleanUrl = extractAndStoreToken(savedUrl);
+                syncFromBackend(cleanUrl)
+                    .then(() => {
+                        connectBackendWebSocket(cleanUrl);
+                        _doPatientLogin(patientNumber, pin);
+                    })
+                    .catch(() => {
+                        console.log('[Patient login] Backend sync failed — using local data');
+                        _doPatientLogin(patientNumber, pin);
+                    });
+                return;
+            }
+
+            _doPatientLogin(patientNumber, pin);
+        }
+
+        function _doPatientLogin(patientNumber, pin) {
             const patients = getFromStorage('pzrPatients') || [];
-            const patient = patients.find(p => p.patientNumber === patientNumber && p.pin === pin);
+            const patient = patients.find(p => (p.patientNumber === patientNumber || p.number === patientNumber) && p.pin === pin);
             
             if (patient) {
+                // Auto-connect to backend if patient has a backend URL assigned
+                if (patient.backendUrl) {
+                    const cleanBackendUrl = extractAndStoreToken(patient.backendUrl);
+                    localStorage.setItem('pzrBackendConnectUrl', cleanBackendUrl);
+                    syncFromBackend(cleanBackendUrl)
+                        .then(() => connectBackendWebSocket(cleanBackendUrl))
+                        .catch(() => console.log('[Patient login] Backend auto-connect failed — offline mode'));
+                }
+
                 // Check if anamnese needs update (older than 1 year)
                 if (patient.anamnese && patient.anamnese.lastUpdated) {
                     const lastUpdate = new Date(patient.anamnese.lastUpdated);
@@ -3808,6 +3839,7 @@
                 pin,
                 status: 'active',
                 practiceId: currentUser?.practiceId || MASTER_PRACTICE_ID,
+                backendUrl: localStorage.getItem('pzrBackendConnectUrl') || null,
                 birthdate: document.getElementById('newPatientBirthdate')?.value || '',
                 email: document.getElementById('newPatientEmail')?.value || '',
                 phone: document.getElementById('newPatientPhone')?.value || '',
@@ -4377,6 +4409,10 @@
             patient.approvedBy = currentUser?.employeeId || currentUser?.id;
             if (!patient.practiceId && currentUser?.practiceId) {
                 patient.practiceId = currentUser.practiceId;
+            }
+            // Auto-assign backend URL so the patient can connect automatically on login
+            if (!patient.backendUrl) {
+                patient.backendUrl = localStorage.getItem('pzrBackendConnectUrl') || null;
             }
             
             saveToStorage('pzrPatients', patients);
@@ -5336,6 +5372,16 @@
                         }
                     });
                     if (changed) saveToStorage('pzrEmployees', employees);
+                    // Also propagate backendUrl to all active patients of the same practice
+                    const patients = getFromStorage('pzrPatients') || [];
+                    let patientsChanged = false;
+                    patients.forEach(pat => {
+                        if (pat.practiceId === currentUser.practiceId && pat.status === 'active') {
+                            pat.backendUrl = shareUrl;
+                            patientsChanged = true;
+                        }
+                    });
+                    if (patientsChanged) saveToStorage('pzrPatients', patients);
                 }
                 // Refresh the practice link display if it is currently open
                 updatePracticeLink();
