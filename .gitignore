@@ -1,0 +1,9 @@
+
+# Trading Bot artifacts
+TradingBot/__pycache__/
+TradingBot/bot/__pycache__/
+TradingBot/bot/broker/__pycache__/
+TradingBot/bot/data/__pycache__/
+TradingBot/bot/webapp/__pycache__/
+TradingBot/*.log
+TradingBot/backtest_equity.png
