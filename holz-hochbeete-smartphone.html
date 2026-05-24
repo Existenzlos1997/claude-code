@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HolzHochbeet Manufaktur – Selbstgebaute Holz-Hochbeete</title>
+  <meta name="description" content="Professionelle, mobil optimierte Website für selbstgebaute Holz-Hochbeete: Planung, Materialien, Bau und individuelle Modelle.">
+  <style>
+    :root{
+      --bg:#f6f7f3;
+      --card:#ffffff;
+      --text:#1f2a1f;
+      --muted:#5e6b5e;
+      --accent:#2f7a3e;
+      --accent-dark:#225b2f;
+      --line:#e5e8e0;
+      --radius:16px;
+      --shadow:0 8px 24px rgba(25,40,24,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.55;
+    }
+    .wrap{max-width:1040px;margin:0 auto;padding:0 18px 28px}
+    header{
+      padding:18px 0 10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .brand{font-weight:800;letter-spacing:.2px}
+    .brand span{color:var(--accent)}
+    .top-cta{
+      text-decoration:none;
+      background:var(--accent);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:.92rem;
+    }
+    .hero{
+      background:linear-gradient(155deg,#d9e8d6 0%,#ffffff 60%);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:24px 18px;
+      box-shadow:var(--shadow);
+    }
+    h1{
+      margin:0 0 10px;
+      font-size:clamp(1.6rem,6vw,2.5rem);
+      line-height:1.2;
+    }
+    .sub{margin:0 0 18px;color:var(--muted)}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      text-decoration:none;
+      border-radius:12px;
+      padding:11px 14px;
+      font-weight:700;
+      font-size:.95rem;
+      display:inline-block;
+    }
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-secondary{border:1px solid var(--line);background:#fff;color:var(--text)}
+    section{margin-top:18px}
+    .cards{
+      display:grid;
+      gap:12px;
+      grid-template-columns:1fr;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+    .card h3{margin:.1rem 0 .5rem;font-size:1.05rem}
+    .meta{margin:0;color:var(--muted);font-size:.94rem}
+    .steps{counter-reset:step;display:grid;gap:10px}
+    .step{
+      background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 12px 12px 44px;position:relative;
+    }
+    .step:before{
+      counter-increment:step;
+      content:counter(step);
+      position:absolute;left:12px;top:12px;
+      width:24px;height:24px;border-radius:50%;
+      display:grid;place-items:center;
+      background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;
+    }
+    .contact{
+      background:#1f2a1f;
+      color:#f7fbf5;
+      border-radius:18px;
+      padding:18px;
+      margin-top:20px;
+    }
+    .contact a{color:#c8f1cf}
+    footer{margin-top:18px;color:var(--muted);font-size:.85rem;text-align:center}
+    @media (min-width:760px){
+      .hero{padding:34px}
+      .cards{grid-template-columns:repeat(3,1fr)}
+      .models{grid-template-columns:repeat(2,1fr)}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">Holz<span>Hochbeet</span> Manufaktur</div>
+      <a class="top-cta" href="#kontakt">Beratung anfragen</a>
+    </header>
+
+    <section class="hero">
+      <h1>Selbstgebaute Holz-Hochbeete in Premium-Qualität</h1>
+      <p class="sub">
+        Maßgeschneiderte Hochbeete aus langlebigem Holz – professionell geplant, präzise gebaut und perfekt für Garten, Terrasse oder Balkon.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#modelle">Modelle ansehen</a>
+        <a class="btn btn-secondary" href="#bauprozess">So bauen wir</a>
+      </div>
+    </section>
+
+    <section aria-label="Vorteile">
+      <div class="cards">
+        <article class="card">
+          <h3>Massives Holz</h3>
+          <p class="meta">Wetterbeständige Hölzer mit sauberer Verarbeitung und starkem Rahmendesign.</p>
+        </article>
+        <article class="card">
+          <h3>Durchdachte Konstruktion</h3>
+          <p class="meta">Optimale Höhe, stabile Aussteifung und intelligente Schichtbefüllung für hohe Erträge.</p>
+        </article>
+        <article class="card">
+          <h3>Individuelle Maße</h3>
+          <p class="meta">Passgenaue Lösungen für kleine Flächen, Familiengärten und anspruchsvolle Projekte.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="modelle" aria-label="Modelle">
+      <div class="cards models">
+        <article class="card">
+          <h3>Classic 120</h3>
+          <p class="meta">120×80 cm · ideal für Einsteiger · ergonomische Arbeitshöhe von 80 cm.</p>
+        </article>
+        <article class="card">
+          <h3>Family 200</h3>
+          <p class="meta">200×100 cm · viel Anbaufläche · perfekt für Kräuter, Salate und Gemüse.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="bauprozess" aria-label="Bauprozess">
+      <div class="card">
+        <h3>Unser Bauprozess</h3>
+        <div class="steps">
+          <div class="step">Beratung & Planung nach Fläche, Budget und Bepflanzung.</div>
+          <div class="step">Materialauswahl mit Fokus auf Haltbarkeit und natürliche Optik.</div>
+          <div class="step">Präziser Zuschnitt, Aufbau und Schutzbehandlung.</div>
+          <div class="step">Lieferung oder Aufbauhilfe inklusive Befüllungs- und Pflanzplan.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="kontakt" class="contact" aria-label="Kontakt">
+      <h2 style="margin:0 0 10px;font-size:1.25rem;">Jetzt unverbindlich anfragen</h2>
+      <p style="margin:0 0 8px;">WhatsApp: <a href="tel:+491701234567">+49 170 1234567</a></p>
+      <p style="margin:0 0 8px;">E-Mail: <a href="mailto:kontakt@holzhochbeet-manufaktur.de">kontakt@holzhochbeet-manufaktur.de</a></p>
+      <p style="margin:0;">Antwort in der Regel innerhalb von 24 Stunden.</p>
+    </section>
+
+    <footer>© 2026 HolzHochbeet Manufaktur · Mobile-First Website</footer>
+  </div>
+</body>
+</html>
